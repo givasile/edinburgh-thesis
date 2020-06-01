@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+
+\title{Summary of Optimization Monte Carlo methods}
+\author{Vasileios Gkolemis}
+\date{June 2020}
+
+\begin{document}
+
+\maketitle
+
+\section{Symbols for functions/probabilities}
+
+\begin{itemize}
+    \item $p(x|y)$: any valid pdf function $g(x,y): \int_x g(x,y) = 1$. 
+    \item $p(x|y=y_0)$ is a function of x (i.e. $g(x): \int_x g(x) = 1$)  
+    \item $p(x=x_0|y)$ is a function of y (i.e. $g(y)$) 
+    \item $p(x=x_0|y=y_0)$ is a real number $\kappa \in [0,1]$
+    \item $p_\epsilon(x)$ is 
+\end{itemize}
+
+\section{Symbols for random variables or parameters}
+
+\begin{itemize}
+    \item $x, y$ are dummy variables, used as thresholders
+    \item $D$ the available data (observed variables)
+\end{itemize}
+
+
+
+
+\section{Likelihood-Free methods}
+
+In our models, the random variables are split into 2 categories; the observed ones (visibles) and the unobserved. The unobserved ones can be further split into 3 categories:
+
+\begin{itemize}
+    \item the parameters of the model $\theta$, over which we try to infer a posterior distribution
+    \item the hidden/latent variables $h$, which we cannot observe but are part of the data generation process
+    \item the nuisance variables $u$, which can be though as dummy random variables, that add stochasticity when sampling from a random variable. Simply speaking, those are the r.v. that, when known, can absorb the randomness of the sampling procedure $x \sim p(x|\theta)$, transforming it to a deterministic function $x = f(\theta, u)$
+\end{itemize}
+
+The particularity of likelihood-free methods is that the likelihood function $p(y=D|\theta)$ cannot be evaluated (i.e. cannot compute the number $p(y=D|\theta=\theta_0)$) but we are able to sample from the generative distribution $p(y|\theta)$. We can thing that we hold in our hands a black box simulator (stochastic function) that maps a the parameters to a sample $y = M_{rand}(\theta)$. The randomness of the mapping is caused by the unknown nuisance variables $u$ that are part of the generation procedure (e.g. calls to random generator etc). If we represent them with a vector, we can transform the aforementioned random procedure to a deterministic function $M(\theta, u) = y$.  
+
+The ultimate goal is to estimate the posterior distribution over the parameters $\theta$ or at least to get some samples from it. Subsequently, we use the approximation to sample from the posterior (or the samples themselves) to estimate the predictive distribution. 
+
+\begin{equation}
+    p(\theta|y=D) = \frac{p(\theta) p(y=D|\theta)}{p(y=D)}
+\end{equation}
+
+
+\section{Background of Likelihood-Free methods and basic algorithms}
+
+The fundamental idea of all Likelihood-Free methods is that we try to generate (artificial) data using our simulator $M_{rand}(\theta)$ that look-alike (are close) to the observed (real) data $D$. When they do, we hold the parameters $\theta$ that were part of the generation, as possible candidates for the posterior.
+
+Since, in the contiguous case it is impossible to reproduce exactly the data, a relaxation is introduced:
+
+\begin{equation} \label{fundamental_posterior_approx}
+    p(\theta|y=D) \approx p(\theta|y \in B_\epsilon(D)) = \frac{p(\theta) p(y \in B_\epsilon(D)|\theta)}{p(y=D)}
+\end{equation}
+
+$B_\epsilon$ represents an area (normally sphere or bounding-box) around $D$ governed by the hyper-parameter $\epsilon$. In the limit where $\epsilon \rightarrow 0$, the approximation becomes equality.
+
+When the data belongs to a high-dimensional space (high in our case can be even 10 dimensions), it is becomes difficult to reproduce the observed data $M_{rand}(\theta) \in B_{\epsilon}(D)$ without letting $\epsilon$ reach very big values. Hence, we normally use a way to squeeze our data to a lower dimensions; we use a function $T:\mathbf{R}^{D_1} \rightarrow \mathbf{R}^{D_2}$ where $D_1 > D_2$. Then, equation \ref{fundamental_posterior_approx} becomes:
+
+\begin{equation} \label{eq:summary_stat}
+    p(\theta|y=D) \approx p(\theta|T(y) \in B_\epsilon(D)) = \frac{p(\theta) p(T(y) \in B_\epsilon(D)|\theta)}{p(y=D)}
+\end{equation}
+
+For abbrevation we usually denote $p(\theta|T(y) \in B_\epsilon(D))$ as $p_\epsilon(\theta|T(D))$. For simplicity we won't use the function $T$ anymore, but all the expressed ideas are valid even with its existence.
+
+\section{Optimization Monte Carlo (OMC)}
+
+The fundamental idea behind OMC is the creation of a dual problem.
+
+Initial problem
+
+We denote as $p(x|\theta)$ the probability that the simulator will generate the data $x$ (i.e. $p(x|\theta) = p(x=M_{rand}(\theta)|\theta)$
+
+\begin{gather*}
+    p(y=D|\theta) \approx p_\epsilon(y = D|\theta) \\
+    = p_\epsilon (x= M_{rand}(\theta)|\theta) = \int_x p_\epsilon(y|x)p(x|\theta)dx
+\end{gather*}
+    
+
+
+\end{document}
