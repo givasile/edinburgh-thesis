@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Pycharm IDE
+.idea
+
+# auctex related files
+*.aux
+*.pdf
+*.gz

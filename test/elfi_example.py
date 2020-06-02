@@ -4,6 +4,7 @@ import elfi
 import graphviz
 
 
+# the function that will be used as part of the Elfi.Simulator
 def simulator(mu, sigma, batch_size=1, N=10, random_state=None):
     """Draws independent samples from univariate Gaussian N(mu,sigma)
 
@@ -25,21 +26,22 @@ def simulator(mu, sigma, batch_size=1, N=10, random_state=None):
 def mean(y):
     return np.mean(y, axis=1)
 
+
 def var(y):
     return np.var(y, axis=1)
 
 
 # Set the generating parameters that we will try to infer
 mean0 = 1
-std0 = 3
+std0 = 2
 
 # Generate some data (using a fixed seed here)
 y0 = simulator(mean0, std0, batch_size=1, N=100, random_state=2)
 print(y0)
 
 # elfi priors
-mu = elfi.Prior('uniform', -2, 4, name="mu")
-sigma = elfi.Prior('uniform', 1, 4, name="sigma")
+mu = elfi.Prior('multivariate_normal', 2, 2, name="mu")
+sigma = elfi.Prior('multivariate_normal', 1, 4, name="sigma")
 
 # elfi.Simulator = elfi.priors + function
 sim = elfi.Simulator(simulator, mu, sigma, observed=y0, name="sim")
@@ -48,15 +50,16 @@ sim = elfi.Simulator(simulator, mu, sigma, observed=y0, name="sim")
 S1 = elfi.Summary(mean, sim, name="S1")
 S2 = elfi.Summary(var, sim, name="S2")
 
-d = elfi.Distance('euclidean', S1, S2, name="eucl_distance")
+d = elfi.Distance('euclidean', S1, name="eucl_distance")
 
 # elfi.draw(d)
 # print(mean(y0))
 # print(var(y0))
 
-rej = elfi.Rejection(d, batch_size=10000, seed=21)
-res = rej.sample(1000, threshold=.5)
+rej = elfi.Rejection(d, discrepancy_name="eucl_distance", output_names=["S1"], seed=21)
+res = rej.sample(1, threshold=.1)
+
 print(res)
 
-res.plot_marginals()
-plt.show()
+# res.plot_marginals()
+# plt.show()
