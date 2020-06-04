@@ -102,34 +102,76 @@ Inuitively: the probability the random generator to generator artificial data cl
 Intuitively: the probability the random generator to generator artificial data close to $D$ given $\theta$ is \textbf{the summing over all the possible nuisance variables and checking for each one if it (deterministically) produces data close to $D$}.
 
 
-\begin{gather}
+
+If $p_\epsilon(y=D|x=M(\theta,u^{(i)}))$ is indeed a boxcar kernel, then there is a set $S^{(i)} = \{ \theta: d(D, M(\theta, u^{(i)})) < \epsilon \}$ of $\theta$ values that generate data "close enough" to $D$. Using this kernel we do not express any preference among those $\theta$; we consider them equally probable to have been the parameter setting that generated the data. The probability is inverted proportional to the area the kernel spans and since tha same kernel is used is independent of the sample $u_i$.
+
+
+\begin{gather} \label{eq:dual_view_analysis}
   L(\theta) = \frac{1}{N} \sum_{i}^Ng_i(\theta) \\
-  g_i(\theta) = p_\epsilon(y=D|x=M(\theta, u^{(i})) = \\ 
+  g_i(\theta) = p_\epsilon(y=D|x=M(\theta, u^{(i}))
 = \left\{
 	\begin{array}{ll}
-		c_i  & \mbox{if } \norm{D-M(\theta, u^{(i)})} \leq \epsilon \\
+		c  & \mbox{if } d(D, M(\theta, u^{(i)})) \leq \epsilon \\
 		0 & \mbox{else } 
 	\end{array}
   \right. \\
-  = c_i\mathbb{1}_{C_\epsilon^{(i)}}(\theta)
-  \end{gather}
+  = c\mathbb{1}_{C_\epsilon^{(i)}}(\theta)
+\end{gather}
 
+With these assumptions the posterior distribution can be computed as:
+
+\begin{gather} \label{eq:dual_view_analysis}
+  p(\theta|y=D) = \frac{p(\theta)p(y=D|\theta)}{\int_\theta p(\theta)p(y=D|\theta)} \\
+  = \frac{1}{Z}p(\theta) \sum_i \mathbb{1}_{C_\epsilon^{(i)}}(\theta) \\
+  Z = \int_\theta p(\theta) \sum_i \mathbb{1}_{C_\epsilon^{(i)}}(\theta) d\theta
+\end{gather}
+
+
+Computing the partiotion function and/or sampling from the posterior is not easy, since $\mathbb{1}_{C_\epsilon^{(i)}}(\theta)$ can represent any abstract shape.
+
+Hence, it is imperative to approximate the set $\mathbb{1}_{C_\epsilon^{(i)}}(\theta)$ with a shape that is easier to handle. This is what the OMC and ROMC approaches attempt to do.
 
 \section{OMC algorithm}
 
-Idea: OMC algorithm approximates $g_i(\theta)$ as an ellipsoid around $\theta_0^{(i)}$, which is any value inside the boxcar kernel $\theta_0^{(i)}: \mathbb{1}_{C_\epsilon^{(i)}}(\theta) = 1$. For obtaining such a point, any gradient-based optimiser can be used for solving the following problem:
+OMC approximates each set $\mathbb{1}_{C_\epsilon^{(i)}}(\theta)$ with a weighted delta $w_i\delta(\theta - \theta_*^{(i)})$. Hence the posterior \ref{eq:dual_view_analysis} becomes:
+
+\begin{gather} \label{eq:OMC_posterior}
+  p(\theta|y=D) = \frac{\sum_i^N w_i p(\theta_*^{(i)})\delta(\theta - \theta_*^{(i))})}{\sum_i^N w_i p(\theta_*^{(i)})}
+\end{gather}
+
+which is very easy to evaluate, sample or compute an expectation on it.
+
+Sampling from \ref{eq:OMC_posterior} is quite easy.
+
+Estimating an expected value can be done through:
+
+\begin{gather} \label{eq:OMC_expectation}
+  E_{p(\theta|y=D)}[h(\theta)] = \frac{\sum_i^N w_i p(\theta_*^{(i)})h(\theta_*^{(i)})}{\sum_i^N w_i p(\theta_*^{(i)})}
+\end{gather}
+
+
+The only question is how to compute $\theta_*^{(i)}, w_i$?
+
+Idea: OMC initially approximates $g_i(\theta)$ as an ellipsoid around $\theta_*^{(i)}$ with volume $V^{(i)}$. This ellipsoid is shrinked into a delta placed at its center with weight being its volume. Intuitively, since all values inside the ellipsoid have equal probability of generating the data, their mass is being cummulated in the center point.
+
+Alogorithm for obtaining $\theta_*^{(i)}$, $V^{(i)}$:
+
+Firstly we search for a point inside the boxcar kernel $\theta_0^{(i)}: \mathbb{1}_{C_\epsilon^{(i)}}(\theta_0^{(i)}) = 1$. 
+
+For obtaining such a point, any gradient-based optimiser can be used for solving the following problem:
  
 \begin{subequations}
 \begin{alignat}{2}
-&\!\min_{\theta}        &\qquad& f(\theta) = \norm{D - M(\theta, u^{(i)}))}^2\label{eq:optProb}\\
-&\text{subject to} &      & \theta \in \mathbf{R}^D \\
-&                  &      & \norm{D - M(\theta, u^{(i)}))} < \epsilon \\
+&\!\min_{\theta}        &\qquad& f(\theta) = d(D - M(\theta, u^{(i)}))\label{eq:optProb}\\
+&\text{subject to} &      & f(\theta)) < \epsilon \\
 \end{alignat}
 \end{subequations}
-%
+
+In the simplest case, d can be the euclidean distance.
+
 (Question: Is $M(\theta, u^{(i)})$ a smooth function with respect to $\theta$? If not how is the problem solved ??)
 
-The central point of the ellipsoid is:
+Let's say $\theta_0^{(i)}$ is an approximate solution to the problem i.e. $\theta_0^{(i)} \approx \text{argmin}_\theta f(\theta)$ and $f(\theta_0^{(i)}) < \epsilon$. Then, the central point of the ellipsoid is:
 
 \begin{equation}
   \theta_*^{(i)} = \theta_0^{(i)} + J_0^{-1}(D - M(\theta^{(i)}_0, u^{(i)}))
@@ -140,27 +182,6 @@ and the volume covered is:
 \begin{equation}
   V^{(i)} = \frac{\gamma}{\sqrt{det( J_0^{(i)T}J_0^{(i)})}}
 \end{equation}
-
-If we represent shrink all its mass in the center and use its volume as an indicator of its weight:
-
-\begin{gather} \label{eq:OMC_posterior}
-  p(\theta|y=D) = \frac{p(\theta)p(y=D|\theta)}{Z} \\
-  = \frac{\sum_i^N w_i p(\theta_*^{(i)})\delta(\theta - \theta_*^{(i))})}{\sum_i^N w_i p(\theta_*^{(i)})}
-\end{gather}
-
-\begin{equation}
-  w_i = \frac{1}{\sqrt{det( J_0^{(i)T}J_0^{(i)})}}
-\end{equation}
-
-
-Sampling from \ref{eq:OMC_posterior} is quite easy.
-
-Estimating an expected value can be done through:
-
-\begin{gather} \label{eq:OMC_expectation}
-  E_{p(\theta|y=D)}[h(\theta)] = \frac{\sum_i^N w_i p(\theta_*^{(i)})h(\theta_*^{(i)})}{\sum_i^N w_i p(\theta_*^{(i)})}
-\end{gather}
-
 
 \section{Robust Optimization Monte Carlo (ROBC)}
 
@@ -174,6 +195,35 @@ OBC has some disadvantages:
   \item The size of the area can be overestimated due to ill conditioned jacobian matrix $J$ and hence dominate the posterior
 \end{itemize}
 
+ROBC attempts to solve the two latter problems, by approximating the sets $\mathbb{1}_{C_\epsilon^{(i)}}(\theta)$ as:
+
+$$ \mathbb{1}_{C_\epsilon^{(i)}}(\theta) \approx BB(\theta; \theta_*^{(i)}, k^{(i)}) \cap \mathbb{1}_{C_\epsilon^{(i)}}(\theta)$$
+
+Hence the posterior becomes:
+
+\begin{gather} \label{eq:ROBC_posterior}
+  p(\theta|y=D) = \frac{p(\theta)p(y=D|\theta)}{\int_\theta p(\theta)p(y=D|\theta)} \\
+  = \frac{1}{Z}p(\theta) \sum_i \mathbb{1}_{C_\epsilon^{(i)}}(\theta)V^{(i)}BB(\theta; \theta_*^{(i)}, k^{(i)}) \\
+  Z = \int_\theta p(\theta) \sum_i \mathbb{1}_{C_\epsilon^{(i)}}(\theta)V^{(i)}BB(\theta; \theta_*^{(i)}, k^{(i)}) d\theta
+\end{gather}
+
+
+Computing an expectation $E_{p(\theta|y=D)}[h(\theta)]$ can be done we the following method:
+
+\begin{gather} \label{eq:ROMC_expectation}
+  E_{p(\theta|y=D)}[h(\theta)] = \int_\theta h(\theta)p(\theta|y=D)d\theta \\
+  = \frac{1}{Z} \int_\theta h(\theta)p(\theta) \sum_i \mathbb{1}_{C_\epsilon^{(i)}}(\theta)V^{(i)}BB(\theta; \theta_*^{(i)}, k^{(i)}) d\theta \\
+  = \frac{1}{Z} \sum_i V^{(i)} \int_\theta h(\theta)p(\theta)  \mathbb{1}_{C_\epsilon^{(i)}}(\theta)BB(\theta; \theta_*^{(i)}, k^{(i)}) \frac{q^{(i)}(\theta)}{q^{(i)}(\theta)}d\theta \\  
+  = \frac{1}{Z} \sum_i V^{(i)} \sum_j \frac{h(\theta^{(ij)})p(\theta^{(ij)}) \mathbb{1}_{C_\epsilon^{(i)}}(\theta^{(ij)})}{q^{(i)}(\theta^{(ij)})}d\theta \\
+  = \frac{1}{Z} \sum_{ij} V^{(i)} \frac{h(\theta^{(ij)})p(\theta^{(ij)}) \mathbb{1}_{C_\epsilon^{(i)}}(\theta^{(ij)})}{q^{(i)}(\theta^{(ij)})}d\theta \\
+  = \frac{ \sum_{ij} h(\theta^{(ij)})w_{ij}}{ \sum_{ij}w_{(ij)}}, \\
+  w_{ij} = \mathbb{1}_{C_\epsilon^{(i)}}(\theta^{(ij)}) \frac{p(\theta^{(ij)})}{q_{i}(\theta^{(ij)})} \\
+\end{gather}
+
+
+The computation of the bounding box is done, with an algorithm almost like OMC; $\theta_*^{(i)}$ and $J^{(ij)T}J^{(ij)}$ are computed as in OMC and the boundaries are computed as the edge points along the eigenvectors of $J^{(ij)T}J^{(ij)}$.
+
+Hence, ROMC is identical to OMC in the optimization part but differs in the way it represents and samples from the posterior.
 
 \subsection{Gradients not available}
 
