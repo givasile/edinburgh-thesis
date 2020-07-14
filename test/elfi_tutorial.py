@@ -86,7 +86,6 @@ print(d.generate().shape)
 
 
 smc = elfi.SMC(d, batch_size=10000, seed=10, output_names=['simulator'])
-breakpoint()
 res = smc.sample(n_samples=10000, thresholds=[25, 10, 5, 3])
 t = time.process_time()
 print(time.process_time() - t)
