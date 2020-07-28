@@ -1,0 +1,29 @@
+\contentsline {section}{\numberline {1}Introduction}{1}% 
+\contentsline {subsection}{\numberline {1.1}Motivation}{1}% 
+\contentsline {subsection}{\numberline {1.2}Outline of Thesis}{1}% 
+\contentsline {subsection}{\numberline {1.3}Notation}{1}% 
+\contentsline {section}{\numberline {2}Mathematical Modelling}{2}% 
+\contentsline {subsection}{\numberline {2.1}Probalistic (Bayesian) Machine Learning}{3}% 
+\contentsline {subsection}{\numberline {2.2}Likelihood-Free Inference Models}{3}% 
+\contentsline {subsection}{\numberline {2.3}Robust Optimistation Monte Carlo (ROMC) approach}{4}% 
+\contentsline {subsubsection}{\numberline {2.3.1}Define deterministic optimisation problems}{5}% 
+\contentsline {subsubsection}{\numberline {2.3.2}Gradient-Based Approach}{5}% 
+\contentsline {subsubsection}{\numberline {2.3.3}Gaussian Process Approach}{5}% 
+\contentsline {subsubsection}{\numberline {2.3.4}Weighted Sampling}{5}% 
+\contentsline {section}{\numberline {3}Implementation}{5}% 
+\contentsline {subsection}{\numberline {3.1}Engine for Likelihood-Free Inference (ELFI) Package}{5}% 
+\contentsline {subsection}{\numberline {3.2}Implementation of the ROMC algorithm}{6}% 
+\contentsline {subsubsection}{\numberline {3.2.1}Training Part}{6}% 
+\contentsline {subsubsection}{\numberline {3.2.2}Inference Part}{6}% 
+\contentsline {subsubsection}{\numberline {3.2.3}Inspection Tools}{6}% 
+\contentsline {subsubsection}{\numberline {3.2.4}Evaluation and Visualisation}{6}% 
+\contentsline {subsection}{\numberline {3.3}Computational Complexity}{6}% 
+\contentsline {section}{\numberline {4}Experiments}{6}% 
+\contentsline {subsection}{\numberline {4.1}Higher-Dimension Example}{6}% 
+\contentsline {subsection}{\numberline {4.2}Computational Complexity}{6}% 
+\contentsline {section}{\numberline {5}Conclusions}{7}% 
+\contentsline {subsection}{\numberline {5.1}Outcomes}{7}% 
+\contentsline {subsection}{\numberline {5.2}Future Research Directions}{7}% 
+\contentsline {section}{Appendices}{8}% 
+\contentsline {section}{\numberline {A}An Appendix}{8}% 
+\contentsline {section}{\numberline {B}Another Appendix}{9}% 
