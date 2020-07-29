@@ -159,18 +159,40 @@ In this section, we keep an overview of the symbols used throughout the document
 
 \subsection{Simulator-Based (Implicit) Models}
 
+As already stated, in Simulator-Based models it is impossible to evaluate the quantity $p_{y|\theta}(y)$. The only tool we own is a black-box simulator $M(\theta, V)$ that can be used to generate data. If we denote as $Y_\theta$ the random variable that describes the simulator, then
+
+\begin{equation}
+  \int_{y \in B_\epsilon(y_0)} p(y|\theta)dy =  Pr(Y_\theta \in B_\epsilon(y_o)) = Pr(M(\theta, V) \in B_\epsilon(y_o))
+  \end{equation}
+
+  On the other hand, the likelihood function can be defined as:
+\begin{equation}
+  L(\theta) =  \lim_{\epsilon \to 0} c_\epsilon Pr(Y_\theta \in B_\epsilon(y_o))
+\end{equation}
+
+and the posterior distribution as:
+\begin{equation}
+p(\theta|y_0) \propto L(\theta)p(\theta)
+\end{equation}
+
+Since $p_{y|\theta}$ cannot be evaluated, so does $L(\theta)$ and subsequently $p(\theta|y_0)$.
+
+\subsubsection{Approximate Bayesian Computation (ABC) Rejection Sampling}
+
+Rejection Sampling is well-known method for sampling from a posterior distribution; a sample is obtained from the prior $\theta \sim p(\theta)$ and it is maintained with probability $L(\theta)/\text{max}_\theta L(\theta)$. The samples $\theta_i$ obtained with this procedure follow the posterior distribution $p(\theta|y_0)$. Although we cannot use this approach out of the box (evaluating $L(\theta)$ is impossible in our case), we can adjust it with some slight modifications.
+
+In the discrete case scenario, where $Y_\theta$ can take a finite set of numbers, the posterior distribution becomes $p(\theta|y_o) \propto Pr(Y_\theta=y_o)p(\theta)$. Hence, we can sample from the prior $\theta_i \sim p(\theta)$, run the simulator $y_i = M(\theta_i, V)$ and maintain $\theta_i$ if only $y_i = y_0$.
+
+The above method becomes less usefull as the finite set of possible $Y_\theta$ values grows large. As the set grows larger, the probability to maintain a sample becomes smaller. In the limit where the set becomes infinite (i.e. continuous case) the probability becomes zero. In order for the method to work in this set-up, a relaxation is introduced; we relax the acceptance criterion to $d(y_i, y_0) < \epsilon$ where $d(\cdot, \cdot)$ can represent any valid distance. With this modification, the maintained samples follow an approximate posterior $p_{d,\epsilon}(\theta|y_0) \propto Pr(Y_\theta \in B_\epsilon(y_0))p(\theta)$, where $B_\epsilon$ is defined by $d, \epsilon$. This procedure is called Rejection ABC algorithm and form the basis of Likelihood-Free methods.
+
+\subsubsection{Summary Statistics}
+
+\subsubsection{Optimization Monte Carlo (OMC)}
 
 \clearpage
 
 \subsection{Robust Optimistation Monte Carlo (ROMC) approach}
 \label{sec:Techniques}
-
-Techniques even better because.
-\begin{enumerate}
- \item They're magnificent.
- \item If they work.
-\end{enumerate}
-\clearpage
 
 \subsubsection{Define deterministic optimisation problems}
 

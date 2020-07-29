@@ -142,6 +142,8 @@ dmypy.json
 *.log
 *.toc
 *.lot
+*blx.bib
+*.bbl
 
 # ommited dirs
 latex_files/*
