@@ -140,3 +140,9 @@ dmypy.json
 *.db
 *.lof
 *.log
+*.toc
+*.lot
+
+# ommited dirs
+latex_files/*
+test/*

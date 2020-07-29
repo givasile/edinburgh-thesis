@@ -10,7 +10,6 @@ title = {{Using approximate bayesian computation to estimate tuberculosis transm
 year = {2006}
 }
 
-
 @inproceedings{Chen2019,
 abstract = {Approximate Bayesian computation (ABC) is a set of techniques for Bayesian inference when the likelihood is intractable but sampling from the model is possible. This work presents a simple yet effective ABC algorithm based on the combination of two classical ABC approaches — regression ABC and sequential ABC. The key idea is that rather than learning the posterior directly, we first target another auxiliary distribution that can be learned accurately by existing methods, through which we then subsequently learn the desired posterior with the help of a Gaussian copula. During this process, the complexity of the model changes adaptively according to the data at hand. Experiments on a synthetic dataset as well as three real-world inference tasks demonstrates that the proposed method is fast, accurate, and easy to use.},
 author = {Chen, Yanzhi and Gutmann, Michael U},
@@ -23,6 +22,7 @@ url = {http://proceedings.mlr.press/v89/chen19d.html},
 volume = {89},
 year = {2019}
 }
+
 @misc{Gutmann2016,
 abstract = {Our paper deals with inferring simulator-based statistical models given some observed data. A simulator-based model is a parametrized mechanism which specifies how data are generated. It is thus also referred to as generative model. We assume that only a finite number of parameters are of interest and allow the generative process to be very general; it may be a noisy nonlinear dynamical system with an unrestricted number of hidden variables. This weak assumption is useful for devising realistic models but it renders statistical inference very difficult. The main challenge is the intractability of the likelihood function. Several likelihood-free inference methods have been proposed which share the basic idea of identifying the parameters by finding values for which the discrepancy between simulated and observed data is small. A major obstacle to using these methods is their computational cost. The cost is largely due to the need to repeatedly simulate data sets and the lack of knowledge about how the parameters affect the discrepancy. We propose a strategy which combines probabilistic modeling of the discrepancy with optimization to facilitate likelihood-free inference. The strategy is implemented using Bayesian optimization and is shown to accelerate the inference through a reduction in the number of required simulations by several orders of magnitude.},
 archivePrefix = {arXiv},
@@ -50,6 +50,7 @@ mendeley-groups = {Edinburgh{\_}thesis/Theory,Edinburgh{\_}thesis/bibliography},
 title = {{Optimization Monte Carlo: Efficient and embarrassingly parallel likelihood-free inference}},
 year = {2015}
 }
+
 @article{Ikonomov2019,
 abstract = {This paper is on Bayesian inference for parametric statistical models that are implicitly defined by a stochastic simulator which specifies how data is generated. While exact sampling is possible, evaluating the likelihood function is typically prohibitively expensive. Approximate Bayesian Computation (ABC) is a framework to perform approximate inference in such situations. While basic ABC algorithms are widely applicable, they are notoriously slow and much research has focused on increasing their efficiency. Optimisation Monte Carlo (OMC) has recently been proposed as an efficient and embarrassingly parallel method that leverages optimisation to accelerate the inference. In this paper, we demonstrate a previously unrecognised important failure mode of OMC: It generates strongly overconfident approximations by collapsing regions of similar or near-constant posterior density into a single point. We propose an efficient, robust generalisation of OMC that corrects this. It makes fewer assumptions, retains the main benefits of OMC, and can be performed either as part of OMC or entirely as post-processing. We demonstrate the effectiveness of the proposed Robust OMC on toy examples and tasks in inverse-graphics where we perform Bayesian inference with a complex image renderer.},
 archivePrefix = {arXiv},
@@ -76,4 +77,11 @@ pages = {e66--e82},
 title = {{Fundamentals and recent developments in approximate Bayesian computation}},
 volume = {66},
 year = {2017}
+}
+
+@misc{1708.00707,
+Author = {Jarno Lintusaari and Henri Vuollekoski and Antti Kangasrääsiö and Kusti Skytén and Marko Järvenpää and Pekka Marttinen and Michael Gutmann and Aki Vehtari and Jukka Corander and Samuel Kaski},
+Title = {ELFI: Engine for Likelihood Free Inference},
+Year = {2018},
+Eprint = {arXiv:1708.00707},
 }

@@ -38,7 +38,7 @@
 \vspace*{1em}
 \begin{figure}[!h]
 \centering
-\includegraphics[width=180pt]{CentredLogoCMYK.jpg}
+\includegraphics[width=180pt]{images/CentredLogoCMYK.jpg}
 \end{figure}
 \vspace{2em}
 \textbf{\Huge{Robust Optimisation Monte Carlo for Likelihood-Free Inference}}\\[2em]
@@ -111,13 +111,17 @@ Here comes your own work declaration
 
 \subsection{Motivation}
 
+\subsubsection*{\textit{Explanation of Simulation-Based Models}}
+
 A Simulator-Based model is a parameterized stochastic data generating mechanism \cite{Gutmann2016}. The key characteristic is that although we are able to sample (simulate) data points, we cannot evaluate the likelihood of a specific set of observations $y_0$. Formally, a simulator-based model is described as a parameterized family of probability density functions $\{p_{y|\theta}(y)\}_\theta$, whose closed-form is either unknown or intractable to evaluate. Although, evaluating $p_{y|\theta}(y)$ is intractable, sampling is feasible and frequently without huge computational cost. Practically, if we set as $V$ the vector containing the (unobserved) random state of the process, then as a mapping $M(\theta, V) \rightarrow y$
 
 The level of modelling freedom make implicit models particularly captivating; any physical process that can be conceptualized as a computer program of finite (determinstic or stochastic) steps, can be modelled as a Simulator-Based model without any mathematical compromise. This includes any amount of hidden (unobserved) internal variables. On the other hand, this level of freedom comes at a cost; performing inference is particularly demanding from a compuational and mathematical perspective. This constraints the dimensionality of $\theta \in \mathbb{R}^D$ to quite low levels (i.e. $D<20$).
 
-For underlying the importance of Simulator-Based models, lets use as example the tuberculosis disease spread model as described in \cite{Tanaka2006}. At each stage we can observe the following events; (a) the transmission of a specific haplotype to a new host (b) the mutation to a different haplotype (c) the exclusion of an infectius host (recovers/dies). The random process, which stops when $m$ infectius hosts are reached, can be parameterized; (a) the transmission rate $\alpha$ (b) the mutation rate $\tau$ and (c) the exclusion rate $\delta$. The outcome of the process is a variable-sized tuple containg the size of all different infection groups $y_\theta$, as described in figure \ref{fig:tuberculosis_model}. Computing $p(y=y_0|\theta)$ requires tracking all tree-paths that generate the specific tuple along with their probabilities and summing over them. Computing this probability becomes intractable when $m$ grows larger as in real-case scenarios. On the other hand, modeling the data-generation process at a computer program is simple and light.
+\subsubsection*{\textit{Example}}
 
-\begin{figure}[!t]
+For underlying the importance of Simulator-Based models, lets use as example the tuberculosis disease spread model as described in \cite{Tanaka2006}. At each stage we can observe the following events; (a) the transmission of a specific haplotype to a new host (b) the mutation to a different haplotype (c) the exclusion of an infectius host (recovers/dies). The random process, which stops when $m$ infectius hosts are reached, can be parameterized; (a) the transmission rate $\alpha$ (b) the mutation rate $\tau$ and (c) the exclusion rate $\delta$. The outcome of the process is a variable-sized tuple $y_\theta$, containg the size of all different infection groups, as described in figure \ref{fig:tuberculosis_model}. Computing $p(y=y_0|\theta)$ requires tracking all tree-paths that generate the specific tuple along with their probabilities and summing over them. Computing this probability becomes intractable when $m$ grows larger as in real-case scenarios. On the other hand, modeling the data-generation process at a computer program is simple and computationally cheap.
+
+\begin{figure}[!ht]
     \begin{center}
       \includegraphics[width=0.49\textwidth]{./images/chapter1/tuber_model_1.png}
       \includegraphics[width=0.42\textwidth]{./images/chapter1/tuber_model_2.png}
@@ -126,14 +130,26 @@ For underlying the importance of Simulator-Based models, lets use as example the
     \label{fig:tuberculosis_model}
 \end{figure}
 
+\subsubsection*{\textit{Goal of Simulation-Based Models}}
 
+As in all Machine Learning (ML) set-ups, the fundamental goal is the derivation of the parameter configuration $\theta^*$ that \textit{describes} well the data (i.e. generates samples $M(\theta^*, V)$ that are as close as possible to the observed data $y_0$). Since Simulation-Based models belong to the broad category of Bayesian Machine Learning, the ultimate goal is to \textit{infer} a posterior distribution $p(\theta|y_0)$ over of all possible configuration set-ups or/and get some samples $\theta \sim p(\theta|y_0)$.
+
+\subsubsection*{\textit{Robust Optimisation Monte Carlo (ROMC) method}}
+
+The ROMC method \cite{Ikonomov2019} is very recent Likelihood-Free approach; its fundamental idea is the transformation of the stochastic data generation process $M(\theta, V)$ to a deterministic function $g(\theta)$, by sampling the variables that the randomness $V_i \sim p(V)$. Hence, we can state that $g(\theta) = M(\theta, V=V_i)$. The ROMC method continues the research line introduced by Meeds et. al \cite{Meeds2015}, by improving some fundamental failure-mode of OMC. ROMC describes a methodology for approximating the posterior through defining and solving deterministic optimisation problems, without enforcing the underlying algorithms for each step; in this sense it can be thought as a meta-algorithm.
+
+\subsubsection*{\textit{Implementation}}
+
+The most important contribution of this work is the implementation of the ROMC method in the Python package Engine for Likelihood-Free Inference (ELFI) \cite{1708.00707}. Since it is very recently published work the ROMC method was not implemented by now in any ML software. This works attempts to provide to the research community a tested and robust implementation for further experimentation.
 
 \subsection{Outline of Thesis}
 
+The remainder of the dissertation is organized as follows. In Chapter 2 we establish the mathematical formulation; more specifically we initially describe the Simulator-Based models and we provide some fundamental algorithms that have been proposed for performing statistical inference. Afterwards, we provide the mathematical description of the ROMC approach \cite{Ikonomov2019}. In Chapter 3, we deal with the implementation part; we initially provide some information regarding the Python package Engine for Likelihood-Free Inference (ELFI) \cite{1708.00707} and subsequently we analyze the implementation details of ROMC in this package. In Chapter 4, we present the functionalities of the ROMC implementation at some real-world examples; this chapter wishes to illustrate the success of the ROMC method and of our implementation at Likelihood-Free tasks. Finally, in chapter 5, we conclude with some thoughts on the work we have done and some future research ideas.
+
 \subsection{Notation}
 
-Here I will write a very good, precise and brief introduction.
-Particularly Section \ref{sec:background} is good!
+In this section, we keep an overview of the symbols used throughout the document along with their explanation. We try to keep the notation as consistent as possible, at least to the most central quantities.
+
 \clearpage
 
 \section{Mathematical Modelling}
@@ -237,12 +253,6 @@ This is a lot of fun!
 \subsection{Implementation of the ROMC algorithm}
 Finally we should have a nice picture like this one. However, I won't forget that figures and table are environments which float around in my document. So LaTeX will place them wherever it thinks they fit well with the surrounding text. I can try to change that with a float specifier, e.g. [!ht].
 %This is a comment. The Compiler ignores it. It is here to remind me that, if I use a .jpeg or .png picture file as below I will need to compile the document with the pdflatex compiler.
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=0.5\textwidth]{scenTree.png}
-\caption{Look at this scenario tree with funny times $t_{1}$ and scenarios $s_{1}$ etc.}
-\label{fig:scenarioTree}
-\end{figure}
 Now I want to use one of my own environments. I want to define something.
 \begin{Definition}
  I define
