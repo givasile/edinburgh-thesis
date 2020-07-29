@@ -133,5 +133,10 @@ dmypy.json
 
 # auctex related files
 *.aux
-*.pdf
 *.gz
+*.bcf
+*.blg
+*.xml
+*.db
+*.lof
+*.log
