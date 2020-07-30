@@ -206,7 +206,7 @@ In the discrete case scenario where $Y_\theta$ can take a finite set of numbers,
 
 The above method becomes less usefull as the finite set of possible $Y_\theta$ values grows large. As the set grows larger, the probability to maintain a sample becomes smaller. In the limit where the set becomes infinite (i.e. continuous case) the probability becomes zero. In order for the method to work in this set-up, a relaxation is introduced; we relax the acceptance criterion by letting $Y_\theta$ lie in a contiguous area around $y_0$, i.e. $Y_\theta \in B_\epsilon(y_0), \epsilon > 0$. The area can be defined as $B_\epsilon(y_0) := \{y: d(y, y_0) < \epsilon \}$ where $d(\cdot, \cdot)$ can represent any valid distance. With this modification, the maintained samples follow an approximate posterior
 
-\begin{equation}
+\begin{equation} \label{eq:approx_posterior}
   p_{d,\epsilon}(\theta|y_0) \propto Pr(Y_\theta \in B_\epsilon(y_0))p(\theta)
   \end{equation}
 
@@ -233,8 +233,24 @@ Approximating the posterior as $p(\theta|y_0) \approx p_{d,\epsilon}(\theta|y_0)
 
   In the following sections we will not use the summary statistics in our expression, for the notation not to clutter. We can state that all the following statements are valid with incorporating summary statistics.
   
-\subsubsection{Optimization Monte Carlo (OMC)}
-We can define a kernel probability $p_{d,\epsilon}(y|x)$ as follows:
+  \subsubsection{Optimization Monte Carlo (OMC)}
+
+  We have already defined $B_{d,\epsilon}(y) := \{x: d(y,x)<\epsilon\}$ as the set of points that lie inside area defined by $(d, \epsilon, y)$. Based on that, we can define two useful entities; an indicator function and a conditional distribution.
+
+  \subsubsection*{Indicator Function}
+
+The indicator function $\mathbb{1}_{B_{d,\epsilon}(y)}(x)$ returns 1 if $x \in B_{d,\epsilon}(y)$ and 0 otherwise. If $d(\cdot,\cdot)$ is a formal distance, due to symmetry $\mathbb{1}_{B_{d,\epsilon}(y)}(x) = \mathbb{1}_{B_{d,\epsilon}(x)}(y)$.
+
+\begin{gather}
+  \mathbb{1}_{B_{d,\epsilon}(y)}(x) = \left\{
+	\begin{array}{ll}
+		1 & \mbox{if } x \in B_{d,\epsilon}(y) \\
+		0 & \mbox{else } 
+	\end{array} \right. \end{gather}
+
+\subsubsection*{Boxcar Kernel}
+
+The boxcar kernel is the conditional distribution:
 
 \begin{gather}
   p_{d,\epsilon}(y|x) = \left\{
@@ -242,45 +258,92 @@ We can define a kernel probability $p_{d,\epsilon}(y|x)$ as follows:
 		c  & \mbox{if } d(y,x) \leq \epsilon \\
 		0 & \mbox{else } 
 	\end{array}
-  \right. \text{where } c = \frac{1}{\int_{ \{ y: d(y,x) < \epsilon\}} dy} \\
+  \right. \text{where } c = \frac{1}{\int_{ \{ y: d(y,x) < \epsilon\}} dy}
 \end{gather}
+%
+If we understand the boxcar kernel as a data generation process we can make two important notices:
+
+\begin{itemize}
+\item given a specific $x$, all values $y: y \in B_{d,\epsilon}(x)$ have equal probability to be generated
+  \item if a specific $y$ value has been generated, all $x: x \in B_{d,\epsilon}(y)$ have equal probability to be the conditional value that lead to this generation
+  \end{itemize}
+%
+Finally, we can also observe that the kernel can be defined through the indicator function:
+
+\begin{equation}
+  p_{d,\epsilon}(y|x) = c \mathbb{1}_{B_{d,\epsilon}(y)}(x) = c \mathbb{1}_{B_{d,\epsilon}(x)}(y)
+\end{equation}
 
 \subsubsection*{Initial View}
-We have already shown that $L_{d,\epsilon}(\theta) = Pr(Y_\theta \in B_\epsilon(y_0))$ where $\epsilon > 0$. 
+
+Based on the knowledge we have so far, we could define and approximate the approximate likelihood $L_{d,\epsilon}(\theta)$ and through \ref{eq:approx_posterior} the approximate posterior $p_{d, \epsilon}(\theta|y_0)$. The approximation is given below:
+
 \begin{gather} \label{eq:primal_view}
   L_{d, \epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
-  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y_i), y_i \sim M_r(\theta) \\
-  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(y_i)} (y_0)
+  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y_i) \\
+  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(y_i)} (y_0), y_i \sim M_r(\theta)
 \end{gather}
-
-Intuitively: $L(\theta)$ is \textbf{the summing over all possible data $y$ the simulator can produce and checking for each one if it is close to $y_0$}.
-
-Although this approximation is feasible it is not that helpful. Evaluating the approximate likelihood at a specific $\theta$ requires resampling $N$ points and checking which ones are close to the observed data $y_0$.
+%
+This approach is quite intuitive; approximating likelihood of a specific $\theta$ requires sampling from the data generator and count the fraction of samples that lie inside the area around the observed data. On the other hand, it has a major disadvantage; evaluating $L_{d,\epsilon}(\theta)$ requires resampling $N$ points and checking which ones are close to the observed data $y_0$.
 
 \subsubsection*{Alternative View}
+
+OMC attempts an alternative view to the approximation of $L_{d,\epsilon}(\theta)$, which has some advantages. Instead of incorporating the random generator $M_r(\theta)$, it samples all the nuisance variables from a prior distribution $v_i \sim p(v)$ and then it uses the deterministic mapping $M_d(\theta, v_i)$. More formally the approach is the following:
+
 \begin{gather} 
   L_{d,\epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
   = \int_y \int_v p_{d,\epsilon}(y_0|y)p(y|\theta, v) p(v)dxdv \\
-  = \int_v p_{d,\epsilon}(y_0|y=M_d(\theta, v)) p(v)du \\
-  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y=M_d(\theta, v_i)), v_i \sim p(v) \\
+  = \int_v p_{d,\epsilon}(y_0|y=M_d(\theta, v)) p(v)dv \\
+  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y=M_d(\theta, v_i)) \\
   \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta, v_i))} (y_0), v_i \sim p(v)
   \label{eq:alt_view}
 \end{gather}
+%
+Based on this approach, the unnormalized approximate posterior can be defined as:
 
-Intuitively: the probability the parameters $\theta$ to have generated the data $D$ is \textbf{the summing over all the possible nuisance variables and checking for each one if it (deterministically) produces data close to $D$}.
-
-Advantage, sampling nuisance variables $v_i$ once (training part) and then evaluating \textbf{every} $\theta$ on the predefined expresion \ref{eq:alt_view} (inference part).
+\begin{equation}
+  p_{d,\epsilon}(\theta|y_0) \propto p(\theta) \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta, v_i))} (y_0)
+  \end{equation}
+%
+Forming an analogy with the previous approach, we sample many nuisance variables in order to absorb the randomness of the generator and we count the fraction of times the deterministic generator produces mapps to outputs close to the observed data. Though it is conceptually close to the previous approach, this approach has a major advantage; we can sample the nuisance variables once (training part) and afterwards evaluate every $\theta$ based on a predefined expression (inference part).
 
 \subsection{Robust Optimistation Monte Carlo (ROMC) approach}
-\label{sec:Techniques}
+\label{sec:ROMC}
 
-\subsubsection{Define deterministic optimisation problems}
+\subsubsection*{Weighted Sampling}
+
+Apart from defining a tractable aproximation of the posterior, Likelihood-Free methods target on sampling from it accurately and efficiently. Sampling can be performed by importance sampling, using the prior as proposal distribution; hence $\theta_i \sim p(\theta)$ and the corresponding weight is $w_i = \frac{L_{d,\epsilon}(\theta_i)}{p(\theta_i)}$. This approach has the same drawbacks as ABC rejection sampling; when the prior is wide, drawing a sample with weight is rare, leading to either poor Effective Sample Size (ESS) or huge execution time. The ROMC method proposes the construction of a better proposal distribution $q(\theta)$; specifically it proposes the construction of one proposal distribution $q_i$ per sampled nuisance variable $v_i$. Therefore,
+
+\begin{equation}
+  w_{ij} = \frac{L_{d,\epsilon}(\theta_{ij}) p(\theta_{ij})}{q(\theta_{ij})}, \theta_{ij} \sim q_i(\theta)
+ \end{equation}
+
+
+\subsubsection*{Computing an expectation}
+
+Another goal of the method is approximating the quantity $E_{p(\theta|y_0)}[h(\theta)]$. Using the weighted samples from above this can be performed through,
+
+\begin{equation}
+  E_{p(\theta|y_0)}[h(\theta)] \approx \frac{\sum_{ij} w_{ij} h(\theta_{ij})}{\sum_{ij} w_{ij}}
+ \end{equation}
+
+ 
+ \subsubsection{Define deterministic optimisation problems}
+ 
+For easier notation, we define as $f_i$ the $i-th$ deterministic problem, namely $f_i(\theta) = M_d(\theta, v_i)$. For constructiong the proposal region, we search for a point $\theta_0 : d(f_i(\theta_0), y_0) < \epsilon$. This is the following optimisation problem:
+
+\begin{subequations}
+\begin{alignat}{2}
+&\!\min_{\theta}        &\qquad& g_i(\theta) = d(y_0,  f_i(\theta))\label{eq:optProb}\\
+&\text{subject to} &      & g_i(\theta) < \epsilon
+\end{alignat}
+\end{subequations}
+%
+We maintain a list of the solutions $\theta_i^*$ of the optimisation problems. If for a specific set of nuisance variables $v_i$, there is no feasible solution we add nothing to the list.
 
 \subsubsection{Gradient-Based Approach}
 
 \subsubsection{Gaussian Process Approach}
-
-\subsubsection{Weighted Sampling}
 
 \subsection{Engine for Likelihood-Free Inference (ELFI) Package}
 \clearpage
