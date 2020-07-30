@@ -2,7 +2,7 @@
 \usepackage{geometry}
 \usepackage{enumerate}
 \usepackage{latexsym,booktabs}
-\usepackage{amsmath,amssymb}
+\usepackage{amsmath,amssymb,bbold}
 \usepackage{graphicx}
 \usepackage[singlespacing]{setspace}
 
@@ -150,6 +150,29 @@ The remainder of the dissertation is organized as follows. In Chapter 2 we estab
 
 In this section, we keep an overview of the symbols used throughout the document along with their explanation. We try to keep the notation as consistent as possible, at least to the most central quantities.
 
+\begin{itemize}
+\item $\theta$ parameters of interest, that control the generator
+\item $M_r(\theta)$ the random generator.
+\item $V$ the random variables we are not interested in and add stochasticity to the generator. $v_i \sim V$ a random sample drawn from the simulator 
+\item $Y_\theta$ random variable descriping the simulator $M_r(\theta)$. Hence, executing the simulator $y_i \sim M_r(\theta)$ produces samples from $Y_\theta$. The pdf of $Y_\theta$ is unknown in closed form or intractable to be evaluated.
+\item $M_d(\theta, v)$ the deterministic generator; if we pass the state $v$ of all stochastic variables that are part of the data generation process, then producing an outcome becomes deterministic.
+\item $y_0$ the observations
+\item $T: \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$ where $D_1 > D_2$, the summary statistic mapping.
+  \item $d(\cdot, \cdot)$ a distance between two vectors, e.g. euclidean distance
+  \item $B_\epsilon(y_0)$ the local set of points around $y_0$, defined as $B_\epsilon(y_0) := \{y: d(y, y_0) < \epsilon \}$
+  \item $\mathbb{1}_{B_{d,\epsilon}(y_0)}(y)$ the indicator function:
+    \begin{gather*}\mathbb{1}_{B_{d,\epsilon}(y_0)}(y) = \left\{
+	\begin{array}{ll}
+		1 & \mbox{if } d(y,y_0) \leq \epsilon \\
+		0 & \mbox{else } 
+	\end{array} \right. \end{gather*}
+  \item $p(\theta)$ the prior distribution on the parameters
+  \item $p(\theta|y_0)$ the posterior distribution
+  \item $p_{d,\epsilon}(\theta|y_0)$ the approximate posterior
+  \item $L(\theta)$ the likelihood function
+   \item $L_{d,\epsilon}(\theta)$ the approximate likelihood function
+  \end{itemize}
+
 \clearpage
 
 \section{Background}
@@ -157,14 +180,14 @@ In this section, we keep an overview of the symbols used throughout the document
 
 \subsection{Simulator-Based (Implicit) Models}
 
-As already stated, in Simulator-Based models it is impossible to evaluate the quantity $p_{y|\theta}(y)$. The only tool we own is a black-box simulator $M(\theta, V)$ that can be used to generate data. If we denote as $Y_\theta$ the random variable that describes the simulator, then
+As already stated, in Simulator-Based models it is impossible to evaluate the quantity $p_{y|\theta}(y)$. The only tool we own is a black-box simulator $M_r(\theta)$ that can be used to generate data. If we denote as $Y_\theta$ the random variable that describes the simulator, then
 
-\begin{equation}
-  \int_{y \in B_\epsilon(y_0)} p(y|\theta)dy =  Pr(Y_\theta \in B_\epsilon(y_o)) = Pr(M(\theta, V) \in B_\epsilon(y_o))
+\begin{equation} 
+  Pr(Y_\theta \in B_\epsilon(y_o)) = Pr(M_r(\theta) \in B_\epsilon(y_o)) = \int_{y \in B_\epsilon(y_0)} p(y|\theta)dy
   \end{equation}
 
   On the other hand, the likelihood function can be defined as:
-\begin{equation}
+\begin{equation} \label{eq:likelihood}
   L(\theta) =  \lim_{\epsilon \to 0} c_\epsilon Pr(Y_\theta \in B_\epsilon(y_0)) = \lim_{\epsilon \to 0} c_\epsilon \int_{y \in B_\epsilon(y_0)} p(y|\theta)dy
 \end{equation}
 
@@ -181,7 +204,13 @@ ABC Rejection Sampling is a modified version of Rejection Sampling, for cases wh
 
 In the discrete case scenario where $Y_\theta$ can take a finite set of numbers, the likelihood becomes $L(\theta) = Pr(Y_\theta=y_0)$ and the posterior $p(\theta|y_o) \propto Pr(Y_\theta=y_o)p(\theta)$. Hence, we can sample from the prior $\theta_i \sim p(\theta)$, run the simulator $y_i = M(\theta_i, V)$ and maintain $\theta_i$ if only $y_i = y_0$.
 
-The above method becomes less usefull as the finite set of possible $Y_\theta$ values grows large. As the set grows larger, the probability to maintain a sample becomes smaller. In the limit where the set becomes infinite (i.e. continuous case) the probability becomes zero. In order for the method to work in this set-up, a relaxation is introduced; we relax the acceptance criterion by letting $Y_\theta$ lie in a contiguous area around $y_0$, i.e. $Y_\theta \in B_\epsilon(y_0), \epsilon > 0$. The area can be defined as $B_\epsilon(y_0) := \{y: d(y, y_0) < \epsilon \}$ where $d(\cdot, \cdot)$ can represent any valid distance. With this modification, the maintained samples follow an approximate posterior $p_{d,\epsilon}(\theta|y_0) \propto Pr(Y_\theta \in B_\epsilon(y_0))p(\theta)$, where $B_\epsilon$ is defined by $d, \epsilon$. This procedure is called Rejection ABC algorithm and forms the basis of Likelihood-Free methods.
+The above method becomes less usefull as the finite set of possible $Y_\theta$ values grows large. As the set grows larger, the probability to maintain a sample becomes smaller. In the limit where the set becomes infinite (i.e. continuous case) the probability becomes zero. In order for the method to work in this set-up, a relaxation is introduced; we relax the acceptance criterion by letting $Y_\theta$ lie in a contiguous area around $y_0$, i.e. $Y_\theta \in B_\epsilon(y_0), \epsilon > 0$. The area can be defined as $B_\epsilon(y_0) := \{y: d(y, y_0) < \epsilon \}$ where $d(\cdot, \cdot)$ can represent any valid distance. With this modification, the maintained samples follow an approximate posterior
+
+\begin{equation}
+  p_{d,\epsilon}(\theta|y_0) \propto Pr(Y_\theta \in B_\epsilon(y_0))p(\theta)
+  \end{equation}
+
+  where $B_\epsilon$ is defined by $d, \epsilon$. This procedure is called Rejection ABC algorithm and forms the basis of Likelihood-Free methods.
 
 \subsubsection{Summary Statistics}
 
@@ -202,9 +231,45 @@ Approximating the posterior as $p(\theta|y_0) \approx p_{d,\epsilon}(\theta|y_0)
   \item Summary Statistics (a) make the distance not a metric in a formal sense, i.e. $d = 0$, even if $y \neq y_0$ (b) make possible disjoint sets of $y$ to lie inside $B_\epsilon{y_0}$
   \end{itemize}
 
+  In the following sections we will not use the summary statistics in our expression, for the notation not to clutter. We can state that all the following statements are valid with incorporating summary statistics.
+  
 \subsubsection{Optimization Monte Carlo (OMC)}
+We can define a kernel probability $p_{d,\epsilon}(y|x)$ as follows:
 
-Optimiza
+\begin{gather}
+  p_{d,\epsilon}(y|x) = \left\{
+	\begin{array}{ll}
+		c  & \mbox{if } d(y,x) \leq \epsilon \\
+		0 & \mbox{else } 
+	\end{array}
+  \right. \text{where } c = \frac{1}{\int_{ \{ y: d(y,x) < \epsilon\}} dy} \\
+\end{gather}
+
+\subsubsection*{Initial View}
+We have already shown that $L_{d,\epsilon}(\theta) = Pr(Y_\theta \in B_\epsilon(y_0))$ where $\epsilon > 0$. 
+\begin{gather} \label{eq:primal_view}
+  L_{d, \epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
+  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y_i), y_i \sim M_r(\theta) \\
+  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(y_i)} (y_0)
+\end{gather}
+
+Intuitively: $L(\theta)$ is \textbf{the summing over all possible data $y$ the simulator can produce and checking for each one if it is close to $y_0$}.
+
+Although this approximation is feasible it is not that helpful. Evaluating the approximate likelihood at a specific $\theta$ requires resampling $N$ points and checking which ones are close to the observed data $y_0$.
+
+\subsubsection*{Alternative View}
+\begin{gather} 
+  L_{d,\epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
+  = \int_y \int_v p_{d,\epsilon}(y_0|y)p(y|\theta, v) p(v)dxdv \\
+  = \int_v p_{d,\epsilon}(y_0|y=M_d(\theta, v)) p(v)du \\
+  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y=M_d(\theta, v_i)), v_i \sim p(v) \\
+  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta, v_i))} (y_0), v_i \sim p(v)
+  \label{eq:alt_view}
+\end{gather}
+
+Intuitively: the probability the parameters $\theta$ to have generated the data $D$ is \textbf{the summing over all the possible nuisance variables and checking for each one if it (deterministically) produces data close to $D$}.
+
+Advantage, sampling nuisance variables $v_i$ once (training part) and then evaluating \textbf{every} $\theta$ on the predefined expresion \ref{eq:alt_view} (inference part).
 
 \subsection{Robust Optimistation Monte Carlo (ROMC) approach}
 \label{sec:Techniques}
