@@ -5,7 +5,9 @@
 \usepackage{amsmath,amssymb,bbold}
 \usepackage{graphicx}
 \usepackage[singlespacing]{setspace}
-
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{multirow}
 \usepackage[backend=bibtex]{biblatex}
 \addbibresource{literature.bib}
 
@@ -23,6 +25,7 @@
 \numberwithin{Algorithm}{section}
 \numberwithin{equation}{section}
 
+\newcommand{\bigO}{\mathcal{O}}
 
 \begin{document}
 
@@ -241,7 +244,7 @@ Approximating the posterior as $p(\theta|y_0) \approx p_{d,\epsilon}(\theta|y_0)
 
 The indicator function $\mathbb{1}_{B_{d,\epsilon}(y)}(x)$ returns 1 if $x \in B_{d,\epsilon}(y)$ and 0 otherwise. If $d(\cdot,\cdot)$ is a formal distance, due to symmetry $\mathbb{1}_{B_{d,\epsilon}(y)}(x) = \mathbb{1}_{B_{d,\epsilon}(x)}(y)$.
 
-\begin{gather}
+\begin{gather} \label{eq:indicator}
   \mathbb{1}_{B_{d,\epsilon}(y)}(x) = \left\{
 	\begin{array}{ll}
 		1 & \mbox{if } x \in B_{d,\epsilon}(y) \\
@@ -301,7 +304,7 @@ OMC attempts an alternative view to the approximation of $L_{d,\epsilon}(\theta)
 %
 Based on this approach, the unnormalized approximate posterior can be defined as:
 
-\begin{equation}
+\begin{equation} \label{eq:posterior}
   p_{d,\epsilon}(\theta|y_0) \propto p(\theta) \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta, v_i))} (y_0)
   \end{equation}
 %
@@ -314,7 +317,7 @@ Forming an analogy with the previous approach, we sample many nuisance variables
 
 Apart from defining a tractable aproximation of the posterior, Likelihood-Free methods target on sampling from it accurately and efficiently. Sampling can be performed by importance sampling, using the prior as proposal distribution; hence $\theta_i \sim p(\theta)$ and the corresponding weight is $w_i = \frac{L_{d,\epsilon}(\theta_i)}{p(\theta_i)}$. This approach has the same drawbacks as ABC rejection sampling; when the prior is wide, drawing a sample with weight is rare, leading to either poor Effective Sample Size (ESS) or huge execution time. The ROMC method proposes the construction of a better proposal distribution $q(\theta)$; specifically it proposes the construction of one proposal distribution $q_i$ per sampled nuisance variable $v_i$. Therefore,
 
-\begin{equation}
+\begin{equation} \label{eq:sampling}
   w_{ij} = \frac{L_{d,\epsilon}(\theta_{ij}) p(\theta_{ij})}{q(\theta_{ij})}, \theta_{ij} \sim q_i(\theta)
  \end{equation}
 
@@ -323,14 +326,14 @@ Apart from defining a tractable aproximation of the posterior, Likelihood-Free m
 
 Another goal of the method is approximating the quantity $E_{p(\theta|y_0)}[h(\theta)]$. Using the weighted samples from above this can be performed through,
 
-\begin{equation}
+\begin{equation} \label{eq:expectation}
   E_{p(\theta|y_0)}[h(\theta)] \approx \frac{\sum_{ij} w_{ij} h(\theta_{ij})}{\sum_{ij} w_{ij}}
  \end{equation}
 
  
  \subsubsection{Define deterministic optimisation problems}
  
-For easier notation, we define as $f_i$ the $i-th$ deterministic problem, namely $f_i(\theta) = M_d(\theta, v_i)$. For constructiong the proposal region, we search for a point $\theta_0 : d(f_i(\theta_0), y_0) < \epsilon$. This is the following optimisation problem:
+For easier notation, we define as $f_i$ the $i-th$ deterministic problem, namely $f_i(\theta) = M_d(\theta, v_i)$, where $v_i \sim p(v)$. For constructiong the proposal region, we search for a point $\theta_* : d(f_i(\theta_0), y_0) < \epsilon$; this point can be obtained by solving the the following optimisation problem:
 
 \begin{subequations}
 \begin{alignat}{2}
@@ -339,13 +342,189 @@ For easier notation, we define as $f_i$ the $i-th$ deterministic problem, namely
 \end{alignat}
 \end{subequations}
 %
-We maintain a list of the solutions $\theta_i^*$ of the optimisation problems. If for a specific set of nuisance variables $v_i$, there is no feasible solution we add nothing to the list.
+We maintain a list of the solutions $\theta_i^*$ of the optimisation problems. If for a specific set of nuisance variables $v_i$, there is no feasible solution we add nothing to the list. The Optimisation problem \ref{eq:optProb} can be treated as unconstrained, accepting the optimal point $\theta_i^* = \text{argmin}_\theta g_i(\theta)$ only if $g_i(\theta_i^*) < \epsilon$.
 
 \subsubsection{Gradient-Based Approach}
 
+The nature of the generative model $M_r(\theta)$, the properties of the objective function $g_i$. If $g_i$ is continuous with smooth gradients $\nabla_{\theta} g_i$ any gradient-based iterative algorithm can be used for solving \ref{eq:optProb}. The gradients $\nabla_{\theta} g_i$ can be either provided in closed form or approximated by finite differences.
+
 \subsubsection{Gaussian Process Approach}
 
+In cases where gradients are not defined or they are not available, the Bayesian Optimisation scheme is an alternative choice. Such approach apart from providing an optimal $\theta_i^* $, also fits a surrogate model $\hat{d}_i$ of the distance $g_i$ which can be used for the forthcoming steps. Specifically, in the construction of the proposal region and in equations \ref{eq:posterior}, \ref{eq:sampling}, \ref{eq:expectation} it could replace $g_i$ in the evaluation of the indicator function \ref{eq:indicator}, providing a major speed-up.
+
+\subsubsection{Construction of the proposal area $q_i$}
+
+Independently of the approach chosen above, the constraction of the proposal region follows a common method. The search directions $\mathbf{v}_d$ are computed as the eigenvectors of the curvature at $\theta_i^*$ and a line-search method is used to obtain the limits. Algorithm \ref{alg:region_construction} describes analytically the method.
+
+\begin{algorithm}[!ht]
+	\caption{Proposal Region $q_i$ construction; Needs, a model of distance $d$ ($\hat{d}$ or $g_i$), optimal point $\theta_i^*$, number of refinements $K$, step size $\eta$ and curvature matrix $H_i$ ($J_i^TJ_i $ or GP Hessian)}\label{alg:region_construction}
+	\begin{algorithmic}[1]
+	\State Compute eigenvectors $\mathbf{v}_{d}$ of $H_i$ {\scriptsize ($d = 1,\ldots,||\theta ||)$}
+	\For{$d \gets 1 \textrm{ to } ||\theta||$}
+		\State $\Tilde{\theta} \gets \theta_i^*$ \label{algstep:box_constr_start}
+		\State $k \gets 0$
+		\Repeat
+        	\Repeat
+                \State $\Tilde{\theta} \gets \Tilde{\theta} + \eta \ \mathbf{v}_{d}$ \Comment{Large step size $\eta$.}
+        	\Until{$d( (\Tilde{\theta}, i), ) \ge \epsilon$}
+        	\State $\Tilde{\theta} \gets \Tilde{\theta} - \eta \ \mathbf{v}_{d}$
+        	\State $\eta \gets \eta/2$ \Comment{More accurate region boundary}
+        	\State $k \gets k + 1$
+    	\Until $k = K$
+    	\State Set final $\Tilde{\theta}$ as region end point. \label{algstep:box_constr_end}
+    	\State Repeat steps \ref{algstep:box_constr_start}~-~\ref{algstep:box_constr_end} for $\mathbf{v}_{d} = - \mathbf{v}_{d}$
+	\EndFor
+	\State Fit a rectangular box around the region end points and define $q_i$ as uniform distribution
+	\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Algorithmic Description of Training and Inference Phases}
+\label{subsubsec:algorithmic_description}
+
+At a high-level, the ROMC method can be split into the training and the inference part.
+
+At the training (fitting) part, the method samples the nuisance variables $v_i \sim p(v)$, defines the the optimisation problems $\min_\theta [g_i(\theta)]$, solves them to obtain $\theta_i^*$, checks whether the optimal point the respects the constraint and finally builds the bounding box for obtaining the proposal region $q_i$. Using the Gaussian Process set up makes the training part slower due to the fitting of the surrogate model at step 2. On the other hand, computing the $q_i$ becomes faster since the evaluating the distance doesn't involve running the whole simulator $M_d^i(\theta)$ for each query point. The algorithms are presented in \ref{alg:training_GB} and \ref{alg:training_GP}.
+
+Performing the infernce part includes evaluating the unnormalised posterior and sampling from the posterior. Computing an expectation is not described as a distinct phase, since it can be done in straightforward manner using the weighted samples. For evaluating the unnormalized posterior in the Gradient-Based approach, only the deterministic functions $g_i$ and the prior distribution $p(\theta)$ are required; there is no need for solving the optimisation problems and building the proposal regions. The evaluation requires iterating over all $g_i$ and evaluating the distance from the observed data. In contrast, using the GP approach, there is need for the optimisation part to run for fitting the surrogate models $\hat{d}_i(\theta)$. Afterwards the distance is evaluated on them. The evaluation of the posterior is presented analytically in \ref{alg:posterior_GB} and \ref{alg:posterior_GP}.
+
+Weighted Sampling is performed by getting $n_2$ samples from each proposal region $q_i$, evaluating if the actually fall inside the acceptance region and if so, compute their weight. The procedure is identical in both cases, apart from step 3 where the acceptance check is done in the real model $g_i$ in the Gradient-Based approach and in the surrogate model $\hat{d}_i$ otherwise. The sampling algorithms are presented step-by-step in \ref{alg:sampling_GB} and \ref{alg:sampling_GP}.
+
+\begin{minipage}{0.46\textwidth}
+\begin{algorithm}[H]
+    \centering
+    \caption{Training Part - Gradient approach. Requires $g_i(\theta), p(\theta)$}\label{alg:training_GB}
+    \begin{algorithmic}[1]
+      \For{$i \gets 1 \textrm{ to } n$}
+        \State Obtain $\theta_i^*$ using a Gradient Optimiser
+        \If{$g_i(\theta_i^*) > \epsilon$}
+        \State{go to} 1
+        \Else
+        \State Approximate $H_i \approx J^T_iJ_i$
+        \State Use algorihm \ref{alg:region_construction} to obtain $q_i$
+        \EndIf      
+      \EndFor
+      \Return{$q_i, p(\theta), g_i(\theta)$}
+    \end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}{0.46\textwidth}
+\begin{algorithm}[H]
+    \centering
+    \caption{Training Part - GP approach. Requires $g_i(\theta), p(\theta)$}\label{alg:training_GP}
+    \begin{algorithmic}[1]
+      \For{$i \gets 1 \textrm{ to } n$}
+        \State Obtain $\theta_i^*, \hat{d}_i(\theta)$ using a GP approach
+        \If{$g_i(\theta_i^*) > \epsilon$}
+        \State{go to} 1
+        \Else
+        \State Approximate $H_i \approx J^T_iJ_i$
+        \State Use algorihm \ref{alg:region_construction} to obtain $q_i$
+        \EndIf      
+      \EndFor
+      \Return{$q_i, p(\theta), \hat{d}_i(\theta)$}
+    \end{algorithmic}
+\end{algorithm}
+\end{minipage}
+
+\begin{minipage}{0.46\textwidth}
+\begin{algorithm}[H]
+    \centering
+    \caption{Sampling - Gradient Based approach. Requires $g_i(\theta), p(\theta), q_i$}\label{alg:sampling_GB}
+    \begin{algorithmic}[1]
+      \For {$i \gets 1 \textrm{ to } n_1$}
+      \For {$j \gets 1 \textrm{ to } n_2$}
+          \State $\theta_{ij} \sim q_i$
+          \If {$g_i(\theta_{ij}) > \epsilon$}
+            \State Reject $\theta_{ij}$
+          \Else {}
+            \State $w_{ij} = \frac{p(\theta_{ij})}{q(\theta_{ij})}$
+            \State Accept $\theta_{ij}$, with weight $w_{ij}$
+          \EndIf
+      \EndFor
+      \EndFor
+    \end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}{0.46\textwidth}
+\begin{algorithm}[H]
+    \centering
+    \caption{Sampling - GP approach. Requires $\hat{d}_i(\theta), p(\theta), q_i$}\label{alg:sampling_GP}
+    \begin{algorithmic}[1]
+      \For {$i \gets 1 \textrm{ to } n_1$}
+      \For {$j \gets 1 \textrm{ to } n_2$}
+          \State $\theta_{ij} \sim q_i$
+          \If {$\hat{d}_i(\theta_{ij}) > \epsilon$}
+            \State Reject $\theta_{ij}$
+          \Else {}
+            \State $w_{ij} = \frac{p(\theta_{ij})}{q(\theta_{ij})}$
+            \State Accept $\theta_{ij}$, with weight $w_{ij}$
+          \EndIf
+      \EndFor
+      \EndFor
+    \end{algorithmic}
+\end{algorithm}
+\end{minipage}
+
+
+\begin{minipage}{0.46\textwidth}
+\begin{algorithm}[H]
+    \centering
+    \caption{Evaluate unnormalised posterior - Gradient approach. Requires $g_i(\theta), p(\theta)$}\label{alg:posterior_GB}
+    \begin{algorithmic}[1]
+      \State $k \leftarrow 0$
+        \For {$i \gets 1 \textrm{ to } n_1$}
+          \If {$g_i(\theta) > \epsilon$}
+            \State $k \leftarrow k + 1$
+          \EndIf
+          \EndFor
+      \Return{$kp(\theta)$}
+    \end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}{0.46\textwidth}
+\begin{algorithm}[H]
+    \centering
+    \caption{Evaluate unnormalised posterior - GP approach. Requires $\hat{d}_i(\theta), p(\theta)$}\label{alg:posterior_GP}
+    \begin{algorithmic}[1]
+      \State $k \leftarrow 0$
+        \For {$i \gets 1 \textrm{ to } n_1$}
+          \If {$d_i(\theta) > \epsilon$}
+            \State $k \leftarrow k + 1$
+          \EndIf
+          \EndFor
+      \Return{$kp(\theta)$}
+    \end{algorithmic}
+\end{algorithm}
+\end{minipage}
+
+\subsection{Computational Complexity}
+
+In the notation, we use $S$ for describing the size of the Simulator. in table we observe that constructing the regions and sampling are the most demanding operations, though $n_2 >> K$. In the Gaussian-Process set-up sampling is not influenced by the size of the simulator.
+
+\begin{tabular}{ |c||c|c|  }
+ \hline
+ \multicolumn{3}{|c|}{Compuational Complexity} \\
+  \hline
+  & Gradient-Based     & Gaussian Process\\
+  \hline
+  \multirow{2}{3.5em}{Optimize}  & Closed-Form Gradients: $\bigO(Sn_1)$   &  \\
+                               & Approximate Gradients: $\bigO(DSn_1)$  &  \\  
+  \hline
+  Construct Regions    & $\bigO(KDSn_1)$  & $\bigO(KDn_1)$ \\
+  \hline
+  Evaluate Posterior   & $\bigO(n_1S)$  & $\bigO(n_1)$ \\
+  \hline
+  Sampling             & $\bigO(n_1n_2DS)$ & $\bigO(n_1n_2D)$ \\
+ \hline
+\end{tabular}
+
+
 \subsection{Engine for Likelihood-Free Inference (ELFI) Package}
+
+
 \clearpage
 
 
