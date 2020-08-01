@@ -25,7 +25,88 @@
 \numberwithin{Algorithm}{section}
 \numberwithin{equation}{section}
 
+
+% Define custom commands
 \newcommand{\bigO}{\mathcal{O}}
+%% Define notation
+\newcommand{\X}{\mathbf{x}}
+\newcommand{\Z}{\mathbf{z}}
+\newcommand{\V}{\mathbf{V}}
+\newcommand{\Y}{\mathbf{Y}}
+
+\newcommand{\vb}{\mathbf{v}}
+\newcommand{\yb}{\mathbf{y}}
+
+
+\newcommand{\jac}{\mathbf{J}}
+\newcommand{\hessian}{\mathbf{H}}
+\newcommand{\thetab}{\boldsymbol{\theta}}
+\newcommand{\thetabij}{\thetab_{ij}}
+\newcommand{\thetabi}{\thetab_i}
+
+\newcommand{\region}{B_{d,\epsilon}}
+\newcommand{\indicator}[1]{\mathbb{1}_{#1}}
+\newcommand{\regioni}{B_{d,\epsilon}^i}
+\newcommand{\data}{\mathbf{y_0}}
+
+\newcommand{\R}{\mathbb{R}}
+
+
+% \newcommand{\likelihood}{L(\theta)}
+% \newcommand{\loglikelihood}{l(\theta)}
+% \newcommand{\likelihoodabc}{L_{d, \epsilon}}
+% \newcommand{\posterior}{p(\thetab|\Xobs)}
+% \newcommand{\posteriorabc}{p_{\epsilon}(\theta|\Xobs)}
+% \newcommand{\nuisance}{\mathbf{u}}
+% \newcommand{\model}{\gen(\thetab,\nuisance)}
+% \newcommand{\xobs}{x^0}
+% \newcommand{\Xobs}{\X^0}
+% \newcommand{\xsim}{x_i}
+% \newcommand{\Xsim}{\X_i}
+% \newcommand{\region}{C_\epsilon(\nuisance)}
+% \newcommand{\regionpair}{C_\epsilon}
+
+% \newcommand{\regionuni}{U^i_\epsilon(\thetab)}
+% \newcommand{\optend}{\thetab^*_i}
+% \newcommand{\Doptend}{d^*_i}
+
+% \newcommand{\optendname}{\text{optimisation end point}}   % In-text name for what I call "OMC sample"
+
+% \newcommand{\dete}{|\det (\A_i)|}
+% \newcommand{\determ}{\dete^{-1}}
+
+% \newcommand{\parameters}{\theta}
+% \newcommand{\gpmodel}{\hat{d}_i}
+% \newcommand{\image}{x(\theta, \nuisance)}
+% \newcommand{\distance}{d(\image, \xobs)}
+% \newcommand{\gradfull}{\frac{\partial \distance}{\partial \parameters}}
+% \newcommand{\gradopendr}{\frac{\partial \image}{\partial \parameters}}
+% \newcommand{\gradrecog}{\frac{\partial \distance}{\partial \image}}
+% \newcommand{\recog}{r(x)}
+% \newcommand{\thetau}{\theta_i(u_j)}
+
+
+% \newcommand{\sumstat}{\Phi}
+% \newcommand{\gensum}{\mathbf{f}}
+% \newcommand{\sumstatObs}{\mathbf{y}^0}
+% \newcommand{\E}{\mathop{\mathbb{E}}}
+% \newcommand{\M}{\mathbf{M}}
+% \newcommand{\A}{\mathbf{A}}
+% \newcommand{\gen}{g}
+% \newcommand{\voli}{\text{vol}(\regioni)}
+% \newcommand{\vole}{\text{vol}(B_{\epsilon})}
+% \newcommand{\w}{\mathbf{w}}
+% \newcommand{\hpost}{\bar{h}} % \E[h(\thetab) | \Xobs]
+% \newcommand{\ESS}{\textrm{ESS}}
+
+% %% Define transpose symbol
+% \newcommand{\tran}{\mkern-2mu\raise1.25ex\hbox{$\scriptscriptstyle\top$}\mkern-3.5mu}
+% \newcommand{\tranlow}{\mkern-2mu\raise0.75ex\hbox{$\scriptscriptstyle\top$}\mkern-3.5mu}
+
+% %% for formatting of paragraphs in Section 3 that describe the paragraphs
+% \newcommand{\algformat}[1]{\textbf{#1}}
+% %\newcommand{\algformat}[1]{\emph{#1}}
+% %\newcommand{\algformat}[1]{#1}
 
 \begin{document}
 
@@ -67,7 +148,6 @@ MSc in Operational Research with Data Science}\\
 \Large{Abstract}
 \end{center}
 
-Here comes your abstract ...
 
 \clearpage
 
@@ -75,7 +155,6 @@ Here comes your abstract ...
 \Large{Acknowledgments}
 \end{center}
 
-Here come your acknowledgments ...
 
 \clearpage
 
@@ -107,426 +186,29 @@ Here comes your own work declaration
 
 \nocite{*}
 % \bibliographystyle{abbrv}
-\clearpage
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
 \section{Introduction}
 \label{sec:introduction}
 
-\subsection{Motivation}
+\input{ch1/motivation}
+\input{ch1/outline}
+\input{ch1/notation}
 
-\subsubsection*{\textit{Explanation of Simulation-Based Models}}
-
-A Simulator-Based model is a parameterized stochastic data generating mechanism \cite{Gutmann2016}. The key characteristic is that although we are able to sample (simulate) data points, we cannot evaluate the likelihood of a specific set of observations $y_0$. Formally, a simulator-based model is described as a parameterized family of probability density functions $\{p_{y|\theta}(y)\}_\theta$, whose closed-form is either unknown or intractable to evaluate. Although, evaluating $p_{y|\theta}(y)$ is intractable, sampling is feasible and frequently without huge computational cost. Practically, if we set as $V$ the vector containing the (unobserved) random state of the process, then as a mapping $M(\theta, V) \rightarrow y$
-
-The level of modelling freedom make implicit models particularly captivating; any physical process that can be conceptualized as a computer program of finite (determinstic or stochastic) steps, can be modelled as a Simulator-Based model without any mathematical compromise. This includes any amount of hidden (unobserved) internal variables. On the other hand, this level of freedom comes at a cost; performing inference is particularly demanding from a compuational and mathematical perspective. This constraints the dimensionality of $\theta \in \mathbb{R}^D$ to quite low levels (i.e. $D<20$).
-
-\subsubsection*{\textit{Example}}
-
-For underlying the importance of Simulator-Based models, lets use as example the tuberculosis disease spread model as described in \cite{Tanaka2006}. At each stage we can observe the following events; (a) the transmission of a specific haplotype to a new host (b) the mutation to a different haplotype (c) the exclusion of an infectius host (recovers/dies). The random process, which stops when $m$ infectius hosts are reached, can be parameterized; (a) the transmission rate $\alpha$ (b) the mutation rate $\tau$ and (c) the exclusion rate $\delta$. The outcome of the process is a variable-sized tuple $y_\theta$, containg the size of all different infection groups, as described in figure \ref{fig:tuberculosis_model}. Computing $p(y=y_0|\theta)$ requires tracking all tree-paths that generate the specific tuple along with their probabilities and summing over them. Computing this probability becomes intractable when $m$ grows larger as in real-case scenarios. On the other hand, modeling the data-generation process at a computer program is simple and computationally cheap.
-
-\begin{figure}[!ht]
-    \begin{center}
-      \includegraphics[width=0.49\textwidth]{./images/chapter1/tuber_model_1.png}
-      \includegraphics[width=0.42\textwidth]{./images/chapter1/tuber_model_2.png}
-    \end{center}
-    \caption{Image taken from \cite{Lintusaari2017}}
-    \label{fig:tuberculosis_model}
-\end{figure}
-
-\subsubsection*{\textit{Goal of Simulation-Based Models}}
-
-As in all Machine Learning (ML) set-ups, the fundamental goal is the derivation of the parameter configuration $\theta^*$ that \textit{describes} well the data (i.e. generates samples $M(\theta^*, V)$ that are as close as possible to the observed data $y_0$). Since Simulation-Based models belong to the broad category of Bayesian Machine Learning, the ultimate goal is to \textit{infer} a posterior distribution $p(\theta|y_0)$ over of all possible configuration set-ups or/and get some samples $\theta \sim p(\theta|y_0)$.
-
-\subsubsection*{\textit{Robust Optimisation Monte Carlo (ROMC) method}}
-
-The ROMC method \cite{Ikonomov2019} is very recent Likelihood-Free approach; its fundamental idea is the transformation of the stochastic data generation process $M(\theta, V)$ to a deterministic function $g(\theta)$, by sampling the variables that the randomness $V_i \sim p(V)$. Hence, we can state that $g(\theta) = M(\theta, V=V_i)$. The ROMC method continues the research line introduced by Meeds et. al \cite{Meeds2015}, by improving some fundamental failure-mode of OMC. ROMC describes a methodology for approximating the posterior through defining and solving deterministic optimisation problems, without enforcing the underlying algorithms for each step; in this sense it can be thought as a meta-algorithm.
-
-\subsubsection*{\textit{Implementation}}
-
-The most important contribution of this work is the implementation of the ROMC method in the Python package Engine for Likelihood-Free Inference (ELFI) \cite{1708.00707}. Since it is very recently published work the ROMC method was not implemented by now in any ML software. This works attempts to provide to the research community a tested and robust implementation for further experimentation.
-
-\subsection{Outline of Thesis}
-
-The remainder of the dissertation is organized as follows. In Chapter 2 we establish the mathematical formulation; more specifically we initially describe the Simulator-Based models and we provide some fundamental algorithms that have been proposed for performing statistical inference. Afterwards, we provide the mathematical description of the ROMC approach \cite{Ikonomov2019}. In Chapter 3, we deal with the implementation part; we initially provide some information regarding the Python package Engine for Likelihood-Free Inference (ELFI) \cite{1708.00707} and subsequently we analyze the implementation details of ROMC in this package. In Chapter 4, we present the functionalities of the ROMC implementation at some real-world examples; this chapter wishes to illustrate the success of the ROMC method and of our implementation at Likelihood-Free tasks. Finally, in chapter 5, we conclude with some thoughts on the work we have done and some future research ideas.
-
-\subsection{Notation}
-
-In this section, we keep an overview of the symbols used throughout the document along with their explanation. We try to keep the notation as consistent as possible, at least to the most central quantities.
-
-\begin{itemize}
-\item $\theta$ parameters of interest, that control the generator
-\item $M_r(\theta)$ the random generator.
-\item $V$ the random variables we are not interested in and add stochasticity to the generator. $v_i \sim V$ a random sample drawn from the simulator 
-\item $Y_\theta$ random variable descriping the simulator $M_r(\theta)$. Hence, executing the simulator $y_i \sim M_r(\theta)$ produces samples from $Y_\theta$. The pdf of $Y_\theta$ is unknown in closed form or intractable to be evaluated.
-\item $M_d(\theta, v)$ the deterministic generator; if we pass the state $v$ of all stochastic variables that are part of the data generation process, then producing an outcome becomes deterministic.
-\item $y_0$ the observations
-\item $T: \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$ where $D_1 > D_2$, the summary statistic mapping.
-  \item $d(\cdot, \cdot)$ a distance between two vectors, e.g. euclidean distance
-  \item $B_\epsilon(y_0)$ the local set of points around $y_0$, defined as $B_\epsilon(y_0) := \{y: d(y, y_0) < \epsilon \}$
-  \item $\mathbb{1}_{B_{d,\epsilon}(y_0)}(y)$ the indicator function:
-    \begin{gather*}\mathbb{1}_{B_{d,\epsilon}(y_0)}(y) = \left\{
-	\begin{array}{ll}
-		1 & \mbox{if } d(y,y_0) \leq \epsilon \\
-		0 & \mbox{else } 
-	\end{array} \right. \end{gather*}
-  \item $p(\theta)$ the prior distribution on the parameters
-  \item $p(\theta|y_0)$ the posterior distribution
-  \item $p_{d,\epsilon}(\theta|y_0)$ the approximate posterior
-  \item $L(\theta)$ the likelihood function
-   \item $L_{d,\epsilon}(\theta)$ the approximate likelihood function
-  \end{itemize}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
-
 \section{Background}
 \label{sec:background}
 
-\subsection{Simulator-Based (Implicit) Models}
+\input{ch2/simBasedModels}
+\input{ch2/ROMC}
+\input{ch2/ROMC_algorithmic}
+\input{ch2/ELFI}
 
-As already stated, in Simulator-Based models it is impossible to evaluate the quantity $p_{y|\theta}(y)$. The only tool we own is a black-box simulator $M_r(\theta)$ that can be used to generate data. If we denote as $Y_\theta$ the random variable that describes the simulator, then
 
-\begin{equation} 
-  Pr(Y_\theta \in B_\epsilon(y_o)) = Pr(M_r(\theta) \in B_\epsilon(y_o)) = \int_{y \in B_\epsilon(y_0)} p(y|\theta)dy
-  \end{equation}
-
-  On the other hand, the likelihood function can be defined as:
-\begin{equation} \label{eq:likelihood}
-  L(\theta) =  \lim_{\epsilon \to 0} c_\epsilon Pr(Y_\theta \in B_\epsilon(y_0)) = \lim_{\epsilon \to 0} c_\epsilon \int_{y \in B_\epsilon(y_0)} p(y|\theta)dy
-\end{equation}
-
-and the posterior distribution as:
-\begin{equation}
-p(\theta|y_0) \propto L(\theta)p(\theta)
-\end{equation}
-
-Since $p_{y|\theta}$ cannot be evaluated, so does $L(\theta)$ and subsequently $p(\theta|y_0)$.
-
-\subsubsection{Approximate Bayesian Computation (ABC) Rejection Sampling}
-
-ABC Rejection Sampling is a modified version of Rejection Sampling, for cases when likelihood evaluation is intractable. In the Rejection  method a sample is obtained from the prior $\theta \sim p(\theta)$ and it is maintained with probability $L(\theta)/\text{max}_\theta L(\theta)$. The samples $\theta_i$ obtained with this procedure follow the posterior distribution $p(\theta|y_0)$. Although we cannot use this approach out of the box (evaluating $L(\theta)$ is impossible in our case), we can adjust it with some slight modifications.
-
-In the discrete case scenario where $Y_\theta$ can take a finite set of numbers, the likelihood becomes $L(\theta) = Pr(Y_\theta=y_0)$ and the posterior $p(\theta|y_o) \propto Pr(Y_\theta=y_o)p(\theta)$. Hence, we can sample from the prior $\theta_i \sim p(\theta)$, run the simulator $y_i = M(\theta_i, V)$ and maintain $\theta_i$ if only $y_i = y_0$.
-
-The above method becomes less usefull as the finite set of possible $Y_\theta$ values grows large. As the set grows larger, the probability to maintain a sample becomes smaller. In the limit where the set becomes infinite (i.e. continuous case) the probability becomes zero. In order for the method to work in this set-up, a relaxation is introduced; we relax the acceptance criterion by letting $Y_\theta$ lie in a contiguous area around $y_0$, i.e. $Y_\theta \in B_\epsilon(y_0), \epsilon > 0$. The area can be defined as $B_\epsilon(y_0) := \{y: d(y, y_0) < \epsilon \}$ where $d(\cdot, \cdot)$ can represent any valid distance. With this modification, the maintained samples follow an approximate posterior
-
-\begin{equation} \label{eq:approx_posterior}
-  p_{d,\epsilon}(\theta|y_0) \propto Pr(Y_\theta \in B_\epsilon(y_0))p(\theta)
-  \end{equation}
-
-  where $B_\epsilon$ is defined by $d, \epsilon$. This procedure is called Rejection ABC algorithm and forms the basis of Likelihood-Free methods.
-
-\subsubsection{Summary Statistics}
-
-When the dimensionality of $Y_\theta \in \mathbb{R}^D$ is high, generating samples inside $B_\epsilon(y_0)$ becomes rare; this is the curse of dimensionality. As an representative example if $B_\epsilon(y_0) := \{ y: ||y - y_0||_2^2 < \epsilon^2 \}$ is a hyper-sphere with radius $\epsilon$ and the prior distribution $p(\theta)$ is a uniform distribution in a hyper-cube with side of length $2/epsilon$, the probability of drawing a sample inside the hyper-sphere becomes:
-
-\begin{equation}
-  Pr(Y_\theta \in B_\epsilon(y_0)) = Pr(\theta \in B_\epsilon(y_0)) = \frac{V_{hypersphere}}{V_{hypercube}} = \frac{\pi^{D/2}}{D2^{D-1}\Gamma(D/2)} \rightarrow 0 \text{as} D \rightarrow \infty
-\end{equation}
-
-We observe that the probality tends to $0$, independently of $\epsilon$; enlarging $\epsilon$ will not increase the acceptance rate. This produces the need for a mapping $T: \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$ where $D_1 > D_2$, redefining the area as $B_\epsilon(y_0) := \{y: d(T(y), T(y_0)) < \epsilon \}$. This process is called measuring the distance at the \textit{summary statistics} level.
-
-\subsubsection{Approximation}
-
-Approximating the posterior as $p(\theta|y_0) \approx p_{d,\epsilon}(\theta|y_0) \propto Pr(Y_\theta \in B_\epsilon(y_0))p(\theta)$ where $B_\epsilon(y_0) := \{y: d(T(y), T(y_0)) < \epsilon \}$ introduces two approximation errors:
-
-\begin{itemize}
-\item $\epsilon$ is chosen to be large enough for enough samples to be accepted
-  \item Summary Statistics (a) make the distance not a metric in a formal sense, i.e. $d = 0$, even if $y \neq y_0$ (b) make possible disjoint sets of $y$ to lie inside $B_\epsilon{y_0}$
-  \end{itemize}
-
-  In the following sections we will not use the summary statistics in our expression, for the notation not to clutter. We can state that all the following statements are valid with incorporating summary statistics.
-  
-  \subsubsection{Optimization Monte Carlo (OMC)}
-
-  We have already defined $B_{d,\epsilon}(y) := \{x: d(y,x)<\epsilon\}$ as the set of points that lie inside area defined by $(d, \epsilon, y)$. Based on that, we can define two useful entities; an indicator function and a conditional distribution.
-
-  \subsubsection*{Indicator Function}
-
-The indicator function $\mathbb{1}_{B_{d,\epsilon}(y)}(x)$ returns 1 if $x \in B_{d,\epsilon}(y)$ and 0 otherwise. If $d(\cdot,\cdot)$ is a formal distance, due to symmetry $\mathbb{1}_{B_{d,\epsilon}(y)}(x) = \mathbb{1}_{B_{d,\epsilon}(x)}(y)$.
-
-\begin{gather} \label{eq:indicator}
-  \mathbb{1}_{B_{d,\epsilon}(y)}(x) = \left\{
-	\begin{array}{ll}
-		1 & \mbox{if } x \in B_{d,\epsilon}(y) \\
-		0 & \mbox{else } 
-	\end{array} \right. \end{gather}
-
-\subsubsection*{Boxcar Kernel}
-
-The boxcar kernel is the conditional distribution:
-
-\begin{gather}
-  p_{d,\epsilon}(y|x) = \left\{
-	\begin{array}{ll}
-		c  & \mbox{if } d(y,x) \leq \epsilon \\
-		0 & \mbox{else } 
-	\end{array}
-  \right. \text{where } c = \frac{1}{\int_{ \{ y: d(y,x) < \epsilon\}} dy}
-\end{gather}
-%
-If we understand the boxcar kernel as a data generation process we can make two important notices:
-
-\begin{itemize}
-\item given a specific $x$, all values $y: y \in B_{d,\epsilon}(x)$ have equal probability to be generated
-  \item if a specific $y$ value has been generated, all $x: x \in B_{d,\epsilon}(y)$ have equal probability to be the conditional value that lead to this generation
-  \end{itemize}
-%
-Finally, we can also observe that the kernel can be defined through the indicator function:
-
-\begin{equation}
-  p_{d,\epsilon}(y|x) = c \mathbb{1}_{B_{d,\epsilon}(y)}(x) = c \mathbb{1}_{B_{d,\epsilon}(x)}(y)
-\end{equation}
-
-\subsubsection*{Initial View}
-
-Based on the knowledge we have so far, we could define and approximate the approximate likelihood $L_{d,\epsilon}(\theta)$ and through \ref{eq:approx_posterior} the approximate posterior $p_{d, \epsilon}(\theta|y_0)$. The approximation is given below:
-
-\begin{gather} \label{eq:primal_view}
-  L_{d, \epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
-  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y_i) \\
-  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(y_i)} (y_0), y_i \sim M_r(\theta)
-\end{gather}
-%
-This approach is quite intuitive; approximating likelihood of a specific $\theta$ requires sampling from the data generator and count the fraction of samples that lie inside the area around the observed data. On the other hand, it has a major disadvantage; evaluating $L_{d,\epsilon}(\theta)$ requires resampling $N$ points and checking which ones are close to the observed data $y_0$.
-
-\subsubsection*{Alternative View}
-
-OMC attempts an alternative view to the approximation of $L_{d,\epsilon}(\theta)$, which has some advantages. Instead of incorporating the random generator $M_r(\theta)$, it samples all the nuisance variables from a prior distribution $v_i \sim p(v)$ and then it uses the deterministic mapping $M_d(\theta, v_i)$. More formally the approach is the following:
-
-\begin{gather} 
-  L_{d,\epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
-  = \int_y \int_v p_{d,\epsilon}(y_0|y)p(y|\theta, v) p(v)dxdv \\
-  = \int_v p_{d,\epsilon}(y_0|y=M_d(\theta, v)) p(v)dv \\
-  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y=M_d(\theta, v_i)) \\
-  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta, v_i))} (y_0), v_i \sim p(v)
-  \label{eq:alt_view}
-\end{gather}
-%
-Based on this approach, the unnormalized approximate posterior can be defined as:
-
-\begin{equation} \label{eq:posterior}
-  p_{d,\epsilon}(\theta|y_0) \propto p(\theta) \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta, v_i))} (y_0)
-  \end{equation}
-%
-Forming an analogy with the previous approach, we sample many nuisance variables in order to absorb the randomness of the generator and we count the fraction of times the deterministic generator produces mapps to outputs close to the observed data. Though it is conceptually close to the previous approach, this approach has a major advantage; we can sample the nuisance variables once (training part) and afterwards evaluate every $\theta$ based on a predefined expression (inference part).
-
-\subsection{Robust Optimistation Monte Carlo (ROMC) approach}
-\label{sec:ROMC}
-
-\subsubsection*{Weighted Sampling}
-
-Apart from defining a tractable aproximation of the posterior, Likelihood-Free methods target on sampling from it accurately and efficiently. Sampling can be performed by importance sampling, using the prior as proposal distribution; hence $\theta_i \sim p(\theta)$ and the corresponding weight is $w_i = \frac{L_{d,\epsilon}(\theta_i)}{p(\theta_i)}$. This approach has the same drawbacks as ABC rejection sampling; when the prior is wide, drawing a sample with weight is rare, leading to either poor Effective Sample Size (ESS) or huge execution time. The ROMC method proposes the construction of a better proposal distribution $q(\theta)$; specifically it proposes the construction of one proposal distribution $q_i$ per sampled nuisance variable $v_i$. Therefore,
-
-\begin{equation} \label{eq:sampling}
-  w_{ij} = \frac{L_{d,\epsilon}(\theta_{ij}) p(\theta_{ij})}{q(\theta_{ij})}, \theta_{ij} \sim q_i(\theta)
- \end{equation}
-
-
-\subsubsection*{Computing an expectation}
-
-Another goal of the method is approximating the quantity $E_{p(\theta|y_0)}[h(\theta)]$. Using the weighted samples from above this can be performed through,
-
-\begin{equation} \label{eq:expectation}
-  E_{p(\theta|y_0)}[h(\theta)] \approx \frac{\sum_{ij} w_{ij} h(\theta_{ij})}{\sum_{ij} w_{ij}}
- \end{equation}
-
- 
- \subsubsection{Define deterministic optimisation problems}
- 
-For easier notation, we define as $f_i$ the $i-th$ deterministic problem, namely $f_i(\theta) = M_d(\theta, v_i)$, where $v_i \sim p(v)$. For constructiong the proposal region, we search for a point $\theta_* : d(f_i(\theta_0), y_0) < \epsilon$; this point can be obtained by solving the the following optimisation problem:
-
-\begin{subequations}
-\begin{alignat}{2}
-&\!\min_{\theta}        &\qquad& g_i(\theta) = d(y_0,  f_i(\theta))\label{eq:optProb}\\
-&\text{subject to} &      & g_i(\theta) < \epsilon
-\end{alignat}
-\end{subequations}
-%
-We maintain a list of the solutions $\theta_i^*$ of the optimisation problems. If for a specific set of nuisance variables $v_i$, there is no feasible solution we add nothing to the list. The Optimisation problem \ref{eq:optProb} can be treated as unconstrained, accepting the optimal point $\theta_i^* = \text{argmin}_\theta g_i(\theta)$ only if $g_i(\theta_i^*) < \epsilon$.
-
-\subsubsection{Gradient-Based Approach}
-
-The nature of the generative model $M_r(\theta)$, the properties of the objective function $g_i$. If $g_i$ is continuous with smooth gradients $\nabla_{\theta} g_i$ any gradient-based iterative algorithm can be used for solving \ref{eq:optProb}. The gradients $\nabla_{\theta} g_i$ can be either provided in closed form or approximated by finite differences.
-
-\subsubsection{Gaussian Process Approach}
-
-In cases where gradients are not defined or they are not available, the Bayesian Optimisation scheme is an alternative choice. Such approach apart from providing an optimal $\theta_i^* $, also fits a surrogate model $\hat{d}_i$ of the distance $g_i$ which can be used for the forthcoming steps. Specifically, in the construction of the proposal region and in equations \ref{eq:posterior}, \ref{eq:sampling}, \ref{eq:expectation} it could replace $g_i$ in the evaluation of the indicator function \ref{eq:indicator}, providing a major speed-up.
-
-\subsubsection{Construction of the proposal area $q_i$}
-
-Independently of the approach chosen above, the constraction of the proposal region follows a common method. The search directions $\mathbf{v}_d$ are computed as the eigenvectors of the curvature at $\theta_i^*$ and a line-search method is used to obtain the limits. Algorithm \ref{alg:region_construction} describes analytically the method.
-
-\begin{algorithm}[!ht]
-	\caption{Proposal Region $q_i$ construction; Needs, a model of distance $d$ ($\hat{d}$ or $g_i$), optimal point $\theta_i^*$, number of refinements $K$, step size $\eta$ and curvature matrix $H_i$ ($J_i^TJ_i $ or GP Hessian)}\label{alg:region_construction}
-	\begin{algorithmic}[1]
-	\State Compute eigenvectors $\mathbf{v}_{d}$ of $H_i$ {\scriptsize ($d = 1,\ldots,||\theta ||)$}
-	\For{$d \gets 1 \textrm{ to } ||\theta||$}
-		\State $\Tilde{\theta} \gets \theta_i^*$ \label{algstep:box_constr_start}
-		\State $k \gets 0$
-		\Repeat
-        	\Repeat
-                \State $\Tilde{\theta} \gets \Tilde{\theta} + \eta \ \mathbf{v}_{d}$ \Comment{Large step size $\eta$.}
-        	\Until{$d( (\Tilde{\theta}, i), ) \ge \epsilon$}
-        	\State $\Tilde{\theta} \gets \Tilde{\theta} - \eta \ \mathbf{v}_{d}$
-        	\State $\eta \gets \eta/2$ \Comment{More accurate region boundary}
-        	\State $k \gets k + 1$
-    	\Until $k = K$
-    	\State Set final $\Tilde{\theta}$ as region end point. \label{algstep:box_constr_end}
-    	\State Repeat steps \ref{algstep:box_constr_start}~-~\ref{algstep:box_constr_end} for $\mathbf{v}_{d} = - \mathbf{v}_{d}$
-	\EndFor
-	\State Fit a rectangular box around the region end points and define $q_i$ as uniform distribution
-	\end{algorithmic}
-\end{algorithm}
-
-\subsubsection{Algorithmic Description of Training and Inference Phases}
-\label{subsubsec:algorithmic_description}
-
-At a high-level, the ROMC method can be split into the training and the inference part.
-
-At the training (fitting) part, the method samples the nuisance variables $v_i \sim p(v)$, defines the the optimisation problems $\min_\theta [g_i(\theta)]$, solves them to obtain $\theta_i^*$, checks whether the optimal point the respects the constraint and finally builds the bounding box for obtaining the proposal region $q_i$. Using the Gaussian Process set up makes the training part slower due to the fitting of the surrogate model at step 2. On the other hand, computing the $q_i$ becomes faster since the evaluating the distance doesn't involve running the whole simulator $M_d^i(\theta)$ for each query point. The algorithms are presented in \ref{alg:training_GB} and \ref{alg:training_GP}.
-
-Performing the infernce part includes evaluating the unnormalised posterior and sampling from the posterior. Computing an expectation is not described as a distinct phase, since it can be done in straightforward manner using the weighted samples. For evaluating the unnormalized posterior in the Gradient-Based approach, only the deterministic functions $g_i$ and the prior distribution $p(\theta)$ are required; there is no need for solving the optimisation problems and building the proposal regions. The evaluation requires iterating over all $g_i$ and evaluating the distance from the observed data. In contrast, using the GP approach, there is need for the optimisation part to run for fitting the surrogate models $\hat{d}_i(\theta)$. Afterwards the distance is evaluated on them. The evaluation of the posterior is presented analytically in \ref{alg:posterior_GB} and \ref{alg:posterior_GP}.
-
-Weighted Sampling is performed by getting $n_2$ samples from each proposal region $q_i$, evaluating if the actually fall inside the acceptance region and if so, compute their weight. The procedure is identical in both cases, apart from step 3 where the acceptance check is done in the real model $g_i$ in the Gradient-Based approach and in the surrogate model $\hat{d}_i$ otherwise. The sampling algorithms are presented step-by-step in \ref{alg:sampling_GB} and \ref{alg:sampling_GP}.
-
-\begin{minipage}{0.46\textwidth}
-\begin{algorithm}[H]
-    \centering
-    \caption{Training Part - Gradient approach. Requires $g_i(\theta), p(\theta)$}\label{alg:training_GB}
-    \begin{algorithmic}[1]
-      \For{$i \gets 1 \textrm{ to } n$}
-        \State Obtain $\theta_i^*$ using a Gradient Optimiser
-        \If{$g_i(\theta_i^*) > \epsilon$}
-        \State{go to} 1
-        \Else
-        \State Approximate $H_i \approx J^T_iJ_i$
-        \State Use algorihm \ref{alg:region_construction} to obtain $q_i$
-        \EndIf      
-      \EndFor
-      \Return{$q_i, p(\theta), g_i(\theta)$}
-    \end{algorithmic}
-\end{algorithm}
-\end{minipage}
-\hfill
-\begin{minipage}{0.46\textwidth}
-\begin{algorithm}[H]
-    \centering
-    \caption{Training Part - GP approach. Requires $g_i(\theta), p(\theta)$}\label{alg:training_GP}
-    \begin{algorithmic}[1]
-      \For{$i \gets 1 \textrm{ to } n$}
-        \State Obtain $\theta_i^*, \hat{d}_i(\theta)$ using a GP approach
-        \If{$g_i(\theta_i^*) > \epsilon$}
-        \State{go to} 1
-        \Else
-        \State Approximate $H_i \approx J^T_iJ_i$
-        \State Use algorihm \ref{alg:region_construction} to obtain $q_i$
-        \EndIf      
-      \EndFor
-      \Return{$q_i, p(\theta), \hat{d}_i(\theta)$}
-    \end{algorithmic}
-\end{algorithm}
-\end{minipage}
-
-\begin{minipage}{0.46\textwidth}
-\begin{algorithm}[H]
-    \centering
-    \caption{Sampling - Gradient Based approach. Requires $g_i(\theta), p(\theta), q_i$}\label{alg:sampling_GB}
-    \begin{algorithmic}[1]
-      \For {$i \gets 1 \textrm{ to } n_1$}
-      \For {$j \gets 1 \textrm{ to } n_2$}
-          \State $\theta_{ij} \sim q_i$
-          \If {$g_i(\theta_{ij}) > \epsilon$}
-            \State Reject $\theta_{ij}$
-          \Else {}
-            \State $w_{ij} = \frac{p(\theta_{ij})}{q(\theta_{ij})}$
-            \State Accept $\theta_{ij}$, with weight $w_{ij}$
-          \EndIf
-      \EndFor
-      \EndFor
-    \end{algorithmic}
-\end{algorithm}
-\end{minipage}
-\hfill
-\begin{minipage}{0.46\textwidth}
-\begin{algorithm}[H]
-    \centering
-    \caption{Sampling - GP approach. Requires $\hat{d}_i(\theta), p(\theta), q_i$}\label{alg:sampling_GP}
-    \begin{algorithmic}[1]
-      \For {$i \gets 1 \textrm{ to } n_1$}
-      \For {$j \gets 1 \textrm{ to } n_2$}
-          \State $\theta_{ij} \sim q_i$
-          \If {$\hat{d}_i(\theta_{ij}) > \epsilon$}
-            \State Reject $\theta_{ij}$
-          \Else {}
-            \State $w_{ij} = \frac{p(\theta_{ij})}{q(\theta_{ij})}$
-            \State Accept $\theta_{ij}$, with weight $w_{ij}$
-          \EndIf
-      \EndFor
-      \EndFor
-    \end{algorithmic}
-\end{algorithm}
-\end{minipage}
-
-
-\begin{minipage}{0.46\textwidth}
-\begin{algorithm}[H]
-    \centering
-    \caption{Evaluate unnormalised posterior - Gradient approach. Requires $g_i(\theta), p(\theta)$}\label{alg:posterior_GB}
-    \begin{algorithmic}[1]
-      \State $k \leftarrow 0$
-        \For {$i \gets 1 \textrm{ to } n_1$}
-          \If {$g_i(\theta) > \epsilon$}
-            \State $k \leftarrow k + 1$
-          \EndIf
-          \EndFor
-      \Return{$kp(\theta)$}
-    \end{algorithmic}
-\end{algorithm}
-\end{minipage}
-\hfill
-\begin{minipage}{0.46\textwidth}
-\begin{algorithm}[H]
-    \centering
-    \caption{Evaluate unnormalised posterior - GP approach. Requires $\hat{d}_i(\theta), p(\theta)$}\label{alg:posterior_GP}
-    \begin{algorithmic}[1]
-      \State $k \leftarrow 0$
-        \For {$i \gets 1 \textrm{ to } n_1$}
-          \If {$d_i(\theta) > \epsilon$}
-            \State $k \leftarrow k + 1$
-          \EndIf
-          \EndFor
-      \Return{$kp(\theta)$}
-    \end{algorithmic}
-\end{algorithm}
-\end{minipage}
-
-\subsection{Computational Complexity}
-
-In the notation, we use $S$ for describing the size of the Simulator. in table we observe that constructing the regions and sampling are the most demanding operations, though $n_2 >> K$. In the Gaussian-Process set-up sampling is not influenced by the size of the simulator.
-
-\begin{tabular}{ |c||c|c|  }
- \hline
- \multicolumn{3}{|c|}{Compuational Complexity} \\
-  \hline
-  & Gradient-Based     & Gaussian Process\\
-  \hline
-  \multirow{2}{3.5em}{Optimize}  & Closed-Form Gradients: $\bigO(Sn_1)$   &  \\
-                               & Approximate Gradients: $\bigO(DSn_1)$  &  \\  
-  \hline
-  Construct Regions    & $\bigO(KDSn_1)$  & $\bigO(KDn_1)$ \\
-  \hline
-  Evaluate Posterior   & $\bigO(n_1S)$  & $\bigO(n_1)$ \\
-  \hline
-  Sampling             & $\bigO(n_1n_2DS)$ & $\bigO(n_1n_2D)$ \\
- \hline
-\end{tabular}
-
-
-\subsection{Engine for Likelihood-Free Inference (ELFI) Package}
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
-
 
 \section{Implementation}
 
@@ -542,7 +224,6 @@ In the notation, we use $S$ for describing the size of the Simulator. in table w
 
 \clearpage
 \section{Experiments}
-Add experiments ...
 
 \subsection{Another Example}
 

@@ -1,0 +1,70 @@
+\subsection{Notation}
+\label{subsec:notation}
+
+In this section, we keep an overview of the symbols used throughout
+the document along with their explanation, in physical language. Some
+quantities that are discribed informally here will be defined formally
+in the next chapters. We try to keep the notation as consistent as
+possible throughout the document.
+
+ Some more generic symbols. In general, as $p(\cdot)$ we represent any valid pdf and $p(\cdot | \cdot)$ any conditional distribution. Depending on the content and the symbol used at the placeholder the distribution may have a more specific meaning.
+
+
+\subsubsection*{Random Generator:}
+\label{sec:random-generator}
+\begin{itemize}
+\item $M_r(\thetab): \R^D \rightarrow \R$
+\end{itemize}
+
+\subsubsection*{Variables}
+\label{sec:variables}
+
+\begin{itemize}
+\item $D$: the dimensionality of the parameter-space
+\item $\thetab \in \R^D$: the parameters of interest
+\item $\data$: the observations
+\item $\epsilon$: threshold
+\item $\vb \in \R^N$, random variable that adds the stochasticity to the generator. 
+\item $\vb_i \sim \vb$: a sample drawn from $\vb$
+\item $\Y_{\thetab}$ random variable descriping the simulator $M_r(\thetab)$. The pdf of $\Y_{\thetab}$ is unknown in closed form or intractable to be evaluated.
+\item $\yb_i \sim \Y_\theta$ a sample drawn from $\Y_\theta$. The sample can be obtained by executing the simulator $\yb_i \sim M_r(\thetab)$
+\end{itemize}
+
+
+\subsubsection*{Sets}
+\label{sec:sets}
+
+\begin{itemize}
+\item $\region(\data)$ the set of points $\yb$ around the observations $\data$, i.e. $\yb := \{\yb: d(\yb, \data) < \epsilon \}$
+\item $\regioni = \region(\yb_i)$ the set of points $\yb$ around $\yb_i$, i.e. $\yb := \{\yb: d(\yb, \yb_i) < \epsilon \}$
+\end{itemize}
+    
+\subsubsection*{Generic Functions}
+\label{sec:generic-functions}
+
+\begin{itemize}
+\item $p(\thetab)$: the prior distribution
+\item $p(\thetab|\data)$: the posterior distribution
+\item $p_{d,\epsilon}(\thetab|\data)$: the approximate posterior distribution
+\item $d(\mathbf{x}, \mathbf{y}): \R^{2N} \rightarrow \R$: any valid distance, e.g L2 norm: $||\mathbf{x}-\mathbf{y}||_2^2$
+\end{itemize}
+
+\subsubsection*{Functions (Mappings):}
+\label{sec:functions-mappings}
+
+\begin{itemize}
+\item $M_d(\thetab, \vb): \R^D \rightarrow \R$ the deterministic generator; if we pass the state $v$ of all stochastic variables that are part of the data generation process, then producing an outcome becomes deterministic.
+\item $f_i(\thetab) = M_d(\thetab, \vb_i)$ alias
+
+\item $g_i(\thetab) = d(f_i(\thetab), \data)$
+\item $T(\mathbf{x}): \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$ where $D_1 > D_2$, the summary statistic mapping.
+\item  $\indicator{\region(\data)}(\yb)$ the indicator function:
+    \begin{gather*}\indicator{\region(\data)}(\yb) = \left\{
+	\begin{array}{ll}
+		1 & \mbox{if } d(\yb,\data) \leq \epsilon \\
+		0 & \mbox{else } 
+	\end{array} \right. \end{gather*}
+
+\item $L(\theta)$ the likelihood function
+\item $L_{d,\epsilon}(\theta)$ the approximate likelihood function
+\end{itemize}   
