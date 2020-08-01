@@ -1,128 +1,203 @@
 \subsection{Simulator-Based (Implicit) Models}
 
-As already stated, in Simulator-Based models it is impossible to evaluate the quantity $p_{y|\theta}(y)$. The only tool we own is a black-box simulator $M_r(\theta)$ that can be used to generate data. If we denote as $Y_\theta$ the random variable that describes the simulator, then
+As already stated, in Simulator-Based models we cannot evaluate the
+posterior $p(\thetab|\data) \propto L(\thetab)p(\thetab)$, since it is
+impossible to evaluate the likelihood $L(\thetab) =
+p(\data|\thetab)$. So, we have to use the following property in order
+to take advantage of the simulator $M_r(\thetab)$.
 
-\begin{equation} 
-  Pr(Y_\theta \in B_\epsilon(y_o)) = Pr(M_r(\theta) \in B_\epsilon(y_o)) = \int_{y \in B_\epsilon(y_0)} p(y|\theta)dy
-  \end{equation}
-
-  On the other hand, the likelihood function can be defined as:
-\begin{equation} \label{eq:likelihood}
-  L(\theta) =  \lim_{\epsilon \to 0} c_\epsilon Pr(Y_\theta \in B_\epsilon(y_0)) = \lim_{\epsilon \to 0} c_\epsilon \int_{y \in B_\epsilon(y_0)} p(y|\theta)dy
+\begin{equation} \label{eq:likelihood} L(\thetab) = \lim_{\epsilon \to
+    0} c_\epsilon \int_{\yb \in B_\epsilon(\data)} p(\yb|\thetab)d\yb
+  = \lim_{\epsilon \to 0} c_\epsilon Pr(M_r(\thetab) \in
+  B_\epsilon(\data))
 \end{equation}
 
-and the posterior distribution as:
-\begin{equation}
-p(\theta|y_0) \propto L(\theta)p(\theta)
-\end{equation}
+\subsubsection{Approximate Bayesian Computation (ABC) Rejection
+  Sampling}
 
-Since $p_{y|\theta}$ cannot be evaluated, so does $L(\theta)$ and subsequently $p(\theta|y_0)$.
+ABC Rejection Sampling is a modified version of Rejection Sampling,
+for cases when likelihood evaluation is intractable. In typical
+Rejection Sampling, a sample is obtained from the prior
+$\thetab \sim p(\thetab)$ and it is maintained with probability
+$L(\thetab)/ \text{max}_{\thetab} L(\thetab)$. Although we cannot use
+this approach out of the box (evaluating $L(\thetab)$ is impossible in
+our case), we can take advantage of the simulator.
 
-\subsubsection{Approximate Bayesian Computation (ABC) Rejection Sampling}
+In the discrete case scenario, where $\Y_{\thetab}$ can take a finite
+set of numbers, the likelihood becomes
+$L(\thetab) = Pr(\Y_{\thetab} = \data)$ and the posterior
+$p(\thetab|\data) \propto Pr(\Y_{\thetab}=\data)p(\thetab)$. We can
+sample from the prior $\thetab_i \sim p(\thetab)$, run the simulator
+$\yb_i = M_r(\thetab_i)$ and maintain $\thetab_i$ only if
+$\yb_i = \data$.
 
-ABC Rejection Sampling is a modified version of Rejection Sampling, for cases when likelihood evaluation is intractable. In the Rejection  method a sample is obtained from the prior $\theta \sim p(\theta)$ and it is maintained with probability $L(\theta)/\text{max}_\theta L(\theta)$. The samples $\theta_i$ obtained with this procedure follow the posterior distribution $p(\theta|y_0)$. Although we cannot use this approach out of the box (evaluating $L(\theta)$ is impossible in our case), we can adjust it with some slight modifications.
-
-In the discrete case scenario where $Y_\theta$ can take a finite set of numbers, the likelihood becomes $L(\theta) = Pr(Y_\theta=y_0)$ and the posterior $p(\theta|y_o) \propto Pr(Y_\theta=y_o)p(\theta)$. Hence, we can sample from the prior $\theta_i \sim p(\theta)$, run the simulator $y_i = M(\theta_i, V)$ and maintain $\theta_i$ if only $y_i = y_0$.
-
-The above method becomes less usefull as the finite set of possible $Y_\theta$ values grows large. As the set grows larger, the probability to maintain a sample becomes smaller. In the limit where the set becomes infinite (i.e. continuous case) the probability becomes zero. In order for the method to work in this set-up, a relaxation is introduced; we relax the acceptance criterion by letting $Y_\theta$ lie in a contiguous area around $y_0$, i.e. $Y_\theta \in B_\epsilon(y_0), \epsilon > 0$. The area can be defined as $B_\epsilon(y_0) := \{y: d(y, y_0) < \epsilon \}$ where $d(\cdot, \cdot)$ can represent any valid distance. With this modification, the maintained samples follow an approximate posterior
+The method above becomes less usefull as the finite set of
+$\Y_{\thetab}$ values grows larger, since the probability of
+maintaining a sample becomes smaller. In the limit where the set
+becomes infinite (i.e. continuous case) the probability becomes
+zero. In order for the method to work in this set-up, a relaxation is
+introduced; we relax the acceptance criterion by letting
+$\Y_{\thetab}$ lie in a larger set of points i.e.
+$\Y_{\theta} \in \region(\data), \epsilon > 0$. The region can be
+defined as $\region (\data) := \{\yb: d(\yb, \data) < \epsilon \}$
+where $d(\cdot, \cdot)$ can represent any valid distance. With this
+modification, the maintained samples follow the approximate posterior,
 
 \begin{equation} \label{eq:approx_posterior}
-  p_{d,\epsilon}(\theta|y_0) \propto Pr(Y_\theta \in B_\epsilon(y_0))p(\theta)
-  \end{equation}
+  p_{d,\epsilon}(\thetab|\data) \propto Pr(\Y_{\thetab} \in
+  \region(\data) p(\thetab)
+\end{equation}
 
-  where $B_\epsilon$ is defined by $d, \epsilon$. This procedure is called Rejection ABC algorithm and forms the basis of Likelihood-Free methods.
+\noindent
+This method is called \textit{Rejection ABC} and forms the basis of
+Likelihood-Free methods.
 
 \subsubsection{Summary Statistics}
 
-When the dimensionality of $Y_\theta \in \mathbb{R}^D$ is high, generating samples inside $B_\epsilon(y_0)$ becomes rare; this is the curse of dimensionality. As an representative example if $B_\epsilon(y_0) := \{ y: ||y - y_0||_2^2 < \epsilon^2 \}$ is a hyper-sphere with radius $\epsilon$ and the prior distribution $p(\theta)$ is a uniform distribution in a hyper-cube with side of length $2/epsilon$, the probability of drawing a sample inside the hyper-sphere becomes:
+When the dimensionality of $\Y_{\thetab} \in \mathbb{R}^D$ is high,
+generating samples inside $\region (\data)$ becomes rare even with
+large $\epsilon$; this is the curse of dimensionality. As a
+representative example if (a) $d$ is set to be the euclidean distance
+the $\region(\data) := \{ \yb: ||\yb - \data||_2^2 < \epsilon^2 \}$ is
+a hyper-sphere with radius $\epsilon$ and (b) the prior distribution
+$p(\thetab)$ is a uniform distribution in a hyper-cube with side of
+length $2\epsilon$, then the probability of drawing a sample inside
+the hyper-sphere becomes:
 
 \begin{equation}
-  Pr(Y_\theta \in B_\epsilon(y_0)) = Pr(\theta \in B_\epsilon(y_0)) = \frac{V_{hypersphere}}{V_{hypercube}} = \frac{\pi^{D/2}}{D2^{D-1}\Gamma(D/2)} \rightarrow 0 \text{as} D \rightarrow \infty
+  Pr(\Y_{\thetab} \in \region (\data)) = Pr(\thetab \in \region (\data)) = \frac{V_{hypersphere}}{V_{hypercube}} = \frac{\pi^{D/2}}{D2^{D-1}\Gamma(D/2)} \rightarrow 0, \quad \text{as} \quad D \rightarrow \infty
 \end{equation}
 
-We observe that the probality tends to $0$, independently of $\epsilon$; enlarging $\epsilon$ will not increase the acceptance rate. This produces the need for a mapping $T: \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$ where $D_1 > D_2$, redefining the area as $B_\epsilon(y_0) := \{y: d(T(y), T(y_0)) < \epsilon \}$. This process is called measuring the distance at the \textit{summary statistics} level.
+\noindent 
+We observe that the probality tends to $0$, independently of
+$\epsilon$; enlarging $\epsilon$ will not increase the acceptance
+rate. This produces the need for a mapping
+$T: \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$ where $D_1 > D_2$,
+redefining the area as
+$\region(\data) := \{\yb: d(T(\yb), T(\data)) < \epsilon \}$. This
+dimensioanlity-reduction is called \textit{summary statistic}.
 
-\subsubsection{Approximation}
+\subsubsection{Approximations Introduced}
 
-Approximating the posterior as $p(\theta|y_0) \approx p_{d,\epsilon}(\theta|y_0) \propto Pr(Y_\theta \in B_\epsilon(y_0))p(\theta)$ where $B_\epsilon(y_0) := \{y: d(T(y), T(y_0)) < \epsilon \}$ introduces two approximation errors:
+Approximating the posterior as
+$p_{d,\epsilon}(\thetab|\data) \propto Pr(\Y_{\thetab} \in
+\region(\data))p(\thetab)$ where
+$\region(\data) := \{\yb: d(T(\yb), T(\data)) < \epsilon \}$
+introduces two different types approximation error:
 
 \begin{itemize}
-\item $\epsilon$ is chosen to be large enough for enough samples to be accepted
-  \item Summary Statistics (a) make the distance not a metric in a formal sense, i.e. $d = 0$, even if $y \neq y_0$ (b) make possible disjoint sets of $y$ to lie inside $B_\epsilon{y_0}$
-  \end{itemize}
+\item $\epsilon$ is chosen to be large enough, so that enough samples
+  are accepted
+\item $T$ introduces loss of information, making possible a $\yb$ far
+  away from the $\data$, namely $\yb: d(\yb,data)>\epsilon$, to enter
+  the acceptance region at after the dimensionality reduction
+  $d(T(\yb), T(\data) < \epsilon)$
+\end{itemize}
 
-  In the following sections we will not use the summary statistics in our expression, for the notation not to clutter. We can state that all the following statements are valid with incorporating summary statistics.
+\noindent
+In the following sections we will not use the summary statistics in
+our expressions, for the notation not to clutter. Though, all the
+following propositions are valid with the use of summary statistics.
   
-  \subsubsection{Optimization Monte Carlo (OMC)}
+\subsubsection{Optimization Monte Carlo (OMC)}
 
-  We have already defined $B_{d,\epsilon}(y) := \{x: d(y,x)<\epsilon\}$ as the set of points that lie inside area defined by $(d, \epsilon, y)$. Based on that, we can define two useful entities; an indicator function and a conditional distribution.
+Based on $\region$, we can define two useful entities; an indicator
+function and a conditional distribution.
 
-  \subsubsection*{Indicator Function}
+\subsubsection*{Indicator Function}
 
-The indicator function $\mathbb{1}_{B_{d,\epsilon}(y)}(x)$ returns 1 if $x \in B_{d,\epsilon}(y)$ and 0 otherwise. If $d(\cdot,\cdot)$ is a formal distance, due to symmetry $\mathbb{1}_{B_{d,\epsilon}(y)}(x) = \mathbb{1}_{B_{d,\epsilon}(x)}(y)$.
+The indicator function $\indicator{\region(\yb)}(\xb)$ returns 1 if
+$\xb \in \region(\yb)$ and 0 otherwise. If $d(\cdot,\cdot)$ is a
+formal distance, due to symmetry
+$\indicator{\region(\yb)}(\xb) = \indicator{\region(\xb)}(\yb)$.
 
-\begin{gather} \label{eq:indicator}
-  \mathbb{1}_{B_{d,\epsilon}(y)}(x) = \left\{
-	\begin{array}{ll}
-		1 & \mbox{if } x \in B_{d,\epsilon}(y) \\
-		0 & \mbox{else } 
-	\end{array} \right. \end{gather}
+\begin{gather} \label{eq:indicator} \indicator{\region(\yb)}(\xb)=
+  \left\{
+    \begin{array}{ll}
+      1 & \mbox{if } \xb \in \region(\yb) \\
+      0 & \mbox{else } 
+    \end{array} \right. \end{gather}
 
 \subsubsection*{Boxcar Kernel}
 
 The boxcar kernel is the conditional distribution:
 
 \begin{gather}
-  p_{d,\epsilon}(y|x) = \left\{
-	\begin{array}{ll}
-		c  & \mbox{if } d(y,x) \leq \epsilon \\
-		0 & \mbox{else } 
-	\end{array}
-  \right. \text{where} c = \frac{1}{\int_{ \{ y: d(y,x) < \epsilon \} } dy}
+  p_{d,\epsilon}(\yb|\xb) = \left\{
+    \begin{array}{ll}
+      c  & \mbox{if } d(\yb,\xb) \leq \epsilon \\
+      0 & \mbox{else } 
+    \end{array}
+  \right. \text{where} c = \frac{1}{\int_{ \{ \yb: d(\yb,\xb) <
+      \epsilon \} } d\yb}
 \end{gather}
 %
-If we understand the boxcar kernel as a data generation process we can make two important notices:
+If we understand the boxcar kernel as a data generation process we can
+make two important notices:
 
 \begin{itemize}
-\item given a specific $x$, all values $y: y \in B_{d,\epsilon}(x)$ have equal probability to be generated
-  \item if a specific $y$ value has been generated, all $x: x \in B_{d,\epsilon}(y)$ have equal probability to be the conditional value that lead to this generation
-  \end{itemize}
+\item given a specific $\xb$, all values
+  $\yb: \yb \in B_{d,\epsilon}(\xb)$ have equal probability to be
+  generated
+\item if a specific $\yb$ value has been generated, all
+  $\xb: x \in B_{d,\epsilon}(\yb)$ have equal probability to be the
+  conditional value that lead to this generation
+\end{itemize}
 %
-Finally, we can also observe that the kernel can be defined through the indicator function:
+Finally, we can also observe that the kernel can be defined through
+the indicator function:
 
 \begin{equation}
-  p_{d,\epsilon}(y|x) = c \mathbb{1}_{B_{d,\epsilon}(y)}(x) = c \mathbb{1}_{B_{d,\epsilon}(x)}(y)
+  p_{d,\epsilon}(\yb|\xb) = c \mathbb{1}_{B_{d,\epsilon}(\yb)}(\xb) = c \mathbb{1}_{B_{d,\epsilon}(\xb)}(\yb)
 \end{equation}
 
 \subsubsection*{Initial View}
 
-Based on the knowledge we have so far, we could define and approximate the approximate likelihood $L_{d,\epsilon}(\theta)$ and through~\ref{eq:approx_posterior} the approximate posterior $p_{d, \epsilon}(\theta|y_0)$. The approximation is given below:
+Based on~\ref{eq:approx_posterior}, we can approximate the likelihood as:
 
 \begin{gather} \label{eq:primal_view}
-  L_{d, \epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
-  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y_i) \\
-  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(y_i)} (y_0), y_i \sim M_r(\theta)
+  L_{d, \epsilon}(\thetab)=\int_{B_\epsilon(\data)}p(\yb|\thetab)dy = \int p_{d,\epsilon}(\data|\yb)p(\yb|\thetab)d\yb\\
+  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (\data|\yb_i) \\
+  \approx \frac{c}{N} \sum_i^N \indicator{\region(\yb_i)}(\data), \yb_i \sim M_r(\thetab)
 \end{gather}
 %
-This approach is quite intuitive; approximating likelihood of a specific $\theta$ requires sampling from the data generator and count the fraction of samples that lie inside the area around the observed data. On the other hand, it has a major disadvantage; evaluating $L_{d,\epsilon}(\theta)$ requires resampling $N$ points and checking which ones are close to the observed data $y_0$.
+This approach is quite intuitive; approximating the likelihood of a
+specific $\thetab$ requires sampling from the data generator and count
+the fraction of samples that lie close to the observations.
+Nevertheless, for every distinct evaluation of
+$L_{d,\epsilon}(\thetab)$ $N$ new samples are needed. This make this
+approach quite inconvenient.
 
 \subsubsection*{Alternative View}
 
-OMC attempts an alternative view to the approximation of $L_{d,\epsilon}(\theta)$, which has some advantages. Instead of incorporating the random generator $M_r(\theta)$, it samples all the nuisance variables from a prior distribution $v_i \sim p(v)$ and then it uses the deterministic mapping $M_d(\theta, v_i)$. More formally the approach is the following:
+For overcoming the disadvantage introduced above, OMC attempts an
+alternative approximation. It samples all the nuisance variables from
+a distribution $v_i \sim p(v)$ and it converts the random simulator to
+a deterministic mapping $M_d(\theta, v_i)$,
 
 \begin{gather} 
   L_{d,\epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
   = \int_y \int_v p_{d,\epsilon}(y_0|y)p(y|\theta, v) p(v)dxdv \\
   = \int_v p_{d,\epsilon}(y_0|y=M_d(\theta, v)) p(v)dv \\
   \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y=M_d(\theta, v_i)) \\
-  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta, v_i))} (y_0), v_i \sim p(v)
+  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta,
+    v_i))} (y_0), v_i \sim p(v)
   \label{eq:alt_view}
 \end{gather}
 %
-Based on this approach, the unnormalized approximate posterior can be defined as:
+Based on this approach, the unnormalized approximate posterior can be
+defined as:
 
-\begin{equation} \label{eq:posterior}
-  p_{d,\epsilon}(\theta|y_0) \propto p(\theta) \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta, v_i))} (y_0)
-  \end{equation}
+\begin{equation} \label{eq:posterior} p_{d,\epsilon}(\theta|y_0)
+  \propto p(\theta) \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta,
+    v_i))} (y_0)
+\end{equation}
 %
-Forming an analogy with the previous approach, we sample many nuisance variables in order to absorb the randomness of the generator and we count the fraction of times the deterministic generator produces mapps to outputs close to the observed data. Though it is conceptually close to the previous approach, this approach has a major advantage; we can sample the nuisance variables once (training part) and afterwards evaluate every $\theta$ based on a predefined expression (inference part).
+Forming an analogy with the previous approach, we sample many nuisance
+variables in order to absorb the randomness of the generator and we
+count the fraction of times the deterministic generator produces mapps
+to outputs close to the observed data. Though it is conceptually close
+to the previous approach, this approach has a major advantage; we can
+sample the nuisance variables once (training part) and afterwards
+evaluate every $\theta$ based on a predefined expression (inference
+part).
