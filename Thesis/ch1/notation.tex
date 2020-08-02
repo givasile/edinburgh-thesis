@@ -1,13 +1,14 @@
 \subsection{Notation}
 \label{subsec:notation}
 
-In this section, we present an overview of the symbols and the
-quantities used in the document. At this point, the quantities are
-described quite informally. Most of them will be defined formally in
-the next chapters. We try to keep the notation as consistent as
-possible throughout the document. The symbol $\R^N$, when used, describes 
-that a variable belongs to a multi-dimensional space in $\R$; $N$
-doesn't represent a specific number.
+In this section, we present an overview of the symbols that will be
+used in the rest of the document. At this level, the quantities are
+introduced quite informally, through general descriptions. Most of
+them will be defined formally in the next chapters. We try to keep the
+notation as consistent as possible throughout the document. The symbol
+$\R^N$, when used, describes that a variable belongs to a
+multi-dimensional space in $\R$; $N$ doesn't represent a specific
+number.
 
 \subsubsection*{Random Generator}
 \label{sec:random-generator}
@@ -20,17 +21,15 @@ doesn't represent a specific number.
 
 \begin{itemize}
 \item $D \in \R$, the dimensionality of the parameter-space
-\item $\thetab \in \R^D$, the parameters of interest
-\item $\data n\R^N$, the observations
-\item $\epsilon \in R$, the threshold for defining the region around $\data$
-\item $\vb \in \R^N$, random variable that represents the stochasticity of
-  the generator.
-\item $\vb_i \sim \vb$, a specific sample drawn from $\vb$
-\item $\Y_{\thetab}$, random variable descriping the simulator
-  $M_r(\thetab)$. The pdf of $\Y_{\thetab}$ is either not unknown or intractable
-\item $\yb_i \sim \Y_\theta$, a sample drawn from $\Y_\theta$. The
-  sample is obtained by executing the random simulator
-  $\yb_i \sim M_r(\thetab)$
+\item $\Thetab \in \R^D$, random variable representing the parameters of interest
+\item $\data \in \R^N$, the vector of observations
+\item $\epsilon \in R$, the threshold setting the limit on the region around $\data$
+\item $\V \in \R^N$, random variable representing the stochasticity of
+  the generator. It is also called nuisance variable, because we are not interested in infering a postrior distribution on it.
+\item $\vb_i \sim \V$, a specific sample drawn from $\V$
+\item $\Y_{\thetab}$, random variable descriping the simulator $M_r(\thetab)$. 
+\item $\yb_i \sim \Y_\theta$, a sample drawn from $\Y_\theta$. It can
+  be obtained by executing the simulator $\yb_i \sim M_r(\thetab)$
 \end{itemize}
 
 
@@ -38,10 +37,8 @@ doesn't represent a specific number.
 \label{sec:sets}
 
 \begin{itemize}
-\item $\region(\data)$, the set of points $\yb$ around the observations
-  $\data$, i.e. $\yb := \{\yb: d(\yb, \data) < \epsilon \}$
-\item $\regioni = \region(\yb_i)$, the set of points $\yb$ around
-  $\yb_i$, i.e. $\yb := \{\yb: d(\yb, \yb_i) < \epsilon \}$
+\item $\region(\data)$, the set of points $\yb := \{\yb: d(\yb, \data) < \epsilon \}$
+\item $\regioni$, the set of points defined around $\yb_i$ i.e. $\regioni = \region(\yb_i)$
 \end{itemize}
     
 \subsubsection*{Generic Functions}
@@ -50,12 +47,13 @@ doesn't represent a specific number.
 \begin{itemize}
 \item $p(\cdot)$, any valid pdf
 \item $p(\cdot | \cdot)$, any valid conditional distribution.
-\item $p(\thetab)$, the prior distribution
+\item $p(\thetab)$, the prior distribution on the parameters
+\item $p(\vb)$, the prior distribution on the nuisance variables
 \item $p(\thetab|\data)$, the posterior distribution
 \item $p_{d,\epsilon}(\thetab|\data)$, the approximate posterior
   distribution  
 \item $d(\mathbf{x}, \mathbf{y}): \R^{2N} \rightarrow \R$: any valid
-  distance e.g L2 norm: $||\mathbf{x}-\mathbf{y}||_2^2$
+  distance e.g $L_2$ norm: $||\mathbf{x}-\mathbf{y}||_2^2$
 \end{itemize}
 
 \subsubsection*{Functions (Mappings)}
@@ -63,13 +61,12 @@ doesn't represent a specific number.
 
 \begin{itemize}
 \item $M_d(\thetab, \vb): \R^D \rightarrow \R$, the deterministic
-  generator; representing all stochastic variables that
-  are part of the data generation process with the \textbb{parameter} $\vb$, transform the stochastic generator to a deterministic.
-\item $f_i(\thetab) = M_d(\thetab, \vb_i)$, deterministic generator associated with parameter $\vb_i$
-\item $g_i(\thetab) = d(f_i(\thetab), \data)$, distance of the generated data from the observations
+  generator; all stochastic variables that are part of the data generation process are represented by the \textbf{parameter} $\vb$
+\item $f_i(\thetab) = M_d(\thetab, \vb_i)$, deterministic generator associated with sample $\vb_i \sim p(\vb)$
+\item $g_i(\thetab) = d(f_i(\thetab), \data)$, distance of the generated data $f_i(\thetab)$ from the observations
 \item $T(\mathbf{x}): \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$
-  where $D_1 > D_2$, the summary statistic mapping.
-\item $\indicator{\region(\data)}(\yb)$, the indicator function; returns 1 iff $d(\yb, \data)<\epsilon$
+  where $D_1 > D_2$, the mapping that computes the summary statistic
+\item $\indicator{\region(\data)}(\yb)$, the indicator function; returns 1 if $d(\yb, \data)<\epsilon$, else 0
 \item $L(\thetab)$, the likelihood
 \item $L_{d,\epsilon}(\thetab)$, the approximate likelihood
 \end{itemize}

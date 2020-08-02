@@ -1,8 +1,33 @@
 \subsection{Algorithmic Description of ROMC}
 
-\subsubsection{ROMC as a Meta-Algorithm}
+In this section, we attempt the depiction of the mathematical
+description of ROMC in algorithms. Specificaly, in chapter
+\ref{subsubsec:romc-meta-algorithm} we present the general algorithmic
+description of ROMC as a meta-algorithm and in chapter
+\ref{subsubsec:alg-training-inference} the proposals of ROMC for
+solving the training and the inference parts.
 
-As stated in the Introduction, ROMC can be understood as step-by-step alorithmic approach for perfroming the inference in Simulator-Based Models. The particular methods used for solving the sub-tasks are left as a free choice to the user. As presented in Algorithm~\ref{alg:meta_alg}, the methods involved in solving the optimistation problem (step~\ref{algstep:optimise}) and constructing the bounding box (step~\ref{algstep:bounding_box}) are not restricted. The practiosioner may choose any convenient algorithm, judging the trade-offs between accuracy, robustness, efficiency and complexity. In particular for the optimisation step, the choice of the appropriate optimiser should also consider the nature of the simulator that defines the properties of $g_i(\thetab)$; for example, is the function differentiable, do we know the gradients $\nabla_{\thetab} [g_i] $ in closed-form or they should be approximated by finite differences. As described in sections~\ref{subsubsec:GB_approach} and~\ref{subsubsec:GP_approach}, ROMC proposes two alternative optimisation schemes (gradient-based and gaussian-process approach) depending on whether the gradients are available or not.
+\subsubsection{ROMC as a Meta-Algorithm}
+\label{subsubsec:romc-meta-algorithm}
+
+As stated at the introductory chapter, ROMC can be understood as
+step-by-step alorithmic approach for perfroming the inference in
+Simulator-Based Models. The particular methods used for solving the
+sub-tasks are left as a free choice to the user. As presented in
+Algorithm~\ref{alg:meta_alg}, the methods involved in solving the
+optimistation problem (step~\ref{algstep:optimise}) and constructing
+the bounding box (step~\ref{algstep:bounding_box}) are not
+restricted. The practiosioner may choose any convenient algorithm,
+judging the trade-offs between accuracy, robustness, efficiency and
+complexity. In particular for the optimisation step, the choice of the
+appropriate optimiser should also consider the properties of
+$g_i(\thetab)$. Some important questions that should be considered are
+whether the function differentiable and if so whether we know the
+gradients $\nabla_{\thetab} [g_i] $ in closed-form. As described in
+sections~\ref{subsubsec:GB_approach} and~\ref{subsubsec:GP_approach},
+ROMC proposes two alternative optimisation schemes (gradient-based and
+gaussian-process approach) depending on whether the gradients are
+available or not.
 
 \begin{algorithm}[t]
 	\caption{ROMC as a Meta-Algorithm. Requires $M_r(\theta), y_0$. Hyperparameters $n_1,n_2$.}\label{alg:meta_alg}
@@ -24,18 +49,88 @@ As stated in the Introduction, ROMC can be understood as step-by-step alorithmic
 
 
 \subsubsection{Training and Inference Algorithms}
-\label{subsubsec:algorithmic_description}
+\label{subsubsec:alg-training-inference}
 
-In this section, we will provide the algorithmic description of the ROMC method; (a) the solution of the optimisation problems using either the gradient based approach or the Gaussian Process alternative and (b) the construction of the Bounding Box. Afterwards, we will discuss the advantages and the disadvantages of each choice both in terms of accuracy and efficiency.
+In this section, we will provide the algorithmic description of the
+ROMC method; (a) the procedures for solving the optimisation problems
+using either the gradient based approach or the Gaussian Process
+alternative and (b) the construction of the Bounding Box. Afterwards,
+we will discuss the advantages and the disadvantages of each choice
+both in terms of accuracy and efficiency.
 
 \noindent
-At a high-level, the ROMC method can be split into the training and the inference part.
+At a high-level, the ROMC method can be split into the training and
+the inference part.
 
-At the training (fitting) part, the method samples the nuisance variables $v_i \sim p(v)$, defines the the optimisation problems $\min_\theta [g_i(\theta)]$, solves them to obtain $\theta_i^*$, checks whether the optimal point the respects the constraint and finally builds the bounding box for obtaining the proposal region $q_i$. Using the Gaussian Process set up makes the training part slower due to the fitting of the surrogate model at step 2. On the other hand, computing the $q_i$ becomes faster since the evaluating the distance doesn't involve running the whole simulator $M_d^i(\theta)$ for each query point. The algorithms are presented in~\ref{alg:training_GB} and~\ref{alg:training_GP}.
+\noindent
+At the training (fitting) part, the goal is the estimation of the
+proposal regions $q_i$. The steps include (a) sampling the nuisance
+variables $\vb_i \sim p(\vb)$ (b) defining the optimisation problems
+$\min_{\thetab} [g_i(\thetab)]$ (c) obtaining $\thetab_i^*$ (d) checking
+whether $d_i^* < \epsilon$ and (e) building the bounding box for
+obtaining the proposal region $q_i$. If gradients are available, using
+a gradient-based method is adviced for obtaining $\thetab_i^*$ much
+faster.  Providing $\nabla_{\thetab} g_i$ in closed-form provides an
+upgrade in both accuracy and efficiency; If closed-form description is
+not available, approximate gradients with finite-differences
+$\frac{\partial g_i(\thetab)}{\thetab_d} = \frac{g_i(\thetab_d + h
+  \mathbf{e_d}) - g_i(\thetab_d)}{h}$ requires two evaluations of $g_i$ for
+\textbf{every} parameter $\thetab_d$. For low-dimensional problems
+though, this approach still works well. When gradients are not
+available or $g_i$ is not differentiable, using the Gaussian Process
+is the only solution. In this case, the training part is much slower
+due to the fitting of the surrogate model and the ignorance of the
+slope throughout the optimisation procedure. Nevertheless, computing
+the proposal region $q_i$ becomes faster since $\hat{d}_i$ can be used
+instead of $g_i$ which involves running the whole simulator
+$M_d(\thetab, \vb_i)$ for each query. The algorithms are presented
+in~\ref{alg:training_GB} and~\ref{alg:training_GP}.
 
-Performing the infernce part includes evaluating the unnormalised posterior and sampling from the posterior. Computing an expectation is not described as a distinct phase, since it can be done in straightforward manner using the weighted samples. For evaluating the unnormalized posterior in the Gradient-Based approach, only the deterministic functions $g_i$ and the prior distribution $p(\theta)$ are required; there is no need for solving the optimisation problems and building the proposal regions. The evaluation requires iterating over all $g_i$ and evaluating the distance from the observed data. In contrast, using the GP approach, there is need for the optimisation part to run for fitting the surrogate models $\hat{d}_i(\theta)$. Afterwards the distance is evaluated on them. The evaluation of the posterior is presented analytically in~\ref{alg:posterior_GB} and~\ref{alg:posterior_GP}.
+\noindent
+Performing the inference includes (a) evaluating the unnormalised
+posterior $p_{d, \epsilon}(\theta_b|\data)$ (b) sampling from the
+posterior $ \thetab_i \sim p_{d, \epsilon}(\theta_b|\data)$ and (c)
+computing an expectation $E_{\thetab|\data}[h(\thetab)]$.  Computing
+an expectation can be done easily after weighted samples are obtained
+\ref{eq:expectation}, so we will not discuss it seperately.
 
-Weighted Sampling is performed by getting $n_2$ samples from each proposal region $q_i$, evaluating if the actually fall inside the acceptance region and if so, compute their weight. The procedure is identical in both cases, apart from step 3 where the acceptance check is done in the real model $g_i$ in the Gradient-Based approach and in the surrogate model $\hat{d}_i$ otherwise. The sampling algorithms are presented step-by-step in~\ref{alg:sampling_GB} and~\ref{alg:sampling_GP}.
+\noindent
+For evaluating the unnormalized posterior in the gradient-based
+approach, only the deterministic functions $g_i$ and the prior
+distribution $p(\thetab)$ are required; there is no need for solving
+the optimisation problems and building the proposal regions. The
+evaluation requires iterating over all $g_i$ and evaluating the
+distance from the observed data. In contrast, using the GP approach,
+the optimisation part should be performed first for fitting the
+surrogate models $\hat{d}_i(\thetab)$ and evaluate the indicator
+function on them. This provides an important speed-up, especially when
+running the simulator is computationally expensive. The evaluation of
+the posterior is presented analytically in~\ref{alg:posterior_GB}
+and~\ref{alg:posterior_GP}.
+
+\noindent
+Sampling is performed by getting $n_2$ samples from each proposal
+region $q_i$. For each sample $\thetab_{ij}$, the indicator function
+is evaluated $\indicator{\regioni(\data)}(\thetab_{ij})$ for checking
+if it lies inside the acceptance region. If so the corresponding
+weight is computed as in \cite{eq:sampling}. As before, if a surrogate
+model $\hat{d}$ has been fitted, it can be used for the evaluation of
+the indicator function providing again a speedup. Apparently, the
+compuational benefit is more important compared to posterior
+evaluation, because the indicator function must be evaluated for a
+total of $n_1 \times n_2$ points. The sampling algorithms are
+presented step-by-step in~\ref{alg:sampling_GB}
+and~\ref{alg:sampling_GP}.
+
+\noindent
+As a conclusion, we can state that the choise of using a bayesian
+optimisation approach provides a significant speed-up in the inference
+part with the cost of making the training part slower and a possible
+approximation error. It is typical in many Machine-Learning use cases,
+being able to provide enough time and computational resources for the
+training phase, but asking for efficiency in the inference
+part. Having that in mind, we can say that the Gaussian-Process is a
+quite usefull alternative.
 
 \begin{minipage}{0.46\textwidth}
 \begin{algorithm}[H]
@@ -169,24 +264,3 @@ Weighted Sampling is performed by getting $n_2$ samples from each proposal regio
     \end{algorithmic}
 \end{algorithm}
 \end{minipage}
-
-\subsection{Computational Complexity}
-
-In the notation, we use $S$ for describing the size of the Simulator. In table we observe that constructing the regions and sampling are the most demanding operations, though $n_2 >> K$. In the Gaussian-Process set-up sampling is not influenced by the size of the simulator.
-
-\begin{tabular}{|c||c|c|}
- \hline
- \multicolumn{3}{|c|}{Compuational Complexity} \\
-  \hline
-  & Gradient-Based     & Gaussian Process\\
-  \hline
-  \multirow{2}{3.5em}{Optimize}  & Closed-Form Gradients: $\bigO(Sn_1)$   &  \\
-                               & Approximate Gradients: $\bigO(DSn_1)$  &  \\  
-  \hline
-  Construct Regions    & $\bigO(KDSn_1)$  & $\bigO(KDn_1)$ \\
-  \hline
-  Evaluate Posterior   & $\bigO(n_1S)$  & $\bigO(n_1)$ \\
-  \hline
-  Sampling             & $\bigO(n_1n_2DS)$ & $\bigO(n_1n_2D)$ \\
- \hline
-\end{tabular}

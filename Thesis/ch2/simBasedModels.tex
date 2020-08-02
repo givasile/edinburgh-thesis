@@ -1,10 +1,12 @@
 \subsection{Simulator-Based (Implicit) Models}
 
-As already stated, in Simulator-Based models we cannot evaluate the
-posterior $p(\thetab|\data) \propto L(\thetab)p(\thetab)$, since it is
-impossible to evaluate the likelihood $L(\thetab) =
-p(\data|\thetab)$. So, we have to use the following property in order
-to take advantage of the simulator $M_r(\thetab)$.
+As already stated at chapter \ref{sec:introduction}, in
+Simulator-Based models we cannot evaluate the posterior
+$p(\thetab|\data) \propto L(\thetab)p(\thetab)$, due to the
+intractability of the likelihood $L(\thetab) = p(\data|\thetab)$. The
+following equation allows incorporating the simulator in the place of
+the likelihood and forms the basis of all Likelihood-Free inference
+approaches.
 
 \begin{equation} \label{eq:likelihood} L(\thetab) = \lim_{\epsilon \to
     0} c_\epsilon \int_{\yb \in B_\epsilon(\data)} p(\yb|\thetab)d\yb
@@ -15,57 +17,57 @@ to take advantage of the simulator $M_r(\thetab)$.
 \subsubsection{Approximate Bayesian Computation (ABC) Rejection
   Sampling}
 
-ABC Rejection Sampling is a modified version of Rejection Sampling,
-for cases when likelihood evaluation is intractable. In typical
-Rejection Sampling, a sample is obtained from the prior
-$\thetab \sim p(\thetab)$ and it is maintained with probability
-$L(\thetab)/ \text{max}_{\thetab} L(\thetab)$. Although we cannot use
-this approach out of the box (evaluating $L(\thetab)$ is impossible in
-our case), we can take advantage of the simulator.
+ABC Rejection Sampling is a modified version of the traditional
+Rejection Sampling method, for cases when likelihood evaluation is
+intractable. In typical Rejection Sampling, a sample is obtained from
+the prior $\thetab \sim p(\thetab)$ and it is maintained with
+probability $L(\thetab)/ \text{max}_{\thetab} L(\thetab)$. Although we
+cannot use this approach out of the box (evaluating $L(\thetab)$ is
+impossible in our case), we can take modify the approach for using the
+simulator.
 
-In the discrete case scenario, where $\Y_{\thetab}$ can take a finite
-set of numbers, the likelihood becomes
+In the discrete case scenario where $\Y_{\thetab}$ can take a finite
+set of values, the likelihood becomes
 $L(\thetab) = Pr(\Y_{\thetab} = \data)$ and the posterior
 $p(\thetab|\data) \propto Pr(\Y_{\thetab}=\data)p(\thetab)$. We can
 sample from the prior $\thetab_i \sim p(\thetab)$, run the simulator
 $\yb_i = M_r(\thetab_i)$ and maintain $\thetab_i$ only if
 $\yb_i = \data$.
 
-The method above becomes less usefull as the finite set of
+The method above becomes less helpfull as the finite set of
 $\Y_{\thetab}$ values grows larger, since the probability of
-maintaining a sample becomes smaller. In the limit where the set
-becomes infinite (i.e. continuous case) the probability becomes
-zero. In order for the method to work in this set-up, a relaxation is
-introduced; we relax the acceptance criterion by letting
-$\Y_{\thetab}$ lie in a larger set of points i.e.
-$\Y_{\theta} \in \region(\data), \epsilon > 0$. The region can be
+maintaining a sample (acceptance rate) becomes smaller. In the limit
+where the set becomes infinite (i.e. continuous case) the probability
+becomes zero. In order for the method to work in this set-up, a
+relaxation is introduced; we relax the acceptance criterion by letting
+$\yb_{i}$ lie in a larger set of points i.e.
+$\yb_{i} \in \region(\data), \epsilon > 0$. The region can be
 defined as $\region (\data) := \{\yb: d(\yb, \data) < \epsilon \}$
 where $d(\cdot, \cdot)$ can represent any valid distance. With this
-modification, the maintained samples follow the approximate posterior,
+modification, the maintained samples follow an approximate posterior,
 
 \begin{equation} \label{eq:approx_posterior}
-  p_{d,\epsilon}(\thetab|\data) \propto Pr(\Y_{\thetab} \in
-  \region(\data) p(\thetab)
+  p_{d,\epsilon}(\thetab|\data) \propto Pr(\yb \in
+  \region(\data)) p(\thetab)
 \end{equation}
 
 \noindent
-This method is called \textit{Rejection ABC} and forms the basis of
-Likelihood-Free methods.
+This method is called \textit{Rejection ABC}.
 
 \subsubsection{Summary Statistics}
 
-When the dimensionality of $\Y_{\thetab} \in \mathbb{R}^D$ is high,
-generating samples inside $\region (\data)$ becomes rare even with
-large $\epsilon$; this is the curse of dimensionality. As a
-representative example if (a) $d$ is set to be the euclidean distance
-the $\region(\data) := \{ \yb: ||\yb - \data||_2^2 < \epsilon^2 \}$ is
-a hyper-sphere with radius $\epsilon$ and (b) the prior distribution
+When the dimensionality of $\yb \in \mathbb{R}^D$ is high, generating
+samples inside $\region (\data)$ becomes rare even with large
+acceptance region; this is the curse of dimensionality. As a
+representative example if (a) $d$ is set to be the euclidean distance,
+then $\region(\data) := \{ \yb: ||\yb - \data||_2^2 < \epsilon^2 \}$
+is a hyper-sphere with radius $\epsilon$ and (b) if the prior
 $p(\thetab)$ is a uniform distribution in a hyper-cube with side of
 length $2\epsilon$, then the probability of drawing a sample inside
 the hyper-sphere becomes:
 
 \begin{equation}
-  Pr(\Y_{\thetab} \in \region (\data)) = Pr(\thetab \in \region (\data)) = \frac{V_{hypersphere}}{V_{hypercube}} = \frac{\pi^{D/2}}{D2^{D-1}\Gamma(D/2)} \rightarrow 0, \quad \text{as} \quad D \rightarrow \infty
+  Pr(\yb \in \region (\data)) = Pr(\thetab \in \region (\data)) = \frac{V_{hypersphere}}{V_{hypercube}} = \frac{\pi^{D/2}}{D2^{D-1}\Gamma(D/2)} \rightarrow 0, \quad \text{as} \quad D \rightarrow \infty
 \end{equation}
 
 \noindent 
@@ -73,24 +75,28 @@ We observe that the probality tends to $0$, independently of
 $\epsilon$; enlarging $\epsilon$ will not increase the acceptance
 rate. This produces the need for a mapping
 $T: \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$ where $D_1 > D_2$,
-redefining the area as
+for squeezing the dimensionality of the output. This intermediate step
+redefines the area as
 $\region(\data) := \{\yb: d(T(\yb), T(\data)) < \epsilon \}$. This
-dimensioanlity-reduction is called \textit{summary statistic}.
+dimensionality-reduction step is called \textit{summary statistic}
+extraction, since the distance is not measured on the actual outputs,
+but on a summarization (i.e. lower-dimension representation) of them.
 
 \subsubsection{Approximations Introduced}
 
-Approximating the posterior as
+So far, we have introduced some approximations for infering the
+posterior as
 $p_{d,\epsilon}(\thetab|\data) \propto Pr(\Y_{\thetab} \in
 \region(\data))p(\thetab)$ where
-$\region(\data) := \{\yb: d(T(\yb), T(\data)) < \epsilon \}$
-introduces two different types approximation error:
+$\region(\data) := \{\yb: d(T(\yb), T(\data)) < \epsilon \}$. These
+approximations introduce two different types of errors:
 
 \begin{itemize}
-\item $\epsilon$ is chosen to be large enough, so that enough samples
-  are accepted
+\item $\epsilon$ is chosen to be \textit{big enough}, so that enough
+  samples are accepted
 \item $T$ introduces loss of information, making possible a $\yb$ far
-  away from the $\data$, namely $\yb: d(\yb,data)>\epsilon$, to enter
-  the acceptance region at after the dimensionality reduction
+  away from the $\data$ i.e. $\yb: d(\yb,\data)>\epsilon$, to enter
+  the acceptance region after the dimensionality reduction
   $d(T(\yb), T(\data) < \epsilon)$
 \end{itemize}
 
@@ -122,26 +128,27 @@ $\indicator{\region(\yb)}(\xb) = \indicator{\region(\xb)}(\yb)$.
 
 The boxcar kernel is the conditional distribution:
 
-\begin{gather}
+\begin{gather}\label{eq:boxcar_kernel}
   p_{d,\epsilon}(\yb|\xb) = \left\{
     \begin{array}{ll}
       c  & \mbox{if } d(\yb,\xb) \leq \epsilon \\
       0 & \mbox{else } 
     \end{array}
-  \right. \text{where} c = \frac{1}{\int_{ \{ \yb: d(\yb,\xb) <
+  \right. \text{where } c = \frac{1}{\int_{ \{ \yb: d(\yb,\xb) <
       \epsilon \} } d\yb}
 \end{gather}
 %
-If we understand the boxcar kernel as a data generation process we can
-make two important notices:
+Observing the boxcar kernel from the view-point of a data generation
+process, where the point $\yb$ is generated after $\xb$, we can make
+two important notices:
 
 \begin{itemize}
 \item given a specific $\xb$, all values
   $\yb: \yb \in B_{d,\epsilon}(\xb)$ have equal probability to be
   generated
 \item if a specific $\yb$ value has been generated, all
-  $\xb: x \in B_{d,\epsilon}(\yb)$ have equal probability to be the
-  conditional value that lead to this generation
+  $\xb: \xb \in B_{d,\epsilon}(\yb)$ are equally probable to have been
+  the initial point that provoked $\yb$ generation
 \end{itemize}
 %
 Finally, we can also observe that the kernel can be defined through
@@ -153,51 +160,54 @@ the indicator function:
 
 \subsubsection*{Initial View}
 
-Based on~\ref{eq:approx_posterior}, we can approximate the likelihood as:
+Based on equation~\ref{eq:approx_posterior} and the Boxcar kernel~\ref{eq:boxcar_kernel}, we can approximate the likelihood as:
 
 \begin{gather} \label{eq:primal_view}
-  L_{d, \epsilon}(\thetab)=\int_{B_\epsilon(\data)}p(\yb|\thetab)dy = \int p_{d,\epsilon}(\data|\yb)p(\yb|\thetab)d\yb\\
-  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (\data|\yb_i) \\
-  \approx \frac{c}{N} \sum_i^N \indicator{\region(\yb_i)}(\data), \yb_i \sim M_r(\thetab)
+  L_{d, \epsilon}(\thetab) =
+  \int_{\yb \in B_\epsilon(\data)}p(\yb|\thetab)d\yb =
+  \int_{\yb \in \R^D} \indicator{\region(\data)}(\yb)p(\yb|\thetab)d\yb\\
+  \approx \frac{1}{N} \sum_i^N \indicator{\region(\data)}(\yb_i),\text{ where }
+  \yb_i \sim M_r(\thetab)
 \end{gather}
 %
 This approach is quite intuitive; approximating the likelihood of a
 specific $\thetab$ requires sampling from the data generator and count
-the fraction of samples that lie close to the observations.
-Nevertheless, for every distinct evaluation of
-$L_{d,\epsilon}(\thetab)$ $N$ new samples are needed. This make this
-approach quite inconvenient.
+the fraction of samples that lie inside the area around the
+observations.  Nevertheless, for each distinct evaluation of
+$L_{d,\epsilon}(\thetab)$, $N$ new samples are needed to be sampled;
+this make this approach quite inconvenient from a computational
+point-of-view.
 
 \subsubsection*{Alternative View}
 
 For overcoming the disadvantage introduced above, OMC attempts an
-alternative approximation. It samples all the nuisance variables from
-a distribution $v_i \sim p(v)$ and it converts the random simulator to
-a deterministic mapping $M_d(\theta, v_i)$,
+alternative approximation. It samples all the nuisance variables once
+$\vb_i \sim p(\vb)$ and it converts the random simulator to a
+deterministic mapping $M_d(\thetab, \vb_i)$,
 
-\begin{gather} 
-  L_{d,\epsilon}(\theta)=\int_{B_\epsilon(y_0)}p(y|\theta)dy = \int p_{d,\epsilon}(y_0|y)p(y|\theta)dy\\
-  = \int_y \int_v p_{d,\epsilon}(y_0|y)p(y|\theta, v) p(v)dxdv \\
-  = \int_v p_{d,\epsilon}(y_0|y=M_d(\theta, v)) p(v)dv \\
-  \approx \frac{1}{N} \sum_i^N p_{d,\epsilon} (y_0|y=M_d(\theta, v_i)) \\
-  \approx \frac{c}{N} \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta,
-    v_i))} (y_0), v_i \sim p(v)
-  \label{eq:alt_view}
+\begin{gather} \label{eq:alt_view}
+  L_{d, \epsilon}(\thetab) =
+  \int_{\yb \in B_\epsilon(\data)}p(\yb|\thetab)d\yb =
+  \int_{\yb \in \R^D} \indicator{\region(\data)}(\yb) p(\yb|\thetab)d\yb\\
+  = \int_\yb \int_\vb \indicator{\region(\data)}(\yb) p(\yb|\thetab, \vb) p(\vb) d\yb d\vb \\
+  = \int_\vb \indicator{\region(\data)}(\yb=M_d(\thetab, \vb)) p(\vb) d\vb \\
+  \approx \frac{1}{N} \sum_i^N \indicator{\region (\data)} (\yb_i) \\
+  \text{ where } \yb_i = M_d(\thetab, \vb_i), \vb_i \sim p(\vb)
 \end{gather}
 %
 Based on this approach, the unnormalized approximate posterior can be
 defined as:
 
-\begin{equation} \label{eq:posterior} p_{d,\epsilon}(\theta|y_0)
-  \propto p(\theta) \sum_i^N \mathbb{1}_{B_{d,\epsilon}(M_d(\theta,
-    v_i))} (y_0)
+\begin{equation} \label{eq:aprox_posterior}
+  p_{d,\epsilon}(\thetab|\data)
+  \propto p(\thetab) \sum_i^N \indicator{ \region(\data)} (\yb_i)
 \end{equation}
 %
 Forming an analogy with the previous approach, we sample many nuisance
 variables in order to absorb the randomness of the generator and we
-count the fraction of times the deterministic generator produces mapps
-to outputs close to the observed data. Though it is conceptually close
-to the previous approach, this approach has a major advantage; we can
-sample the nuisance variables once (training part) and afterwards
-evaluate every $\theta$ based on a predefined expression (inference
+count the fraction of times the deterministic generator produce
+outputs close to the observed data. Though it is conceptually similar
+to the previous approach, we now overcome the previous disadvantage;
+we sample the nuisance variables once (training part) and afterwards
+evaluate every $\theta$ based on the predefined expression (inference
 part).

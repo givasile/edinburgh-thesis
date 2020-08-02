@@ -1,47 +1,61 @@
 \subsection{Robust Optimistation Monte Carlo (ROMC) approach}
 \label{sec:ROMC}
 
+Apart from defining a tractable aproximation of the posterior, ROMC
+provides a method for sampling from the posterior and computing an expectation.
+
 \subsubsection*{Weighted Sampling}
 
-Apart from defining a tractable aproximation of the posterior, Likelihood-Free methods target on sampling from it accurately and efficiently. Sampling can be performed by importance sampling, using the prior as proposal distribution; hence $\theta_i \sim p(\theta)$ and the corresponding weight is $w_i = \frac{L_{d,\epsilon}(\theta_i)}{p(\theta_i)}$. This approach has the same drawbacks as ABC rejection sampling; when the prior is wide, drawing a sample with weight is rare, leading to either poor Effective Sample Size (ESS) or huge execution time. The ROMC method proposes the construction of a better proposal distribution $q(\theta)$; specifically it proposes the construction of one proposal distribution $q_i$ per sampled nuisance variable $v_i$. Therefore,
+Sampling could be performed in a straightforward fashion using
+importance sampling; using the prior as the proposal distribution
+$\thetab_i \sim p(\thetab)$ and computing the weight as
+$w_i = \frac{L_{d,\epsilon}(\thetab_i)}{p(\thetab_i)}$. This approach
+has the same drawbacks as ABC rejection sampling; when the prior is
+wide or the dimensionality $D$ high, drawing a sample with non-zero
+weight is rare, leading to either poor Effective Sample Size (ESS) or
+huge execution time. The ROMC method proposes a better sampling
+approach by constructing an appropriate proposal distribution $q_i$
+per nuisance variable $\vb_i$\footnote{We describe the proposal area
+  construction in the next chapter}. Therefore the weight is computed
+as,
 
 \begin{equation} \label{eq:sampling}
-  w_{ij} = \frac{L_{d,\epsilon}(\theta_{ij}) p(\theta_{ij})}{q(\theta_{ij})}, \theta_{ij} \sim q_i(\theta)
- \end{equation}
+  w_{ij} = \frac{L_{d,\epsilon}(\thetab_{ij}) p(\thetab_{ij})}{q(\thetab_{ij})}, \thetab_{ij} \sim q_i(\thetab)
+\end{equation}
 
 
 \subsubsection*{Computing an expectation}
 
-Another goal of the method is approximating the quantity $E_{p(\theta|y_0)}[h(\theta)]$. Using the weighted samples from above this can be performed through,
+Having defined the procedure for obtaining weighted samples, any expectation $E_{p(\thetab|\data)}[h(\thetab)]$, can be approximated as,
 
 \begin{equation} \label{eq:expectation}
-  E_{p(\theta|y_0)}[h(\theta)] \approx \frac{\sum_{ij} w_{ij} h(\theta_{ij})}{\sum_{ij} w_{ij}}
- \end{equation}
+  E_{p(\thetab|\data)}[h(\thetab)] \approx \frac{\sum_{ij} w_{ij} h(\thetab_{ij})}{\sum_{ij} w_{ij}}
+\end{equation}
 
  
- \subsubsection{Define deterministic optimisation problems}
- 
-For easier notation, we define as $f_i$ the $i-th$ deterministic problem, namely $f_i(\theta) = M_d(\theta, v_i)$, where $v_i \sim p(v)$. For constructiong the proposal region, we search for a point $\theta_* : d(f_i(\theta_0), y_0) < \epsilon$; this point can be obtained by solving the the following optimisation problem:
+\subsubsection{Define and solve deterministic optimisation problems}
+
+For each set of nuisance variables $\vb_i, i = \{1,2,...,n_1 \}$ a deterministic function is defined as $f_i(\thetab) = M_d(\thetab,\vb_i)$. For constructiong the proposal region, we search for a point $\thetab_* : d(f_i(\thetab_*), \data) < \epsilon$; this point can be obtained by solving the the following optimisation problem:
 
 \begin{subequations}
 \begin{alignat}{2}
-&\!\min_{\theta}        &\qquad& g_i(\theta) = d(y_0,  f_i(\theta))\label{eq:optProb}\\
-&\text{subject to} &      & g_i(\theta) < \epsilon
+&\!\min_{\thetab}        &\qquad& g_i(\thetab) = d(\data,  f_i(\thetab))\label{eq:optProb}\\
+&\text{subject to} &      & g_i(\thetab) < \epsilon
 \end{alignat}
 \end{subequations}
 %
-We maintain a list of the solutions $\theta_i^*$ of the optimisation problems. If for a specific set of nuisance variables $v_i$, there is no feasible solution we add nothing to the list. The Optimisation problem~\ref{eq:optProb} can be treated as unconstrained, accepting the optimal point $\theta_i^* = \text{argmin}_\theta g_i(\theta)$ only if $g_i(\theta_i^*) < \epsilon$.
+We maintain a list of the solutions $\thetab_i^*$ of the optimisation problems. If for a specific set of nuisance variables $\vb_i$, there is no feasible solution we add nothing to the list. The optimisation problem~\ref{eq:optProb} can be treated as unconstrained, accepting the optimal point $\thetab_i^* = \text{argmin}_{\thetab}  g_i(\thetab)$ only if $g_i(\thetab_i^*) < \epsilon$.
 
 \subsubsection{Gradient-Based Approach}
 \label{subsubsec:GB_approach}
 
-The nature of the generative model $M_r(\theta)$, the properties of the objective function $g_i$. If $g_i$ is continuous with smooth gradients $\nabla_{\theta} g_i$ any gradient-based iterative algorithm can be used for solving~\ref{eq:optProb}. The gradients $\nabla_{\theta} g_i$ can be either provided in closed form or approximated by finite differences.
+The nature of the generative model $M_r(\theta)$, specifies the properties of the objective function $g_i$. If $g_i$ is continuous with smooth gradients $\nabla_{\theta} g_i$ any gradient-based iterative algorithm can be used for solving~\ref{eq:optProb}. The gradients $\nabla_{\theta} g_i$ can be either provided in closed form or approximated by finite differences.
 
 \subsubsection{Gaussian Process Approach}
 \label{subsubsec:GP_approach}
 
-In cases where gradients are not defined or they are not available, the Bayesian Optimisation scheme is an alternative choice. Such approach apart from providing an optimal $\theta_i^* $, also fits a surrogate model $\hat{d}_i$ of the distance $g_i$ which can be used for the forthcoming steps. Specifically, in the construction of the proposal region and in equations~\ref{eq:posterior},~\ref{eq:sampling},~\ref{eq:expectation} it could replace $g_i$ in the evaluation of the indicator function~\ref{eq:indicator}, providing a major speed-up.
+In cases where the gradients are not available, the Bayesian Optimisation scheme provides an alternative choice. With this approach, apart from ontaining an optimal $\thetab_i^* $, a surrogate model $\hat{d}_i$ of the distance $g_i$ is fitted; this approximate model can be used in the following steps, instead of $g_i$, providing a noteworthy speed-up. Specifically, in the construction of the proposal region and in equations~\ref{eq:approx_posterior},~\ref{eq:sampling},~\ref{eq:expectation} it could replace $g_i$ in the evaluation of the indicator function~\ref{eq:indicator}, providing a major speed-up.
 
 \subsubsection{Construction of the proposal area $q_i$}
 
-Independently of the approach chosen above, the constraction of the proposal region follows a common method. The search directions $\mathbf{v}_d$ are computed as the eigenvectors of the curvature at $\theta_i^*$ and a line-search method is used to obtain the limits. Algorithm~\ref{alg:region_construction} describes analytically the method.
+Independently of the approach chosen above, the constraction of the proposal region follows a common method. The search directions $\mathbf{v}_d$ are computed as the eigenvectors of the curvature at $\theta_i^*$ and a line-search method is used to obtain the limit point where $g_i(\thetab_i^* + \kappa \vb_d) \geq \epsilon$. Algorithm~\ref{alg:region_construction} describes analytically the method.
