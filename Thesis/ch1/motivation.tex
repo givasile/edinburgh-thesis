@@ -1,6 +1,3 @@
-\subsection{Motivation}
-\label{subsec:motivation}
-
 \subsubsection*{\textit{Explanation of Simulation-Based Models}}
 
 A Simulator-Based model is a parameterized stochastic data generating mechanism \cite{Gutmann2016}. The key characteristic is that although we are able to sample (simulate) data points, we cannot evaluate the likelihood of a specific set of observations $y_0$. Formally, a simulator-based model is described as a parameterized family of probability density functions $\{p_{y|\theta}(y)\}_\theta$, whose closed-form is either unknown or intractable to evaluate. Although, evaluating $p_{y|\theta}(y)$ is intractable, sampling is feasible. Practically, a simulator can be understood as a black-box machine $M_r$ that, given parameter $\theta$, produces samples $y$ in a stochastic manner, i.e. $M_r(\theta) \rightarrow y$.
