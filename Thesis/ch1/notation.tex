@@ -3,8 +3,8 @@ used in the rest of the document. At this level, the quantities are
 introduced quite informally, through general descriptions. Most of
 them will be defined formally in the next chapters. We try to keep the
 notation as consistent as possible throughout the document. The symbol
-$\R^N$, when used, describes that a variable belongs to a
-multi-dimensional space in $\R$; $N$ doesn't represent a specific
+$\R^N$, when used, describes that a variable belongs to the 
+$N-dimensional$ euclidean space; $N$ doesn't represent a specific
 number.
 
 \subsubsection*{Random Generator}
@@ -17,7 +17,7 @@ number.
 \label{sec:variables}
 
 \begin{itemize}
-\item $D \in \R$, the dimensionality of the parameter-space
+\item $D \in \mathbb{N}$, the dimensionality of the parameter-space
 \item $\Thetab \in \R^D$, random variable representing the parameters of interest
 \item $\data \in \R^N$, the vector of observations
 \item $\epsilon \in R$, the threshold setting the limit on the region around $\data$
@@ -34,8 +34,8 @@ number.
 \label{sec:sets}
 
 \begin{itemize}
-\item $\region(\data)$, the set of points $\yb := \{\yb: d(\yb, \data) < \epsilon \}$
-\item $\regioni$, the set of points defined around $\yb_i$ i.e. $\regioni = \region(\yb_i)$
+\item $\region(\data)$, the set of points $\yb := \{\yb: d(\yb, \data) \leq \epsilon \}$
+\item $\regioni$, the set of points defined around $\yb_i$ i.e.\ $\regioni = \region(\yb_i)$
 \end{itemize}
     
 \subsubsection*{Generic Functions}
@@ -50,7 +50,7 @@ number.
 \item $p_{d,\epsilon}(\thetab|\data)$, the approximate posterior
   distribution  
 \item $d(\mathbf{x}, \mathbf{y}): \R^{2N} \rightarrow \R$: any valid
-  distance e.g $L_2$ norm: $||\mathbf{x}-\mathbf{y}||_2^2$
+  distance, the $L_2$ norm: $||\mathbf{x}-\mathbf{y}||_2$
 \end{itemize}
 
 \subsubsection*{Functions (Mappings)}
@@ -63,7 +63,7 @@ number.
 \item $g_i(\thetab) = d(f_i(\thetab), \data)$, distance of the generated data $f_i(\thetab)$ from the observations
 \item $T(\mathbf{x}): \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$
   where $D_1 > D_2$, the mapping that computes the summary statistic
-\item $\indicator{\region(\data)}(\yb)$, the indicator function; returns 1 if $d(\yb, \data)<\epsilon$, else 0
+\item $\indicator{\region(\data)}(\yb)$, the indicator function; returns 1 if $d(\yb, \data) \leq \epsilon$, else 0
 \item $L(\thetab)$, the likelihood
 \item $L_{d,\epsilon}(\thetab)$, the approximate likelihood
 \end{itemize}
