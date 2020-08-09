@@ -135,7 +135,8 @@ approach, lets define the indicator function based on $\region$.
 The indicator function $\indicator{\region(\yb)}(\xb)$ returns 1 if
 $\xb \in \region(\yb)$ and 0 otherwise. If $d(\cdot,\cdot)$ is a
 formal distance, due to symmetry
-$\indicator{\region(\yb)}(\xb) = \indicator{\region(\xb)}(\yb)$.
+$\indicator{\region(\yb)}(\xb) = \indicator{\region(\xb)}(\yb)$, so
+they can be used interchangeably.
 
 \begin{gather} \label{eq:indicator} \indicator{\region(\yb)}(\xb)=
   \left\{
@@ -146,7 +147,9 @@ $\indicator{\region(\yb)}(\xb) = \indicator{\region(\xb)}(\yb)$.
 
 \subsubsection*{Likelihood approximation}
 
-Based on equation~\ref{eq:approx_posterior} and the Boxcar kernel~\ref{eq:boxcar_kernel}, we can approximate the likelihood as:
+Based on equation~\eqref{eq:approx_posterior} and the indicator
+function as defined above~\eqref{eq:indicator}, we can approximate
+the likelihood as:
 
 \begin{gather} \label{eq:approx_likelihood}
   L_{d, \epsilon}(\thetab) =
@@ -170,13 +173,49 @@ reason, we choose to approximate the integral as in equation
 $\vb_i \sim p(\vb)$ and we count the fraction of samples that lie
 inside the area using the deterministic simulator
 $M_d(\thetab, \vb_i)$. Hence, the evaluation of each $\thetab$ does
-not imply drawing any new samples.
-
-\noindent
-Based on this approach, the unnormalized approximate posterior can be
-defined as:
+not imply drawing any new samples. Based on this approach, the
+unnormalized approximate posterior can be defined as:
 
 \begin{equation} \label{eq:aprox_posterior}
   p_{d,\epsilon}(\thetab|\data)
   \propto p(\thetab) \sum_i^N \indicator{ \region(\data)} (\yb_i)
+\end{equation}
+
+\subsubsection*{Further approximations for sampling and computing expectations}
+
+The posterior approximation in \eqref{eq:approx_posterior} does not a
+provide any obvious way for drawing samples. In fact, the set
+$S_i = \{ \thetab \in \region(\yb_i=M_d(\thetab, \vb_i)) \}$ can represent
+any arbitrary shape in the D-dimensional Euclidean space; it can be
+non-convex, can contain disjoint sets of $\thetab$ etc. This
+observation leads to the need for a further simplification of the
+posterior for sampling from it.
+
+As a side-note, sampling could be performed in a straightforward
+fashion using importance sampling; using the prior as the proposal
+distribution $\thetab_i \sim p(\thetab)$ and computing the weight as
+$w_i = \frac{L_{d,\epsilon}(\thetab_i)}{p(\thetab_i)}$. This approach
+has the same drawbacks as ABC rejection sampling; when the prior is
+wide or the dimensionality $D$ is high, drawing a sample with non-zero
+weight is rare, leading to either poor Effective Sample Size (ESS) or
+huge execution time.
+
+The OMC proposes a quite drastic simplification of the posterior; it
+squeezes all regions $S_i$ into a single point $\thetab_i^* \in S_i$
+attaching a weight $w_i$ proportional to the volume of $S_i$. For
+obtaining $\thetab_i^*$, a gradient based optimiser is used for
+minimising $g_i(\thetab) = d(\data, f_i(\thetab))$ and the estimation of the volume
+of $S_i$ is done using the Hessian approximation $\hess_i \approx \jac_i^{*T}\jac_i^*$. Hence,
+
+\begin{gather} \label{eq:OMC_posterior}
+    p(\thetab|\data) \propto p(\thetab) \sum_i^N w_i \delta(\thetab - \thetab_i^*)\\
+  \thetab_i^* = \text{argmin}_{\thetab} [g_i(\thetab)] \\
+  w_i \propto \frac{1}{\sqrt{det( \jac_i^{*T}\jac_i^*)}}
+\end{gather}
+
+The distribution \eqref{eq:OMC_posterior} provides automatically weighted samples and an expectation can be computed easily with the following equation,
+
+\begin{equation}
+  \label{eq:OMC_expectation}
+  E_{p(\thetab|\data)}[h(\thetab)] = \frac{\sum_i^N w_i p(\thetab_i^*)h(\thetab_i^*)}{\sum_i^N w_i p(\thetab_i^*)}
 \end{equation}
