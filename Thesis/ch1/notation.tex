@@ -1,16 +1,15 @@
-In this section, we present an overview of the symbols that will be
-used in the rest of the document. At this level, the quantities are
-introduced quite informally, through general descriptions. Most of
+In this section, we provide an overview of the symbols utilised in the rest of the document. At this level, the quantities are
+introduced quite informally; most of
 them will be defined formally in the next chapters. We try to keep the
 notation as consistent as possible throughout the document. The symbol
 $\R^N$, when used, describes that a variable belongs to the 
-$N-dimensional$ euclidean space; $N$ doesn't represent a specific
+$N-dimensional$ euclidean space; $N$ does not represent a specific
 number.
 
 \subsubsection*{Random Generator}
 \label{sec:random-generator}
 \begin{itemize}
-\item $M_r(\thetab): \R^D \rightarrow \R$: The black-box data simulator.
+\item $M_r(\thetab): \R^D \rightarrow \R$: The black-box data simulator
 \end{itemize}
 
 \subsubsection*{Parameters/Random Variables/Symbols}
@@ -19,12 +18,12 @@ number.
 \begin{itemize}
 \item $D \in \mathbb{N}$, the dimensionality of the parameter-space
 \item $\Thetab \in \R^D$, random variable representing the parameters of interest
-\item $\data \in \R^N$, the vector of observations
+\item $\data \in \R^N$, the vector with the observations
 \item $\epsilon \in R$, the threshold setting the limit on the region around $\data$
-\item $\V \in \R^N$, random variable representing the stochasticity of
-  the generator. It is also called nuisance variable, because we are not interested in infering a postrior distribution on it.
+\item $\V \in \R^N$, random variable representing the randomness of
+  the generator. It is also called nuisance variable, because we are not interested in inferring a posterior distribution on it.
 \item $\vb_i \sim \V$, a specific sample drawn from $\V$
-\item $\Y_{\thetab}$, random variable descriping the simulator $M_r(\thetab)$. 
+\item $\Y_{\thetab}$, random variable describing the simulator $M_r(\thetab)$. 
 \item $\yb_i \sim \Y_\theta$, a sample drawn from $\Y_\theta$. It can
   be obtained by executing the simulator $\yb_i \sim M_r(\thetab)$
 \end{itemize}
@@ -34,9 +33,9 @@ number.
 \label{sec:sets}
 
 \begin{itemize}
-\item $\region(\data)$, the set of points $\yb := \{\yb: d(\yb, \data) \leq \epsilon \}$
+\item $\region(\data)$, the set of $\yb$ points close to the observations, i.e.\ $\yb := \{\yb: d(\yb, \data) \leq \epsilon \}$
 \item $\regioni$, the set of points defined around $\yb_i$ i.e.\ $\regioni = \region(\yb_i)$
-\item $S_i$, the set of $\thetab$ points, such that $\{ \thetab \in \region(\yb_i=M_d(\thetab, \vb_i)) \}$
+\item $S_i$, the set of $\thetab$ parameters that generate data close to the observations using the i-th deterministic generator, i.e.\ $\{ \thetab: M_d(\thetab, \vb_i) \in \region(\data) \}$
 \end{itemize}
     
 \subsubsection*{Generic Functions}
@@ -44,7 +43,7 @@ number.
 
 \begin{itemize}
 \item $p(\cdot)$, any valid pdf
-\item $p(\cdot | \cdot)$, any valid conditional distribution.
+\item $p(\cdot | \cdot)$, any valid conditional distribution
 \item $p(\thetab)$, the prior distribution on the parameters
 \item $p(\vb)$, the prior distribution on the nuisance variables
 \item $p(\thetab|\data)$, the posterior distribution
@@ -59,7 +58,7 @@ number.
 
 \begin{itemize}
 \item $M_d(\thetab, \vb): \R^D \rightarrow \R$, the deterministic
-  generator; all stochastic variables that are part of the data generation process are represented by the \textbf{parameter} $\vb$
+  generator; all stochastic variables that are part of the data generation process are represented by the parameter $\vb$
 \item $f_i(\thetab) = M_d(\thetab, \vb_i)$, deterministic generator associated with sample $\vb_i \sim p(\vb)$
 \item $g_i(\thetab) = d(f_i(\thetab), \data)$, distance of the generated data $f_i(\thetab)$ from the observations
 \item $T(\mathbf{x}): \mathbb{R}^{D_1} \rightarrow \mathbb{R}^{D_2}$

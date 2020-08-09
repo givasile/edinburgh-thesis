@@ -1,16 +1,15 @@
-The simplifications introduced by OMC, although quite usefull from a
-computational point of view, they suffer from some major failure modes:
+The simplifications introduced by OMC, although quite useful from a
+computational point-of-view, they suffer from some significant failure modes:
 
 \begin{itemize}
-\item The whole set of acceptable $S_i$ for each nuisance variable
-  gets shrinked to a single point$\thetab_i^*$; this can add
+\item The whole acceptable region $S_i$, for each nuisance variable,
+  shrinks to a single point $\thetab_i^*$; this simplification may add
   significant error when then the area $S_i$ is relatively big.
-\item The weight $w_i$ is computed using only \textbf{local}
-  information, i.e.\ the curvature of $g_i$ at the point
-  $\theta_i^*$. This approach can introduce significant error when
-  $g_i$ is almost flat at $\theta_i^*$, leading to a
+\item The weight $w_i$ is computed using information from $\thetab_i^*$, i.e.\ the curvature of $g_i$ at the point
+  $\thetab_i^*$. This approach can introduce significant error when
+  $g_i$ is almost flat at $\thetab_i^*$, leading to a
   $\text{det}(\jac_i^{*T}\jac_i^*) \rightarrow 0 \Rightarrow w_i
-  \rightarrow \infty$, dominating the posterior.
+  \rightarrow \infty$, thus dominating the posterior.
 \item There is no way to solve the optimisation problem
   $\thetab_i^* = \text{argmin}_{\thetab} \: [g_i(\thetab)]$ when $g_i$
   is not differentiable.
@@ -21,10 +20,9 @@ computational point of view, they suffer from some major failure modes:
 
 The ROMC approach resolves the aforementioned issues. Instead of
 collapsing the acceptance regions into single points, it tries to
-approximate them with a bounding box and then define a uniform
-distribution on them.\footnote{The description on how to estimate the
-  Bounding Box is given in the following chapters.}. This distribution
-serves as a proposal distribution for importance sampling. If we
+approximate them with a bounding box and then defines a uniform
+distribution over it.\footnote{The description on how to estimate the
+  bounding box is provided in the following chapters.}, which serves as the proposal distribution for importance sampling. If we
 define as $q_i$, the uniform distribution defined on the $i-th$
 bounding box, weighted sampling is performed as:
 
@@ -46,7 +44,7 @@ Having defined the procedure for obtaining weighted samples, any expectation $E_
 
 In this section we will describe mathematically the steps needed for
 computing the proposal distributions $q_i$. There will be also
-presented a Bayesian Optimisation alternative when gradients are not
+presented a Bayesian optimisation alternative when gradients are not
 available.
 
 \subsubsection*{Define and solve deterministic optimisation problems}
@@ -72,7 +70,7 @@ problem can be treated as unconstrained, accepting the optimal point
 $\thetab_i^* = \text{argmin}_{\thetab} g_i(\thetab)$ only if
 $g_i(\thetab_i^*) < \epsilon$.
 
-\subsubsection*{Gradient-Based Approach}
+\subsubsection*{Gradient-based approach}
 \label{subsubsec:GB_approach}
 
 The nature of the generative model $M_r(\thetab)$, specifies the
@@ -80,13 +78,13 @@ properties of the objective function $g_i$. If $g_i$ is continuous
 with smooth gradients $\nabla_{\thetab} g_i$ any gradient-based
 iterative algorithm can be used for solving~\ref{eq:optProb}. The
 gradients $\nabla_{\thetab} g_i$ can be either provided in closed form
-or approximated by finite differences.
+or be approximated by finite differences.
 
-\subsubsection*{Bayesian Optimisation Approach}
+\subsubsection*{Bayesian optimisation approach}
 \label{subsubsec:GP_approach}
 
 In cases where the gradients are not available, the Bayesian
-Optimisation scheme provides an alternative
+optimisation scheme provides an alternative
 choice~\autocite{Shahriari2016}. With this approach, apart from
 obtaining an optimal $\thetab_i^* $, a surrogate model $\hat{d}_i$ of
 the distance $g_i$ is fitted; this approximate model can be used in
@@ -95,11 +93,11 @@ efficient. Specifically, in the construction of the proposal region
 and in
 equations~\eqref{eq:approx_posterior},~\eqref{eq:sampling},~\eqref{eq:expectation}
 it could replace $g_i$ in the evaluation of the indicator
-function~\ref{eq:indicator}, providing a major speed-up.
+function, providing a major speed-up.
 
 \subsubsection*{Construction of the proposal area $q_i$}
 
-After obtaining $\thetab_i^*$ such that $g_i(\thetab_i^*) < \epsilon$,
+After obtaining a $\thetab_i^*$ such that $g_i(\thetab_i^*) < \epsilon$,
 we need to construct a bounding box around it. The bounding box must
 contain the acceptance region around $\thetab_i^*$, i.e.\
 $\{ \thetab : g_i(\thetab) < \epsilon$ and
@@ -107,19 +105,17 @@ $d(\thetab, \thetab_i^*) < M \}$. The second condition
 $d(\thetab, \thetab_i^*) < M$ is meant to describe that if
 $S_i := \{ \thetab : g_i(\thetab) < \epsilon \} $ contains a number of
 disjoint sets of $\thetab$ that respect $g_i(\thetab) < \epsilon$, we
-want our bounding box to fit the one that contains $\thetab_i^*$. We
-seek for a bounding box to be as tight as possible to the local
-acceptance region (enlarging the bounding box dicreases the acceptance
-rate) but large enough for not discarding accepted areas.
+want our bounding box to fit only the one that contains $\thetab_i^*$. We
+seek for a bounding box that is as tight as possible to the local
+acceptance region (enlarging the bounding box without a reason decreases the acceptance
+rate) but large enough for not discarding accepted areas. 
 
 In contrast with the OMC approach, we construct the bounding box by
-querying the indication function along the search directions. The
+obtaining search directions and querying the indicator function as we move on them. The
 search directions $\mathbf{v}_d$ are computed as the eigenvectors of
 the curvature at $\thetab_i^*$ and a line-search method is used to
 obtain the limit point where
 $g_i(\thetab_i^* + \kappa \vb_d) \geq
-\epsilon$. Algorithm~\ref{alg:region_construction} describes
-analytically the method. After the limits are obtained along all
-search directions, we define the uniform distribution $q_i$ on the
-bounding box. This is the proposal distribution of the importance
-sampling explained in \eqref{eq:sampling}.
+\epsilon$\footnote{$-\kappa$ is used as well for the opposite direction along the search line}. The Algorithm~\ref{alg:region_construction} describes the method in-depth. After the limits are obtained along all
+search directions, we define bounding box and the uniform distribution $q_i$. This is the proposal distribution used for the importance
+sampling as explained in \eqref{eq:sampling}.
