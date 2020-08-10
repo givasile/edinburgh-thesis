@@ -145,6 +145,7 @@ dmypy.json
 *blx.bib
 *.bbl
 *.tex~
+*.pytxcode
 
 # ommited dirs
 latex_files/*

@@ -1,0 +1,11 @@
+The training part has 4 functionalities; $romc.solve\_problems()$, $romc.estimate\_regions()$, $romc.fit\_posterior$.
+
+\subsubsection*{Solve Problems}
+
+\begin{lstlisting}[language=Python]
+  romc.solve_problems(n1, seed=None, use\_bo=False)
+\end{lstlisting}
+
+\noindent
+The functionality \lstinline{romc.solve_problems(n1, seed=None, use_bo=False)} is responsible for (a) drawing the nuisance variables, (b) define the optimisation problems and (c) solve them using either a gradient-based optimiser or Bayesian optimisation.
+
