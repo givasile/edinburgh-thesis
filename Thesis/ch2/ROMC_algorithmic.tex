@@ -1,10 +1,12 @@
 In this section, we will provide the algorithmic description of the
-ROMC method; how to solve the optimisation problems
-using either the gradient-based approach or the Bayesian optimisation
-alternative and the construction of the bounding box. Afterwards,
-we will discuss the advantages and disadvantages of each choice in terms of accuracy and efficiency. 
+ROMC method; how to solve the optimisation problems using either the
+gradient-based approach or the Bayesian optimisation alternative and
+the construction of the bounding box. Afterwards, we will discuss the
+advantages and disadvantages of each choice in terms of accuracy and
+efficiency.
 
-At a high-level, the ROMC method can be split into the training and the inference part.
+At a high-level, the ROMC method can be split into the training and
+the inference part.
 
 \subsubsection*{Training part}
 \noindent
@@ -19,14 +21,17 @@ $\thetab_i^*$ much faster. Providing $\nabla_{\thetab} g_i$ in
 closed-form provides an upgrade in both accuracy and efficiency; If
 closed-form description is not available, approximate gradients with
 finite-differences requires two evaluations of $g_i$ for
-\textbf{every} parameter $\thetab_d$, which works adequately well for low-dimensional problems. When gradients are not
-available or $g_i$ is not differentiable, the Bayesian
-optimisation paradigm exists as an alternative solution. In this scenario, the training part becomes slower due to fitting of the surrogate model and the
-blind optimisation steps. Nevertheless, the subsequent task of computing the proposal region $q_i$ becomes
-faster since $\hat{d}_i$ can be used instead of $g_i$; hence we avoid to
-run the simulator $M_d(\thetab, \vb_i)$ for each query. The
-algorithms~\ref{alg:training_GB} and~\ref{alg:training_GP} present
-the above procedure.
+\textbf{every} parameter $\thetab_d$, which works adequately well for
+low-dimensional problems. When gradients are not available or $g_i$ is
+not differentiable, the Bayesian optimisation paradigm exists as an
+alternative solution. In this scenario, the training part becomes
+slower due to fitting of the surrogate model and the blind
+optimisation steps. Nevertheless, the subsequent task of computing the
+proposal region $q_i$ becomes faster since $\hat{d}_i$ can be used
+instead of $g_i$; hence we avoid to run the simulator
+$M_d(\thetab, \vb_i)$ for each query. The
+algorithms~\ref{alg:training_GB} and~\ref{alg:training_GP} present the
+above procedure.
 
 \subsubsection*{Inference Part}
 Performing the inference includes one or more of the following three
@@ -41,7 +46,8 @@ equation~\ref{eq:expectation}, so we will not discuss it separately.
 Evaluating the unnormalised posterior requires solely the
 deterministic functions $g_i$ and the prior distribution $p(\thetab)$;
 there is no need for solving the optimisation problems and building
-the proposal regions. The evaluation requires iterating over all $g_i$ and evaluating the distance from the observed data. In contrast, using
+the proposal regions. The evaluation requires iterating over all $g_i$
+and evaluating the distance from the observed data. In contrast, using
 the GP approach, the optimisation part should be performed first for
 fitting the surrogate models $\hat{d}_i(\thetab)$ and evaluate the
 indicator function on them. This provides an important speed-up,
@@ -51,15 +57,17 @@ expensive. % The evaluation of the posterior is presented analytically
 
 \noindent
 Sampling is performed by getting $n_2$ samples from each proposal
-distribution $q_i$. For each sample $\thetab_{ij}$, the indicator function
-is evaluated $\indicator{\regioni(\data)}(\thetab_{ij})$ for checking
-if it lies inside the acceptance region. If so the corresponding
-weight is computed as in \eqref{eq:sampling}. As before, if a surrogate
-model $\hat{d}$ is available, it can be utilised for evaluating
-the indicator function. At the sampling task, the computational benefit of using the surrogate model is more valuable compared to the evaluation of the posterior, because the indicator function must be evaluated for a
-total of $n_1 \times n_2$ points. The sampling algorithms are
-presented step-by-step in algorithms~\ref{alg:sampling_GB}
-and~\ref{alg:sampling_GP}.
+distribution $q_i$. For each sample $\thetab_{ij}$, the indicator
+function is evaluated $\indicator{\regioni(\data)}(\thetab_{ij})$ for
+checking if it lies inside the acceptance region. If so the
+corresponding weight is computed as in \eqref{eq:sampling}. As before,
+if a surrogate model $\hat{d}$ is available, it can be utilised for
+evaluating the indicator function. At the sampling task, the
+computational benefit of using the surrogate model is more valuable
+compared to the evaluation of the posterior, because the indicator
+function must be evaluated for a total of $n_1 \times n_2$ points. The
+sampling algorithms are presented step-by-step in
+algorithms~\ref{alg:sampling_GB} and~\ref{alg:sampling_GP}.
 
 \noindent
 In summary, we can state that the choice of using a Bayesian

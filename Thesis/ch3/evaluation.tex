@@ -1,0 +1,22 @@
+The ROMC implementation provides two functions for evaluating the inference results,
+
+\begin{itemize}
+\item \mintinline{python}{romc.compute_divergence(gt_posterior, step=0.1, distance="Jensen-Shannon")}
+\item \mintinline{python}{romc.compute_ess()}
+\end{itemize}
+
+The \mintinline{python}{romc.compute_divergence(gt_posterior, step=0.1, distance="Jensen-Shannon")} 
+
+\begin{minted}
+[framesep=2mm,
+baselinestretch=1.2,
+fontsize=\small,
+]
+{python}
+res = romc.compute_divergence(wrapper, distance="Jensen-Shannon")                                 
+print("Jensen-Shannon divergence: %.3f" % res)
+# Jensen-Shannon divergence: 0.025
+
+print("Nof Samples: %d, ESS: %.3f" % (len(romc.result.weights), romc.compute_ess()))
+# Nof Samples: 19950, ESS: 16694.816
+\end{minted}

@@ -20,6 +20,13 @@ For illustrating the implemented functionalities, we desing the following expamp
 \noindent
 where $u \sim \mathcal{N}(0,1)$. There is only one observation $y_0 = 0$.
 
+\begin{figure}[h]
+    \begin{center}
+      \includegraphics[width=0.5\textwidth]{./Thesis/images/chapter3/example_gt.png}
+    \end{center}
+  \caption{Ground-truth posterior distribution for our simple 1D example}
+  \label{fig:example_gt}
+\end{figure}
 
 The corresponding \textit{elfi} code for building the specific generative model is the following.
 
@@ -29,8 +36,9 @@ baselinestretch=1.2,
 fontsize=\small,
 ]
 {python}
-  import scipy.stats as ss
   import elfi
+  import scipy.stats as ss
+  import numpy as np
   
   def simulator(t1, batch_size=1,random_state=None):
       if t1 < -0.5:
@@ -45,7 +53,7 @@ fontsize=\small,
       
   # Elfi graph    
   t1 = elfi.Prior('uniform', -2.5, 5)
-  sim = elfi.simulator(simulator, t1, observed=y)
+  sim = elfi.Simulator(simulator, t1, observed=y)
   d = elfi.Distance('euclidean', sim)
 
   # Define ROMC inference method
