@@ -7,16 +7,39 @@ The ROMC implementation provides two functions for evaluating the inference resu
 
 The \mintinline{python}{romc.compute_divergence(gt_posterior, step=0.1, distance="Jensen-Shannon")} 
 
-\begin{minted}
-[framesep=2mm,
-baselinestretch=1.2,
-fontsize=\small,
-]
-{python}
+\subsubsection*{Function (i): \mintinline{python}{romc.compute_divergence(theta)}}
+
+This function computes the divergence between the ROMC approximation
+and the ground truth posterior. Since the compuation of the divergence
+is performed using the Riemann approximation in can only work in low
+dimensional parametric spaces; it is suggested to be used for up to a
+$3D$ parametric space.As mentioned in the beginning of this chapter,
+in a real-case scenario it is not expected the ground-truth posterior
+to be available; this is the whole meaning of performing the
+inference. However, there are two scenarios where this functionality
+can be useful; (a) when the likelihood is tractable and we want to
+check the accuracy of the ROMC method (as in the running-example) (b)
+when we want to compute the divergence between the ROMC's posterior
+approximation and another approximation e.g.\ ABC Rejection. The
+argument \pinline{step} defines step used in the Riemann approximation
+and the argument \pinline{distance} can take either the
+\pinline{Jensen-Shannon} or the \pinline{KL-divergence} value, for
+computing the appropriate distance.
+
+\subsubsection*{Function (ii): \mintinline{python}{romc.compute_ess()}}
+
+This function compute the Effective Sample Size (ESS) using the following expression,
+
+\begin{equation} \label{eq:ESS}
+  ESS = \frac{(\sum_i w_i)^2}{\sum_i w_i^2}
+\end{equation}
+
+
+\begin{pythoncode}
 res = romc.compute_divergence(wrapper, distance="Jensen-Shannon")                                 
 print("Jensen-Shannon divergence: %.3f" % res)
 # Jensen-Shannon divergence: 0.025
 
 print("Nof Samples: %d, ESS: %.3f" % (len(romc.result.weights), romc.compute_ess()))
 # Nof Samples: 19950, ESS: 16694.816
-\end{minted}
+\end{pythoncode}

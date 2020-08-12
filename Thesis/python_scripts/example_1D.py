@@ -198,7 +198,7 @@ romc = elfi.ROMC(dist, left_lim=left_lim, right_lim=right_lim)
 
 ############# TRAINING ###################
 n1 = 500
-seed = 23
+seed = 21
 romc.solve_problems(n1=n1, seed=seed)
 romc.theta_hist(bins=100,
                 savefig= os.path.join(prepath,"Thesis/images/chapter3/example_theta_dist.png"))

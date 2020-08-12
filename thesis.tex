@@ -8,6 +8,10 @@
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage{multirow}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=True, urlcolor=cyan}
+
 \usepackage[backend=bibtex, citestyle=authoryear, bibstyle=alphabetic]{biblatex}
 \addbibresource{literature.bib}
 
@@ -25,12 +29,19 @@
 \numberwithin{Algorithm}{section}
 \numberwithin{equation}{section}
 
-% Python style for highlighting
+% Python style code
 \usepackage[cache=false]{minted}
 \usemintedstyle{tango}
 \usepackage{listings}
 \usepackage{xcolor}
 \newcommand{\pinline}[1]{\mintinline{python}{#1}}
+\newminted{python}{framesep=2mm,
+baselinestretch=1.2,
+fontsize=\small,
+frame=single
+}
+
+
 
 % Define custom commands
 \newcommand{\bigO}{\mathcal{O}}
@@ -225,11 +236,12 @@ This dissertation is mainly focused on the implementation of the Robust Optimisa
 \input{Thesis/ch2/simBasedModels}
 
 \subsection{Robust Optimisation Monte Carlo (ROMC) approach}
-\label{sec:ROMC}
+\label{subsec:ROMC}
 % \input{ch2/ROMC}
 \input{Thesis/ch2/ROMC}
 
 \subsection{Algorithmic description of ROMC}
+\label{subsec:romc-algorithmic}
 % \input{ch2/ROMC_algorithmic}
 \input{Thesis/ch2/ROMC_algorithmic}
 
@@ -241,14 +253,32 @@ This dissertation is mainly focused on the implementation of the Robust Optimisa
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \clearpage
 \section{Implementation}
-In this chapter, we will analyse the details of the implementation of the ROMC inference method to the ELFI package. Sections \ref{subsec:general_design}, \ref{subsec:training}, \ref{subsec:inference}, \ref{subsec:utilities} provide an overview of the functionalities provided by our implementation. These three chapters analyse the implementation steps for training, performing the inference and evaluate the method from the point of view of the user. For illustration purposes, we will use a simple running example throughout the steps. In contrast, in the final section \ref{subsec:developers} we will delve into the internal details of the implementation in order to provide the information pieces for a possible extension of the method using user-defined methods as the internal building blocks.
+In this chapter, we will exhibit the implementation of the ROMC
+inference method at the ELFI package. The presentation is split into
+two logical blocks; In
+Sections~\ref{subsec:general_design},~\ref{subsec:training},~\ref{subsec:inference},
+\ref{subsec:evaluation} we present the functionalities provided by our
+implementation, from the \textbf{user's point-of-view}. These sections
+demonstrate how a practitioner could use our ROMC implementation for
+performing the inference in a real-case scenario. For providing a
+practical overview of the implementation, we set-up a simple running
+example and illustrate the functionalities on top of it. In contrast,
+in the final Section~\ref{subsec:developers} we delve into the
+internals of the code, presenting all the tiny details of the
+implementation. This Section mainly refers to a \textbf{developer or a
+  researcher} who would like to use ROMC as a meta-algorithm and
+experiment with novel approaches for solving specific tasks. We have
+designed our implementation preserving extensibility and
+customisation; hence, a researcher may intervene in parts of the
+method without too much effort. This Section can serve as a driver for
+achieving so.
 
 
 \subsection{General Design}
 \label{subsec:general_design}
 % \input{ch3/generalDesign}
 \input{Thesis/ch3/generalDesign}
-llllllllllllllllllllllllllllllllllll
+
 \subsection{Training}
 \label{subsec:training}
 \input{Thesis/ch3/training}
@@ -263,7 +293,7 @@ llllllllllllllllllllllllllllllllllll
 
 \subsection{Implementation details for developers}
 \label{subsec:developers}
-
+la
 \clearpage
 \section{Experiments}
 

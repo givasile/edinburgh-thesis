@@ -1,71 +1,110 @@
-The training part provides 4 functionalities;
+The training part contains the 6 following functionalities:
 
 \begin{itemize}
 \item \mintinline{python}{romc.solve_problems(n1, seed=None, use_bo=False)}
-\item \mintinline{python}{romc.estimate_regions(epsilon)}
+\item \mintinline{python}{romc.estimate_regions(eps)}
 \item \mintinline{python}{romc.theta_hist(**kwargs)}
+\item \mintinline{python}{romc.visualize_region(i)}
+\item \mintinline{python}{romc.compute_eps(quantile)}
 \item \mintinline{python}{romc.fit_posterior(n1, eps, quantile=None, use_bo=False, seed=None)}
 \end{itemize}
 
 
-\subsubsection*{API call (i): \pinline{romc.solve_problems(n1, seed=None, use_bo=False)}}
+\subsubsection*{Function (i): \pinline{romc.solve_problems(n1,
+    seed=None, use_bo=False)}}
 
 \noindent
-The functionality is responsible for (a) drawing the nuisance
-variables, (b) define the optimisation problems and (c) solve them
-using either a gradient-based optimiser or Bayesian optimisation. The
-aforementioned tasks are done in a sequential fashion, as show in
-figure \ref{fig:elfi-model}. Passing an integer number as seed, makes
-the random generation of the initial points deterministic, making the
-whole process reproducible.
+This routine is responsible for (a) drawing the nuisance variables,
+(b) define the optimisation problems and (c) solve them using either a
+gradient-based optimiser or Bayesian optimisation. The aforementioned
+tasks are done in a sequential fashion, as show in
+figure~\ref{fig:elfi-model}. The defininition of the optimisation
+problems is performed by drawing $n_1$ integer numbers from a discrete
+uniform distribution $u_i \sim \mathcal{U}\{1, 2^{32}-1\}$. Each
+integer $u_i$ is the seed used in ELFI's random simulator. Hence from
+a programmatistic point-of-view drawing the state of all random
+variables $\vb_i$ as described in the previous chapter, traces back to
+just setting the seed that initialises the state of the pseudo-random
+generator, before asking a sample from the simulator.
 
-\subsubsection*{API call (ii): \pinline{romc.theta_hist(**kwargs)}}
+Finally, passing an integer number as the argument \pinline{seed}
+absorbs all the randomness of the optimistation part (e.g.\ drawing
+initial points for the optimisation procedure), making the whole
+process reproducible.
 
-This functionality can serve as an intermediate step of manual
-inspection for choosing the threshold $\epsilon$. It plots a histogram
-of the distances at the optimal point
-$g_i(\thetab_i^* : \{i = 1, 2, ..., n_1\}$ hepling deciding a sensible
-threshold. The function accepts all keyword arguments and forwards
-them to the underlying \pinline{matplotlib.hist()} function; in this
-way the user may customize some properties of the histogram, such as
-the number of bins or the range of values.
+Setting the argument \pinline{use_bo=True}, chooses the Bayesian
+Optimisation scheme for obtaining $\theta_i^*$. In this case the
+function $g_i(\thetab) = d(M_d(\thetab,\vb=\vb_i))$ which by default
+is evaluated using the simulator, is replaced by a Gaussian Proccess
+surrogate model $\hat{d}$, which is used in all next steps.
 
+\subsubsection*{Function (ii): \pinline{romc.theta_hist(**kwargs)}}
 
-\subsubsection*{API call (iii): \pinline{romc.estimate_regions(epsilon)}}
+This function can serve as an intermediate step of manual inspection,
+for helping the user choose which threshold $\epsilon$ to use. It
+plots a histogram of the distances at the optimal point
+$g_i(\thetab_i^*) : \{i = 1, 2, \ldots, n_1\}$ or
+$d_i^*$ in case \pinline{use_bo=True}. The function accepts all
+keyword arguments and forwards them to the underlying
+\pinline{matplotlib.hist()} function; in this way the user may
+customize some properties of the histogram, such as the number of bins
+or the range of values.
 
-This functionality constructs the bounding boxes around the optimal
-points $\thetab_i^* : \{ i = 1, 2, ..., n_1 \}$ following the
-Algorithm \ref{alg:region_construction}. The hessian matrix is
-approximated based on the jacobian $\hess_i = \jac_i^T \jac_i$ and the
+\subsubsection*{Function (iii): \pinline{romc.compute_eps(quantile)}}
+
+This function return the appropriate distance value $d_{i=\kappa}^*$
+where $\kappa = \lfloor \frac{quantile}{n} \rfloor$ from the
+collection $\{ d_i^* \} \forall i = \{1, \ldots, n\}$ where $n$ is the
+number of accepted solutions. It can be used to automate the selection
+of the threshold $\epsilon$, e.g.\
+\pinline{eps=romc.compute_eps(quantile=0.9)}.
+
+\subsubsection*{Function (iv): \pinline{romc.estimate_regions(eps)}}
+
+This function constructs the bounding boxes around the optimal points
+$\thetab_i^* : i = 1, 2, \ldots, n_1$ following the
+Algorithm~\ref{alg:region_construction}. The Hessian matrix is
+approximated based on the Jacobian $\hess_i = \jac_i^T \jac_i$. The
 eigenvectores are computed using the function
-\pinline{numpy.linalg.eig()} that use the \pinline{_geev LAPACK} under
-the hood. A check is performed so that the matrix $\hess_i$ is not
-singular; if this is the case the orthonormal basis is returned as
-eigenvectors. Afterwards, the limits are obtained by repeteadly
-querying the distance function ($g_i(\thetab)$ or $\hat{d}(\thetab)$
-depending on the optimisation scheme).
+\pinline{numpy.linalg.eig()} that calls, under the hood, the
+\pinline{_geev LAPACK}. A check is performed so that the matrix
+$\hess_i$ is not singular; if this is the case, the eigenvectors are
+set to be the vectors of the orthonormal basis. Afterwards, the limits
+are obtained by repeteadly querying the distance function
+($g_i(\thetab)$ or $\hat{d}(\thetab)$) along the search directions. In
+section \ref{subsec:developers}, we provide some details regarding the
+way the bounding box is defined as a class and sampling is performed
+on it.
 
 
-\subsubsection*{API call (iv): \pinline{romc.fit_posterior(n1, eps, quantile=None, use_bo=False, seed=None)}}
+\subsubsection*{Function (v): \pinline{romc.fit_posterior(n1, eps,
+    quantile=None, use_bo=False, seed=None)}}
 
-This functionality merges the three above into a single step. If the user doesn't want to manually inspect the histogram of the distances before deciding where to set the threshold $\epsilon$, he may call \pinline{romc.fit_posterior()} and the whole training process will be done end-to-end. There are two alternatives for setting the threshold $\epsilon$; the first is to set to a specific value blindly and the second is to set at as a specific quantile of the histogram of distances. In the second scenario the \pinline{quantile} argument must be set to a floating number in the range $[0,1]$ and \pinline{eps='auto'}.
+This function merges all steps for constructing the bounding box into
+a single command. If the user doesn't want to manually inspect the
+histogram of the distances before deciding where to set the threshold
+$\epsilon$, he may call \pinline{romc.fit_posterior()} and the whole
+training part will be done end-to-end. There are two alternatives for
+setting the threshold $\epsilon$; the first is to set to a specific
+value blindly and the second is to set at as a specific quantile of
+the histogram of distances. In the second scenario the
+\pinline{quantile} argument must be set to a floating number in the
+range $[0,1]$ and \pinline{eps='auto'}.
 
-\subsubsection*{\pinline{romc.visualize_region(i)}}
+\subsubsection*{Function (vi): \pinline{romc.visualize_region(i)}}
   
-It can be used as an inspection utility for cases where the parametric space is $1D$ or $2D$, so that the visualization is feasible. The argument $\pinline{i}$ is the index of the corresponding optimization problem i.e.\ $i<n_1$.
+It can be used as an inspection utility for cases where the parametric
+space is up to two dimensional. The argument $\pinline{i}$ is the
+index of the corresponding optimization problem i.e.\ $i<n_1$.
 
 \subsubsection*{Example}
 
-Here we will illustrate the aforementioned functionalities using the simple 1D example we set up in the previous chapter. The code snippet that implements those steps using a gradient-based approach, is the following;
+Here we will illustrate the aforementioned functionalities using the
+simple 1D example we set up in the previous chapter. The following
+code snippet performs the training part at ELFI.
 
-\begin{minted}
-[framesep=2mm,
-baselinestretch=1.2,
-fontsize=\small,
-]
-{python}
-  '''Training part snippet'''
-  n1 = 100
+\begin{pythoncode}
+  n1 = 500
   seed = 21
   eps = .75
   use_bo = False # True, if using Bayesian optimisation
@@ -78,10 +117,15 @@ fontsize=\small,
 
   # Equivalent one-line command
   # romc.fit_posterior(n1=n1, eps=eps, use_bo=use_bo, seed=seed)
-\end{minted}
+\end{pythoncode}
 
-
-We observe that all optimal points produce zero distance, thus the histogram has mass only at zero. For observing the curve around the optimal point and the acceptance region of the first optimisation problem. We observe the switching to the alternative Bayesian optimisation scheme needs nothing more the setting the argument \pinline{use_bo=True}; all the following command remain unchanged. If the practitioner doesn't want to observe the histogram of the distances for setting the threshold $\epsilon$, the command \pinline{romc.fit_posterior()} is a single-line equivalent.
+As stated before, switching to the Bayesian optimisation scheme needs
+nothing more the setting the argument \pinline{use_bo=True}; all the
+following command remain unchanged. In figure
+\ref{fig:example_training} we illustrate the distribution of the
+distances obtained and the acceptance area of the first optimisation
+problem. We observe that most optimal points produce almost zero
+distance.
 
 \begin{figure}[h]
     \begin{center}

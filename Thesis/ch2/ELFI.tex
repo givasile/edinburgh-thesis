@@ -1,4 +1,4 @@
-!! NOT fully written, I have to add some more info !!
+!!NOT fully written, I have to add some more info!!
 
 The Engine for Likelihood-Free Inference (ELFI) \cite{1708.00707} is a Python software library dedicated to likelihood-free inference (LFI). ELFI models in a convenient manner all the fundamental components of a Probabilistic Model such as priors, simulators, summaries and distances. Furthermore, in the ELFI there are implemented a wide range of likelihood-free inference methods.
 
@@ -9,7 +9,7 @@ ELFI models the Probabilistic Model as Directed Acyclic Graph (DAG);
 it implements this functionality based on the package NetworkX, which
 is designed for creating general purpose graphs. Although not
 restricted to that, in most cases the structure of a likelihood-free
-model follows the pattern presented in figure \ref{fig:elfi-model};
+model follows the pattern presented in figure~\ref{fig:elfi-model};
 there are edges that connect the \textit{prior} distributions to the
 simulator, the simulator is connected to the summary statistics which
 are connected to the distance, which is the output node. Samples can
@@ -41,7 +41,7 @@ hyper-parameters of the method and (b) they must provide a basic
 inference functionality, e.g. $<$\textit{method}$>$\textit{.sample()},
 which returns a predefined \textit{elfi.Result} object containing the
 obtained samples along with some other useful functionalities
-(e.g. plotting the marginal posteriors).
+(e.g.\ plotting the marginal posteriors).
 
 A good collection of likelihood-free inference methods is implemented
 so far, such as the \textit{ABC Rejection Sampler} and
