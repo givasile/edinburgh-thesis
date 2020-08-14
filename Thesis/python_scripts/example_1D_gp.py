@@ -173,7 +173,7 @@ y = np.squeeze(np.array([gt_posterior_pdf(th) for th in theta]))
 plt.plot(theta, y, 'r-.', label=r'Posterior: $p(\theta|y_0)$')
 
 plt.legend()
-plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_gt.png"), bbox_inches='tight')
+plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_gp_gt.png"), bbox_inches='tight')
 plt.show(block=False)
 
 
@@ -198,20 +198,20 @@ dim = data.shape[-1]
 romc = elfi.ROMC(dist, bounds)
 
 ############# TRAINING ###################
-n1 = 500
+n1 = 10
 seed = 21
-romc.solve_problems(n1=n1, seed=seed, use_bo=False, optimizer_args=None)
+romc.solve_problems(n1=n1, seed=seed, use_bo=True)
 romc.distance_hist(bins=100,
-                savefig= os.path.join(prepath,"Thesis/images/chapter3/example_theta_dist.png"))
+                savefig= os.path.join(prepath,"Thesis/images/chapter3/example_gp_theta_dist.png"))
 eps = .75
-romc.estimate_regions(eps=eps, use_surrogate=False, region_args=None)
+romc.estimate_regions(eps=eps)
 romc.visualize_region(1,
-                      savefig=os.path.join(prepath,"Thesis/images/chapter3/example_region.png"))
+                      savefig=os.path.join(prepath,"Thesis/images/chapter3/example_gp_region.png"))
 
 ############# INFERENCE ##################
 n2 = 10
 tmp = romc.sample(n2=n2, seed=seed)
-romc.visualize_region(i=1,savefig=os.path.join(prepath,"Thesis/images/chapter3/example_region_samples.png"))
+romc.visualize_region(i=1,savefig=os.path.join(prepath,"Thesis/images/chapter3/example_gp_region_samples.png"))
 
 romc.result.summary()
 
@@ -232,7 +232,7 @@ plt.plot(theta, y, 'r-.', label="True Posterior")
 plt.xlabel(r'$\theta$')
 plt.ylabel(r'density')
 plt.ylim([0, .6])
-plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_marginal.png"), bbox_inches='tight')
+plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_gp_marginal.png"), bbox_inches='tight')
 plt.show(block=False)
 
 
@@ -270,7 +270,7 @@ plt.plot(theta, y, 'r-.', label="True Posterior")
 
 
 plt.legend()
-plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_posterior.png"), bbox_inches='tight')
+plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_gp_posterior.png"), bbox_inches='tight')
 plt.show(block=False)
 
 
