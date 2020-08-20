@@ -1,0 +1,135 @@
+import logging
+import matplotlib.pyplot as plt
+from elfi.methods.parameter_inference import ROMC
+from elfi.examples import ma2
+import elfi
+import numpy as np
+import scipy.stats
+import matplotlib
+matplotlib.rcParams['text.usetex'] = True
+
+logging.basicConfig(level=logging.INFO)
+
+# Set seed for reproducibility
+seed = 21
+np.random.seed(seed)
+model = ma2.get_model(seed_obs=seed)
+
+# plot prior samples
+x = model.generate(1000)
+plt.plot(x["t1"], x["t2"], "bo")
+plt.show()
+
+
+n1 = 1000
+bounds = [(-2, 2), (-1.25, 1.25)]
+eps = .01
+
+romc = ROMC(model, bounds=bounds, discrepancy_name="d")
+romc.solve_problems(n1=n1, seed=seed)
+
+romc.distance_hist(bins=400)
+
+romc.estimate_regions(eps=eps)
+
+
+# In[60]:
+
+
+romc.visualize_region(5)
+
+
+# In[61]:
+
+
+romc.eval_unnorm_posterior(np.array([[0.6, 0.2]]))
+
+
+# In[62]:
+
+
+# def plot_romc_posterior(posterior, nof_points):
+#     plt.figure()
+#     th1 = np.linspace(bounds[0][0], bounds[0][1], nof_points)
+#     th2 = np.linspace(bounds[1][0], bounds[1][1], nof_points)
+#     X, Y = np.meshgrid(th1, th2)
+
+#     x_flat = X.flatten()
+#     y_flat = Y.flatten()
+#     th = np.stack((x_flat, y_flat), -1)
+#     z_flat = posterior(th)
+#     Z = z_flat.reshape(nof_points, nof_points)
+
+#     plt.contourf(X, Y, Z, 50, cmap='viridis')
+#     plt.title('ROMC Unnorm Posterior PDF')
+#     plt.xlabel("th_1")
+#     plt.ylabel("th_2")
+#     plt.colorbar()
+#     plt.show(block=False)
+
+# plot_romc_posterior(romc.eval_unnorm_posterior, nof_points=20)
+
+
+# In[63]:
+
+
+n2 = 20
+tmp = romc.sample(n2=n2)
+
+
+# In[64]:
+
+
+# As before but now it plots the samples as well
+romc.visualize_region(7)
+
+
+# # ROMC - check the obtained samples
+
+# In[65]:
+
+
+romc.result.plot_marginals(
+    weights=romc.result.weights, bins=70, range=(-.4, 1))
+plt.show()
+
+
+# In[66]:
+
+
+romc.result.summary()
+
+
+# In[67]:
+
+
+x = romc.result.samples_array
+weights = romc.result.weights
+np.cov(x, rowvar=False, aweights=weights)
+
+
+# # Rejection ABC - check obtained samples
+
+# In[48]:
+
+
+N = 10000
+rej = elfi.Rejection(model, discrepancy_name="d", batch_size=10000, seed=seed)
+vis = dict(xlim=[-2, 2], ylim=[-1, 1])
+get_ipython().run_line_magic('time', 'result = rej.sample(N, threshold=.1, vis=vis)')
+result.summary()
+result.plot_marginals()
+
+
+# In[49]:
+
+
+x = result.samples_array
+weights = None
+np.cov(x, rowvar=False)
+
+
+# In[ ]:
+
+
+# In[ ]:

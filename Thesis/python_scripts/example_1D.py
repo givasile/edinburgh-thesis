@@ -1,18 +1,18 @@
 """ This script generates the figures used in the implementation example.
 """
 
+import os
+import scipy.stats as ss
+import scipy.integrate as integrate
+import matplotlib.pyplot as plt
 import timeit
 import numpy as np
 import elfi
 
 import matplotlib
 matplotlib.rcParams['text.usetex'] = True
-import matplotlib.pyplot as plt
 
-import scipy.integrate as integrate
-import scipy.stats as ss
 
-import os
 # from matplotlib import rc
 # rc('font', **{'family':'sans-serif','sans-serif':['Helvetica']})
 # ## for Palatino and other serif fonts use:
@@ -56,15 +56,18 @@ class Likelihood:
         c = 0.5 - 0.5 ** 4
 
         tmp_theta = theta[theta <= -0.5]
-        samples[theta <= -0.5] = ss.norm(loc=-tmp_theta - c, scale=1).rvs(random_state=seed)
+        samples[theta <= -
+                0.5] = ss.norm(loc=-tmp_theta - c, scale=1).rvs(random_state=seed)
         theta[theta <= -0.5] = np.inf
 
         tmp_theta = theta[theta <= 0.5]
-        samples[theta <= 0.5] = ss.norm(loc=tmp_theta**4, scale=1).rvs(random_state=seed)
+        samples[theta <= 0.5] = ss.norm(
+            loc=tmp_theta**4, scale=1).rvs(random_state=seed)
         theta[theta <= 0.5] = np.inf
 
         tmp_theta = theta[theta < np.inf]
-        samples[theta < np.inf] = ss.norm(loc=tmp_theta - c, scale=1).rvs(random_state=seed)
+        samples[theta < np.inf] = ss.norm(
+            loc=tmp_theta - c, scale=1).rvs(random_state=seed)
         theta[theta < np.inf] = np.inf
 
         assert np.allclose(theta, np.inf)
@@ -90,11 +93,14 @@ class Likelihood:
             tmp_theta = np.expand_dims(tmp_theta, -1)
             scale = np.ones_like(tmp_theta)
             if mode == 1:
-                pdf_eval[theta <= lim] = np.prod(ss.norm(loc=-tmp_theta - c, scale=scale).pdf(x), 1)
+                pdf_eval[theta <= lim] = np.prod(
+                    ss.norm(loc=-tmp_theta - c, scale=scale).pdf(x), 1)
             elif mode == 2:
-                pdf_eval[theta <= lim] = np.prod(ss.norm(loc=tmp_theta**4, scale=scale).pdf(x), 1)
+                pdf_eval[theta <= lim] = np.prod(
+                    ss.norm(loc=tmp_theta**4, scale=scale).pdf(x), 1)
             elif mode == 3:
-                pdf_eval[theta <= lim] = np.prod(ss.norm(loc=tmp_theta - c, scale=scale).pdf(x), 1)
+                pdf_eval[theta <= lim] = np.prod(
+                    ss.norm(loc=tmp_theta - c, scale=scale).pdf(x), 1)
             theta[theta <= lim] = np.inf
 
         big_M = 10**7
@@ -112,13 +118,14 @@ def summary(x):
     elif x.ndim == 2:
         return np.prod(x, 1)
 
-    
+
 def create_factor(x):
     """Creates the function g(theta) = L(theta)*prior(theta).
 
     """
     lik = Likelihood()
     pr = Prior()
+
     def tmp_func(theta):
         return float(lik.pdf(x, np.array([theta])) * pr.pdf(theta))
     return tmp_func
@@ -173,7 +180,8 @@ y = np.squeeze(np.array([gt_posterior_pdf(th) for th in theta]))
 plt.plot(theta, y, 'r-.', label=r'Posterior: $p(\theta|y_0)$')
 
 plt.legend()
-plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_gt.png"), bbox_inches='tight')
+plt.savefig(os.path.join(
+    prepath, "Thesis/images/chapter3/example_gt.png"), bbox_inches='tight')
 plt.show(block=False)
 
 
@@ -186,7 +194,8 @@ def simulator(theta, dim, batch_size=10000, random_state=None):
 
 elfi.new_model("1D_example")
 elfi_prior = elfi.Prior(Prior(), name="theta")
-elfi_simulator = elfi.Simulator(simulator, elfi_prior, dim, observed=np.expand_dims(data, 0), name="simulator")
+elfi_simulator = elfi.Simulator(
+    simulator, elfi_prior, dim, observed=np.expand_dims(data, 0), name="simulator")
 dist = elfi.Distance('euclidean', elfi_simulator, name="dist")
 
 # left_lim = np.array([-2.5])
@@ -202,22 +211,25 @@ n1 = 500
 seed = 21
 romc.solve_problems(n1=n1, seed=seed, use_bo=False, optimizer_args=None)
 romc.distance_hist(bins=100,
-                savefig= os.path.join(prepath,"Thesis/images/chapter3/example_theta_dist.png"))
+                   savefig=os.path.join(prepath, "Thesis/images/chapter3/example_theta_dist.png"))
 eps = .75
 romc.estimate_regions(eps=eps, use_surrogate=False, region_args=None)
 romc.visualize_region(1,
-                      savefig=os.path.join(prepath,"Thesis/images/chapter3/example_region.png"))
+                      savefig=os.path.join(prepath, "Thesis/images/chapter3/example_region.png"))
 
 ############# INFERENCE ##################
 n2 = 10
 tmp = romc.sample(n2=n2, seed=seed)
-romc.visualize_region(i=1,savefig=os.path.join(prepath,"Thesis/images/chapter3/example_region_samples.png"))
+romc.visualize_region(i=1, savefig=os.path.join(
+    prepath, "Thesis/images/chapter3/example_region_samples.png"))
 
 romc.result.summary()
 
 # compute expectation
-print("Expected value   : %.3f" % romc.compute_expectation(h = lambda x: np.squeeze(x)))
-print("Expected variance: %.3f" % romc.compute_expectation(h =lambda x: np.squeeze(x)**2))
+print("Expected value   : %.3f" %
+      romc.compute_expectation(h=lambda x: np.squeeze(x)))
+print("Expected variance: %.3f" %
+      romc.compute_expectation(h=lambda x: np.squeeze(x)**2))
 
 
 ############# PLOT HISTOGRAM OF SAMPLES  ##################
@@ -232,7 +244,8 @@ plt.plot(theta, y, 'r-.', label="True Posterior")
 plt.xlabel(r'$\theta$')
 plt.ylabel(r'density')
 plt.ylim([0, .6])
-plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_marginal.png"), bbox_inches='tight')
+plt.savefig(os.path.join(
+    prepath, "Thesis/images/chapter3/example_marginal.png"), bbox_inches='tight')
 plt.show(block=False)
 
 
@@ -270,11 +283,12 @@ plt.plot(theta, y, 'r-.', label="True Posterior")
 
 
 plt.legend()
-plt.savefig(os.path.join(prepath,"Thesis/images/chapter3/example_posterior.png"), bbox_inches='tight')
+plt.savefig(os.path.join(
+    prepath, "Thesis/images/chapter3/example_posterior.png"), bbox_inches='tight')
 plt.show(block=False)
 
 
-## Evaluation
+# Evaluation
 # compute divergence
 def wrapper(x):
     """gt_posterior_pdf with batching.
@@ -284,7 +298,10 @@ def wrapper(x):
         tmp = x[i]
         res.append(gt_posterior_pdf(float(tmp)))
     return np.array(res)
+
+
 print(romc.compute_divergence(wrapper, distance="Jensen-Shannon"))
 
 # compute ESS
-print("Nof Samples: %d, ESS: %.3f" % (len(romc.result.weights), romc.compute_ess()))
+print("Nof Samples: %d, ESS: %.3f" %
+      (len(romc.result.weights), romc.compute_ess()))

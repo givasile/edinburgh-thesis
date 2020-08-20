@@ -147,6 +147,7 @@ dmypy.json
 *.tex~
 *.pytxcode
 *.out
+*.pyg
 
 # ommited dirs
 latex_files/*
