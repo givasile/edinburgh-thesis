@@ -185,7 +185,7 @@ romc1 = elfi.ROMC(dist, bounds)
 ############# Gradients ###################
 seed = 21
 eps = 1
-n1 = np.linspace(5, 20, 4)
+n1 = np.linspace(1, 201, 10)
 solve_grad = []
 estimate_regions_grad = []
 eval_unnorm_grad = []
@@ -228,7 +228,6 @@ plot("Execution time: sampling (gradients)",
 ############# bayesian ###################
 seed = 21
 eps = 1
-n1 = np.linspace(5, 20, 4)
 solve_bo = []
 estimate_regions_bo = []
 eval_unnorm_bo = []
