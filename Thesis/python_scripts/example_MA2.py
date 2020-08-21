@@ -35,7 +35,7 @@ def plot_marginal(samples, weights, mean, std, title, xlabel, ylabel, bins, rang
 
 
 # Set seed for reproducibility
-seed = 21
+seed = 1
 np.random.seed(seed)
 model = ma2.get_model(seed_obs=seed)
 
@@ -56,7 +56,9 @@ n1 = 200
 n2 = 20
 bounds = [(-2, 2), (-1.25, 1.25)]
 eps = .01
-vis_ind = 5
+vis_ind_1 = 12
+vis_ind_2 = 1
+vis_ind_3 = 2
 
 romc = ROMC(model, bounds=bounds, discrepancy_name="d")
 romc.solve_problems(n1=n1, seed=seed)
@@ -66,8 +68,14 @@ romc.distance_hist(savefig=os.path.join(
 romc.estimate_regions(eps=eps)
 
 tmp = romc.sample(n2=n2)
-romc.visualize_region(vis_ind, savefig=os.path.join(
-    prepath, "ma2_region.png"))
+romc.visualize_region(vis_ind_1, savefig=os.path.join(
+    prepath, "ma2_region_1.png"))
+
+romc.visualize_region(vis_ind_2, savefig=os.path.join(
+    prepath, "ma2_region_2.png"))
+
+romc.visualize_region(vis_ind_3, savefig=os.path.join(
+    prepath, "ma2_region_3.png"))
 
 print(romc.result.summary())
 
@@ -76,21 +84,21 @@ name = "t1"
 plot_marginal(romc.result.samples["t1"], romc.result.weights,
               romc.result.sample_means_array[0],
               np.sqrt(romc.result.samples_cov()[0, 0]),
-              r"ROMC - Histogram of the parameter $\theta_1$",
+              r"ROMC (gradient-based) - Histogram of the parameter $\theta_1$",
               r"$\theta_1$",
               r"density",
               30,
-              (0.3, 1.5), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_romc.png"))
+              (0.3, 1.2), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_romc.png"))
 
 name = "t2"
 plot_marginal(romc.result.samples["t2"], romc.result.weights,
               romc.result.sample_means_array[1],
               np.sqrt(romc.result.samples_cov()[1, 1]),
-              r"ROMC - Histogram of the parameter $\theta_2$",
+              r"ROMC (gradient-based) - Histogram of the parameter $\theta_2$",
               r"$\theta_2$",
               r"density",
               30,
-              (-0.5, 1.5), (0, 2), os.path.join(prepath, "mae2_hist_t2_romc.png"))
+              (-0.5, 1), (0, 3), os.path.join(prepath, "mae2_hist_t2_romc.png"))
 
 
 ####### ROMC with BO ###########
@@ -103,8 +111,12 @@ romc1.distance_hist(savefig=os.path.join(
 romc1.estimate_regions(eps=eps, use_surrogate=False)
 
 tmp = romc1.sample(n2=n2)
-romc1.visualize_region(vis_ind, savefig=os.path.join(
-    prepath, "ma2_region_bo.png"))
+romc1.visualize_region(vis_ind_1, savefig=os.path.join(
+    prepath, "ma2_region_1_bo.png"))
+romc1.visualize_region(vis_ind_2, savefig=os.path.join(
+    prepath, "ma2_region_2_bo.png"))
+romc1.visualize_region(vis_ind_3, savefig=os.path.join(
+    prepath, "ma2_region_3_bo.png"))
 
 print(romc1.result.summary())
 
@@ -117,7 +129,7 @@ plot_marginal(romc1.result.samples["t1"], romc1.result.weights,
               r"$\theta_1$",
               r"density",
               30,
-              (0.3, 1.5), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_romc_bo.png"))
+              (0.3, 1.2), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_romc_bo.png"))
 
 name = "t2"
 plot_marginal(romc1.result.samples["t2"], romc1.result.weights,
@@ -127,7 +139,7 @@ plot_marginal(romc1.result.samples["t2"], romc1.result.weights,
               r"$\theta_2$",
               r"density",
               30,
-              (-0.5, 1.5), (0, 2), os.path.join(prepath, "mae2_hist_t2_romc_bo.png"))
+              (-0.5, 1), (0, 3), os.path.join(prepath, "mae2_hist_t2_romc_bo.png"))
 
 
 # rejection
@@ -144,7 +156,7 @@ plot_marginal(result.samples["t1"], None,
               r"$\theta_1$",
               r"density",
               30,
-              (0.3, 1.5), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_rejection.png"))
+              (0.3, 1.2), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_rejection.png"))
 
 name = "t2"
 plot_marginal(result.samples["t2"], None,
@@ -154,7 +166,7 @@ plot_marginal(result.samples["t2"], None,
               r"$\theta_2$",
               r"density",
               30,
-              (-0.5, 1.5), (0, 2), os.path.join(prepath, "mae2_hist_t2_rejection.png"))
+              (-0.5, 1), (0, 3), os.path.join(prepath, "mae2_hist_t2_rejection.png"))
 
 
 print(result.summary())
@@ -188,6 +200,6 @@ plot_romc_posterior('MAE2, ROMC Unnorm Posterior (gradient-based)',
 
 
 plot_romc_posterior('MAE2, ROMC Unnorm Posterior (Bayesian optimisation)',
-                    romc.eval_unnorm_posterior,
+                    romc1.eval_unnorm_posterior,
                     nof_points=20,
                     savefig=os.path.join(prepath, "mae2_romc_posterior_bo.png"))

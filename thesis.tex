@@ -298,21 +298,30 @@ achieving so.
 
 \clearpage
 \section{Experiments}
+This section presents the ROMC implementation on some real-world
+examples. It is used to present the accuracy of the method both at a
+conceptual and the implementation level. The two examples that will be
+presented are multidimensional to confirm that method works fine in
+higher-dimensions. The first one is chosen to be a simple $2D$ with
+tractable likelihood, for the ground-truth information to be available
+for validation purposes. The second one is the second-degree moving
+average model, where the likelihood becomes intractable as the number
+of observations grows large. This model, which is used as a general
+example by the ELFI package, is chosen to illustrate that our
+implementation performs well at a general model, not implemented by
+us.
 
-\subsection{Another Example}
-
-Here I will probably add a simple 2D-example (MA2 is a good option).
+\subsection{Example 1: Simple 2D example}
+\label{subsec:ex1}
+\input{Thesis/ch4/ex1}
 
 \subsection{Example 2: Second-order Moving Average MA(2)}
 \label{subsec:ma2}
-\input{Thesis/ch3/ma2}
-lall
+\input{Thesis/ch4/ma2}
 
 \subsection{Execution Time Experiments}
-
-Here I will provide some graphs showing how the inference scales relatively to some hypereparameters (i.e. $n_1, n_2$).
-
-If time allows, I will also add the timings from a parallelised implementation.
+\label{subsec:exec}
+\input{Thesis/ch4/exec}
 
 \section{Conclusions}
 
