@@ -2,13 +2,17 @@ The inference part contains the 4 following functionalities:
 
 \begin{itemize}
 \item \mintinline{python}{romc.sample(n2, seed=None)}
+\item \mintinline{python}{romc.compute_expectation(h)}  
 \item \mintinline{python}{romc.eval_unnorm_posterior(theta)}
 \item \mintinline{python}{romc.eval_posterior(theta)}
-\item \mintinline{python}{romc.compute_expectation(h)}
 \end{itemize}
 
-\subsubsection*{Function (i): \mintinline{python}{romc.sample(n2)}}
+\subsubsection*{Function (i): Perform weithted sampling}
 
+\mintinline{python}{romc.sample(n2)}
+
+\vspace{5mm}
+\noindent
 This is the basic inference utility of the ROMC implementation. The
 samples are drawn from a uniform distribution $q_i$ defined over the
 corresponding bounding box and the weight $w_i$ is computed as in
@@ -21,8 +25,11 @@ overview of these functionalities is provided in ELFI's
 \href{https://elfi.readthedocs.io/en/latest/api.html#elfi.methods.results.Sample}{official
   documentation}.
 
-\subsubsection*{Function (ii):nn
-  \mintinline{python}{romc.compute_expectation(h)}}
+\subsubsection*{Function (ii): Compute an expectation}
+
+\mintinline{python}{romc.compute_expectation(h)}
+\vspace{5mm}
+\noindent
 
 This function computes the expectation
 $E_{p(\thetab|\data)}[h(\thetab)]$ using the
@@ -31,14 +38,19 @@ any python \pinline{Callable} that accepts a one-dimensional
 \pinline{np.ndarray} as input and returns a one-dimensional
 \pinline{np.ndarray} as output.
 
-\subsubsection*{Function (iii):
-  \mintinline{python}{romc.eval_unorm_posterior(theta)}}
+\subsubsection*{Function (iii): Evaluate the unnormalised posterior}
+\mintinline{python}{romc.eval_unorm_posterior(theta, eps_cutoff=False)}
+\vspace{5mm}
+\noindent
 
 This function computes the unnormalised posterior approximation using
 the expression~\eqref{eq:approx_posterior}.
 
-\subsubsection*{Function (iv):
-  \mintinline{python}{romc.eval_posterior(theta)}}
+\subsubsection*{Function (iv):Evaluate the normalised posterior}
+\vspace{5mm}
+\noindent
+
+\mintinline{python}{romc.eval_posterior(theta, eps_cutoff=False)}
 
 This function evaluates the normalised posterior. For doing so it
 needs to approximate the partition function

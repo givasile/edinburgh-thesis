@@ -10,7 +10,7 @@ import os
 matplotlib.rcParams['text.usetex'] = True
 
 logging.basicConfig(level=logging.INFO)
-prepath = '/home/givasile/ORwDS/edinburgh-thesis/Thesis/images/chapter4/'
+prepath = '/home/givasile/ORwDS/edinburgh-thesis/Thesis/tmp_images/chapter4/'
 
 
 def plot_marginal(samples, weights, mean, std, title, xlabel, ylabel, bins, range, ylim, savepath):
@@ -52,7 +52,7 @@ plt.savefig(os.path.join(prepath, "mae2_prior_samples.png"),
 plt.show(block=False)
 
 ####### ROMC with gradients ################
-n1 = 200
+n1 = 1000
 n2 = 20
 bounds = [(-2, 2), (-1.25, 1.25)]
 eps = .01
@@ -65,7 +65,7 @@ romc.solve_problems(n1=n1, seed=seed)
 romc.distance_hist(savefig=os.path.join(
     prepath, "ma2_distance_hist.png"))
 
-romc.estimate_regions(eps=eps)
+romc.estimate_regions(eps_filter=eps, fit_models=True)
 
 tmp = romc.sample(n2=n2)
 romc.visualize_region(vis_ind_1, savefig=os.path.join(
@@ -108,7 +108,7 @@ romc1.solve_problems(n1=n1, seed=seed, use_bo=use_bo)
 romc1.distance_hist(savefig=os.path.join(
     prepath, "ma2_distance_hist_bo.png"))
 
-romc1.estimate_regions(eps=eps, use_surrogate=False)
+romc1.estimate_regions(eps_filter=eps, use_surrogate=False, fit_models=True)
 
 tmp = romc1.sample(n2=n2)
 romc1.visualize_region(vis_ind_1, savefig=os.path.join(
@@ -195,7 +195,7 @@ def plot_romc_posterior(title, posterior, nof_points, savefig):
 
 plot_romc_posterior('MAE2, ROMC Unnorm Posterior (gradient-based)',
                     romc.eval_unnorm_posterior,
-                    nof_points=20,
+                    nof_points=50,
                     savefig=os.path.join(prepath, "mae2_romc_posterior.png"))
 
 

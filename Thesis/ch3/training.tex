@@ -1,17 +1,33 @@
 The training part contains the 6 following functionalities:
 
 \begin{itemize}
-\item \mintinline{python}{romc.solve_problems(n1, seed=None, use_bo=False)}
-\item \mintinline{python}{romc.estimate_regions(eps)}
-\item \mintinline{python}{romc.theta_hist(**kwargs)}
-\item \mintinline{python}{romc.visualize_region(i)}
+\item \mintinline{python}{romc.solve_problems(n1, use_bo=False, optimizer_args=None, seed=None)}
+\item \mintinline{python}{romc.estimate_regions(eps_filter,}
+  
+      \mintinline{python}{                      use_surrogate=None, region_args=None,}
+  
+      \mintinline{python}{                      fit_models=False, fit_models_args=None,}
+  
+      \mintinline{python}{                      eps_region=None, eps_cutoff=None)}
+      
+    \item \mintinline{python}{romc.fit_posterior(n1, eps_filter, use_bo=False, optimizer_args=None,}
+  
+          \mintinline{python}{                   seed=None, use_surrogate=None, region_args=None,}
+  
+          \mintinline{python}{                   fit_models=False, fit_models_args=None,}
+  
+          \mintinline{python}{                   eps_region=None, eps_cutoff=None)}
+
+\item \mintinline{python}{romc.distance_hist(savefig=False, **kwargs)}
+\item \mintinline{python}{romc.visualize_region(i, savefig=False)}
 \item \mintinline{python}{romc.compute_eps(quantile)}
-\item \mintinline{python}{romc.fit_posterior(n1, eps, quantile=None, use_bo=False, seed=None)}
 \end{itemize}
 
 
-\subsubsection*{Function (i): \pinline{romc.solve_problems(n1,
-    seed=None, use_bo=False)}}
+\subsubsection*{Function (i): Define and solve the optimisation problems}
+
+\pinline{romc.solve_problems(n1, use_bo=False, optimizer_args=None, seed=None)}
+\vspace{5mm}
 
 \noindent
 This routine is responsible for (a) drawing the nuisance variables,
@@ -22,7 +38,7 @@ figure~\ref{fig:elfi-model}. The defininition of the optimisation
 problems is performed by drawing $n_1$ integer numbers from a discrete
 uniform distribution $u_i \sim \mathcal{U}\{1, 2^{32}-1\}$. Each
 integer $u_i$ is the seed used in ELFI's random simulator. Hence from
-a programmatistic point-of-view drawing the state of all random
+an algorithmic point-of-view drawing the state of all random
 variables $\vb_i$ as described in the previous chapter, traces back to
 just setting the seed that initialises the state of the pseudo-random
 generator, before asking a sample from the simulator.
@@ -38,20 +54,18 @@ function $g_i(\thetab) = d(M_d(\thetab,\vb=\vb_i))$ which by default
 is evaluated using the simulator, is replaced by a Gaussian Proccess
 surrogate model $\hat{d}$, which is used in all next steps.
 
-\subsubsection*{Function (ii): \pinline{romc.theta_hist(**kwargs)}}
+\subsubsection*{Function (ii): Construct bounding boxes and fit local surrogate models}
 
-This function can serve as an intermediate step of manual inspection,
-for helping the user choose which threshold $\epsilon$ to use. It
-plots a histogram of the distances at the optimal point
-$g_i(\thetab_i^*) : \{i = 1, 2, \ldots, n_1\}$ or
-$d_i^*$ in case \pinline{use_bo=True}. The function accepts all
-keyword arguments and forwards them to the underlying
-\pinline{matplotlib.hist()} function; in this way the user may
-customize some properties of the histogram, such as the number of bins
-or the range of values.
+\mintinline{python}{romc.estimate_regions(eps_filter,}
+  
+      \mintinline{python}{                      use_surrogate=None, region_args=None,}
+  
+      \mintinline{python}{                      fit_models=False, fit_models_args=None,}
+  
+      \mintinline{python}{                      eps_region=None, eps_cutoff=None)}
+\vspace{5mm}
 
-\subsubsection*{Function (iii): \pinline{romc.compute_eps(quantile)}}
-
+\noindent
 This function return the appropriate distance value $d_{i=\kappa}^*$
 where $\kappa = \lfloor \frac{quantile}{n} \rfloor$ from the
 collection $\{ d_i^* \} \forall i = \{1, \ldots, n\}$ where $n$ is the
@@ -59,7 +73,19 @@ number of accepted solutions. It can be used to automate the selection
 of the threshold $\epsilon$, e.g.\
 \pinline{eps=romc.compute_eps(quantile=0.9)}.
 
-\subsubsection*{Function (iv): \pinline{romc.estimate_regions(eps)}}
+\subsubsection*{Function (iii): Perform all training steps in a single call}
+
+
+\mintinline{python}{romc.fit_posterior(n1, eps_filter, use_bo=False, optimizer_args=None,}
+  
+          \mintinline{python}{                   seed=None, use_surrogate=None, region_args=None,}
+  
+          \mintinline{python}{                   fit_models=False, fit_models_args=None,}
+  
+          \mintinline{python}{                   eps_region=None, eps_cutoff=None)}
+
+\vspace{5mm}
+\noindent
 
 This function constructs the bounding boxes around the optimal points
 $\thetab_i^* : i = 1, 2, \ldots, n_1$ following the
@@ -77,8 +103,11 @@ way the bounding box is defined as a class and sampling is performed
 on it.
 
 
-\subsubsection*{Function (v): \pinline{romc.fit_posterior(n1, eps,
-    quantile=None, use_bo=False, seed=None)}}
+\subsubsection*{Function (iv): Plot the histogramm of the optimal points}
+
+\pinline{romc.distance_hist(**kwargs)}
+\vspace{5mm}
+\noindent
 
 This function merges all steps for constructing the bounding box into
 a single command. If the user doesn't want to manually inspect the
@@ -91,8 +120,28 @@ the histogram of distances. In the second scenario the
 \pinline{quantile} argument must be set to a floating number in the
 range $[0,1]$ and \pinline{eps='auto'}.
 
-\subsubsection*{Function (vi): \pinline{romc.visualize_region(i)}}
-  
+\subsubsection*{Function (v): Plot the acceptance region of the objective functions}
+
+\pinline{romc.visualize_region(i)}
+\vspace{5mm}
+\noindent
+
+This function can serve as an intermediate step of manual inspection,
+for helping the user choose which threshold $\epsilon$ to use. It
+plots a histogram of the distances at the optimal point
+$g_i(\thetab_i^*) : \{i = 1, 2, \ldots, n_1\}$ or
+$d_i^*$ in case \pinline{use_bo=True}. The function accepts all
+keyword arguments and forwards them to the underlying
+\pinline{matplotlib.hist()} function; in this way the user may
+customize some properties of the histogram, such as the number of bins
+or the range of values.
+
+\subsubsection*{Function (vi): Compute $\epsilon$ automatically based on the distribution of $d^*$}
+
+\pinline{romc.compute_eps(quantile)}
+\vspace{5mm}
+\noindent
+
 It can be used as an inspection utility for cases where the parametric
 space is up to two dimensional. The argument $\pinline{i}$ is the
 index of the corresponding optimization problem i.e.\ $i<n_1$.

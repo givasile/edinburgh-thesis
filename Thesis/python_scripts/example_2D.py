@@ -11,7 +11,7 @@ import os
 matplotlib.rcParams['text.usetex'] = True
 
 logging.basicConfig(level=logging.INFO)
-prepath = '/home/givasile/ORwDS/edinburgh-thesis/Thesis/images/chapter4/'
+prepath = '/home/givasile/ORwDS/edinburgh-thesis/Thesis/tmp_images/chapter4/'
 
 
 def plot_marginal(samples, weights, mean, std, marg, title, xlabel, ylabel, bins,
@@ -222,7 +222,7 @@ romc.solve_problems(n1=n1, seed=seed)
 romc.distance_hist(savefig=os.path.join(
     prepath, "ex2D_distance_hist.png"))
 
-romc.estimate_regions(eps=eps)
+romc.estimate_regions(eps_filter=eps, fit_models=False)
 
 tmp = romc.sample(n2=n2)
 romc.visualize_region(vis_ind_1, savefig=os.path.join(
@@ -261,7 +261,7 @@ romc1.solve_problems(n1=n1, seed=seed, use_bo=use_bo)
 romc1.distance_hist(savefig=os.path.join(
     prepath, "ex2D_distance_hist_bo.png"))
 
-romc1.estimate_regions(eps=eps, use_surrogate=False)
+romc1.estimate_regions(eps_filter=eps, use_surrogate=False)
 
 tmp = romc1.sample(n2=n2)
 romc1.visualize_region(vis_ind_1, savefig=os.path.join(
