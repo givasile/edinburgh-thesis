@@ -87,7 +87,7 @@ plot_marginal(romc.result.samples["t1"], romc.result.weights,
               r"ROMC (gradient-based) - Histogram of the parameter $\theta_1$",
               r"$\theta_1$",
               r"density",
-              30,
+              60,
               (0.3, 1.2), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_romc.png"))
 
 name = "t2"
@@ -97,7 +97,7 @@ plot_marginal(romc.result.samples["t2"], romc.result.weights,
               r"ROMC (gradient-based) - Histogram of the parameter $\theta_2$",
               r"$\theta_2$",
               r"density",
-              30,
+              60,
               (-0.5, 1), (0, 3), os.path.join(prepath, "mae2_hist_t2_romc.png"))
 
 
@@ -128,7 +128,7 @@ plot_marginal(romc1.result.samples["t1"], romc1.result.weights,
               r"ROMC (Bayesian Optimisation) - Histogram of the parameter $\theta_1$",
               r"$\theta_1$",
               r"density",
-              30,
+              60,
               (0.3, 1.2), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_romc_bo.png"))
 
 name = "t2"
@@ -138,7 +138,7 @@ plot_marginal(romc1.result.samples["t2"], romc1.result.weights,
               r"ROMC (Bayesian Optimisation) - Histogram of the parameter $\theta_2$",
               r"$\theta_2$",
               r"density",
-              30,
+              60,
               (-0.5, 1), (0, 3), os.path.join(prepath, "mae2_hist_t2_romc_bo.png"))
 
 
@@ -155,7 +155,7 @@ plot_marginal(result.samples["t1"], None,
               r"Rejection ABC - Histogram of the parameter $\theta_1$",
               r"$\theta_1$",
               r"density",
-              30,
+              60,
               (0.3, 1.2), (0, 3.5), os.path.join(prepath, "mae2_hist_t1_rejection.png"))
 
 name = "t2"
@@ -165,7 +165,7 @@ plot_marginal(result.samples["t2"], None,
               r"Rejection ABC - Histogram of the parameter $\theta_2$",
               r"$\theta_2$",
               r"density",
-              30,
+              60,
               (-0.5, 1), (0, 3), os.path.join(prepath, "mae2_hist_t2_rejection.png"))
 
 
@@ -201,5 +201,5 @@ plot_romc_posterior('MAE2, ROMC Unnorm Posterior (gradient-based)',
 
 plot_romc_posterior('MAE2, ROMC Unnorm Posterior (Bayesian optimisation)',
                     romc1.eval_unnorm_posterior,
-                    nof_points=20,
+                    nof_points=50,
                     savefig=os.path.join(prepath, "mae2_romc_posterior_bo.png"))

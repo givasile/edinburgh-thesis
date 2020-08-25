@@ -1,14 +1,14 @@
 In figure \ref{fig:elfi-model} we present an overview of our
-implementation; one could think of figure~\ref{fig:elfi-model} as a
-depiction of the main class of our implementation, which is called
-ROMC, while the entities inside the green and blue ellipses are the
-main functions of the class. Following the common naming principles,
-the methods starting with an underscore (green ellipses) represent
-internal (private) functions and are not meant to be used by a user,
-whereas the rest of the methods (blue ellipses) are the
-functionalities used for performing the inference.As mentioned before,
-the implementation favours extensibility; the building blocks that
-compose the method have been designed in an isolated fashion so that a
+implementation; one may interpret figure~\ref{fig:elfi-model} as a
+depiction of the main class of our implementation, called
+(\pinline{ROMC}), while the entities inside the green and blue
+ellipses are the main functions of the class. Following the common
+naming principles, the methods starting with an underscore (green
+ellipses) represent internal (private) functions and are not meant to
+be used by a user, whereas the rest of the methods (blue ellipses) are
+the functionalities the user interacts with. As mentioned before, the
+implementation favours extensibility; the building blocks that compose
+the method have been designed in an isolated fashion so that a
 practitioner may replace them without the method to collapse.
 
 Figure \ref{fig:elfi-model} groups the ROMC implementation into the
@@ -16,24 +16,24 @@ training, the inference and the evaluation part, following the
 arrangement used in the algorithmic presentation (section
 \ref{subsec:romc-algorithmic}). The training part includes all the
 steps until the computation of the proposal regions; sampling the
-nuisance variables, defining the optimisation problems, solving them
-and constructing the regions. The inference part comprises of
-evaluating the unnormalised posterior (and the normalised one, in
-low-dimensional cases), sampling and computing an
-expectation. Moreover, the ROMC implementation provides some utilities
-for inspecting the training process, such as plotting the histogram of
-the distances
-$d^*_i = g_i(\theta_i^*), \: \forall i \in \{1, \ldots, n_1
-\}$ after solving the optimisation problems and visualising the
-constructed bounding box\footnote{if the parametric space is up to
-  $2D$}. Finally, there are implemented two functionalities for
-evaluating the inference; (a) computing the Effective Sample Size
-(ESS) of the obtained weighted samples and (b) measuring the
-divergence of the approximate posterior from the ground-truth, if the
-latter is available.\footnote{Normally, the ground-truth posterior is
-  not available; that is the meaning of performing the inference!
-  Though this functionality is useful in cases where the posterior can
-  be computed numerically or with an alternative method (i.e.\ ABC
+nuisance variables, defining the optimisation problems, solving them,
+constructing the regions and fitting local surrogate models. The
+inference part comprises of evaluating the unnormalised posterior (and
+the normalised one, in low-dimensional cases), sampling and computing
+an expectation. Moreover, the ROMC implementation provides some
+utilities for inspecting the training process, such as plotting the
+histogram of the distances
+$d^*_i = g_i(\theta_i^*), \: \forall i \in \{1, \ldots, n_1 \}$ after
+solving the optimisation problems and visualising the constructed
+bounding box\footnote{if the parametric space is up to $2D$}. Finally,
+there are implemented two functionalities for evaluating the
+inference; (a) computing the Effective Sample Size (ESS) of the
+obtained weighted samples and (b) measuring the divergence of the
+approximate posterior from the ground-truth, if the latter is
+available.\footnote{Normally, the ground-truth posterior is not
+  available; that is the meaning of performing the inference!  Though
+  this functionality is useful in cases where the posterior can be
+  computed numerically or with an alternative method (i.e.\ ABC
   Rejection Sampling) and we would like to measure the discrepancy
   between the two approximations.}
 
@@ -55,14 +55,13 @@ examples the following model, introduced by~\autocite{Ikonomov2019},
 \end{gather}
 
 \noindent
-where $u \sim \mathcal{N}(0,1)$.
 
 In the model \eqref{eq:1D_example}, the prior distribution is the
 uniform in the range $[-2.5, 2.5]$ and the likelihood a Gaussian
 distribution. There is only one observation $y_0 = 0$. The inference
 in the particular example can be performed quite easily, without
 icorporating a likelihood-free inference approach. Hence, we can
-exploit it for validating the accuracy of our implementaion. The
+exploit it for validating the accuracy of our implementation. The
 ground-truth posterior, approximated computationally, is shown in
 figure \ref{fig:example_gt}.
 
@@ -76,13 +75,15 @@ figure \ref{fig:example_gt}.
 
 \subsubsection*{ELFI code for modelling the example}
 
-In the following code snippet, we model the example as an
-\textit{ELFI.Model} and we initialise the ROMC inference method. We
-observe that the initialisation of the ROMC inference method is quite
-intuitive; we just pass the final (distance) node of the simulator as
-argument, as in all $\textit{ELFI}$ inference methods. The argument
+In the following code snippet, we code the model at \textit{ELFI} and
+we initialise the ROMC inference method. We observe that the
+initialisation of the ROMC inference method is quite intuitive; we
+just pass the final (distance) node of the simulator as argument, as
+in all $\textit{ELFI}$ inference methods. The argument
 \pinline{bounds}, although typically optional, is important for many
-functionalities (e.g. approximating the partition function, set the bounds of the Bayesian optimisation etc.) so it is highly recommended to be passed.
+functionalities (e.g. approximating the partition function, set the
+bounds of the Bayesian optimisation etc.) so it is highly recommended
+to be set.
 
 \begin{pythoncode}
   import elfi

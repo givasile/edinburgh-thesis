@@ -1,10 +1,13 @@
-In this section, we provide an overview of the symbols utilised in the rest of the document. At this level, the quantities are
-introduced quite informally; most of
-them will be defined formally in the next chapters. We try to keep the
-notation as consistent as possible throughout the document. The symbol
-$\R^N$, when used, describes that a variable belongs to the 
-$N-dimensional$ euclidean space; $N$ does not represent a specific
-number.
+In this section, we provide an overview of the symbols utilised in the
+rest of the document. At this level, the quantities are introduced
+quite informally; most of them will be defined formally in the next
+chapters. We try to keep the notation as consistent as possible
+throughout the document. The symbol $\R^N$, when used, describes that
+a variable belongs to the $\text{N-dimensional}$ euclidean space; $N$
+does not represent a specific number. The bold formation ($\xb$)
+indicates a vector, while ($x$) a scalar. Random Variables are
+represented with capital letters ($\Thetab$) while the samples with
+lowercase letters ($\thetab$), i.e.\ $\thetab \sim \Thetab$.
 
 \subsubsection*{Random Generator}
 \label{sec:random-generator}
@@ -19,9 +22,20 @@ number.
 \item $D \in \mathbb{N}$, the dimensionality of the parameter-space
 \item $\Thetab \in \R^D$, random variable representing the parameters of interest
 \item $\data \in \R^N$, the vector with the observations
-\item $\epsilon \in R$, the threshold setting the limit on the region around $\data$
+\item $\epsilon \in R$, the threshold setting the limit on the region
+  around $\data$. When there is further notation is introduced
+  regarding $\epsilon$\footnote{If
+    $\epsilon_*, \: *:\{filter, region, cutoff\}$ values are not specified
+    explicitly, they all share the common value of $\epsilon$}
+  \begin{itemize}
+  \item $\epsilon_{filter}$, threshold for discarding solutions
+  \item $\epsilon_{region}$, threshold for building bounding box regions
+  \item $\epsilon_{cutoff}$, threshold for the indicator function
+  \end{itemize}
+  
 \item $\V \in \R^N$, random variable representing the randomness of
-  the generator. It is also called nuisance variable, because we are not interested in inferring a posterior distribution on it.
+  the generator. It is also called nuisance variable, because we are
+  not interested in inferring a posterior distribution on it.
 \item $\vb_i \sim \V$, a specific sample drawn from $\V$
 \item $\Y_{\thetab}$, random variable describing the simulator $M_r(\thetab)$. 
 \item $\yb_i \sim \Y_\theta$, a sample drawn from $\Y_\theta$. It can
@@ -33,9 +47,13 @@ number.
 \label{sec:sets}
 
 \begin{itemize}
-\item $\region(\data)$, the set of $\yb$ points close to the observations, i.e.\ $\yb := \{\yb: d(\yb, \data) \leq \epsilon \}$
-\item $\regioni$, the set of points defined around $\yb_i$ i.e.\ $\regioni = \region(\yb_i)$
-\item $S_i$, the set of $\thetab$ parameters that generate data close to the observations using the i-th deterministic generator, i.e.\ $\{ \thetab: M_d(\thetab, \vb_i) \in \region(\data) \}$
+\item $\region(\data)$, the set of $\yb$ points close to the
+  observations, i.e.\ $\yb := \{\yb: d(\yb, \data) \leq \epsilon \}$
+\item $\regioni$, the set of points defined around $\yb_i$ i.e.\
+  $\regioni = \region(\yb_i)$
+\item $\mathcal{S}_i$, the set of parameters $\thetab$ that generate data close
+  to the observations using the i-th deterministic generator, i.e.\
+  $\{ \thetab: M_d(\thetab, \vb_i) \in \region(\data) \}$
 \end{itemize}
     
 \subsubsection*{Generic Functions}

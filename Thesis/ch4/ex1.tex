@@ -4,7 +4,7 @@ space.
 
 \subsubsection*{Problem Definition}
 
-The equation that model the inference problem are presented below.
+The equations describing this inference problem are presented below.
 
 \begin{gather}
   p(\thetab) = p(\theta_1)p(\theta_2)
@@ -14,14 +14,16 @@ The equation that model the inference problem are presented below.
   Z = \int_{\thetab} p(\thetab)p(\yb|\thetab) d\thetab
 \end{gather}
 
-Computing the unnormalised posterior is straightforward using the
-equation and approximating the partition $Z$ is feasible with using
-the Riemann's approximation. Hence, computing the ground-truth
-posterior is computationally feasible. Setting the observation to
-$\data=(-0.5,0.5)$, the posterior distribution is illustrated in
+\noindent
+Computing the unnormalised posterior in this example is quite
+straightforward using the a compuational approximation. Additionaly
+the partition function $Z$ can be estimated using the Riemann's
+approximation. Hence, computing the ground-truth posterior is
+computationally feasible. Setting the observation to
+$\data=(-0.5,0.5)$, the ground-truth posterior is illustrated in
 figure \ref{fig:ex2_4}. In table \ref{tab:ex2}, we present the
-ground-truth statistics i.e.\ $\mu, \sigma$ of the marginal
-posterior distributions.
+ground-truth statistics i.e.\ $\mu, \sigma$ of the marginal posterior
+distributions.
 
 \subsubsection*{Performing the inference}
 
@@ -29,37 +31,38 @@ We perform the inference using the following hyperparameters
 $n_1=500, n_2=30, \epsilon=0.4$. This set-up leads to a total of
 $15000$ samples. As observed in the histogram of distances
 \ref{fig:ex2_1}, in the gradient-based approach, all optimisation
-problems reach an almost zero distance end point; hence all optimal
-points are accepted. At the Bayesian optimisation scheme, the grand
+problems reach an almost zero-distance end point; hence all optimal
+points are accepted. At the Bayesian optimisation scheme, the vast
 majority of the optimisation procedures has the behaviour; there are
 only 4 optimal distance above the limit. In figure \ref{fig:ex2_2},
 the acceptance area of a specific optimisation problem is
 demonstrated. We observe that both optimisation schemes lead to a
 similar bounding box construction. This specific example is quite
-representative of the rest optimisation problems; due to the
+representative of the rest of the optimisation problems; due to the
 simplicity of the optimisation process, in most cases the optimal
 points are similar and the surrogate model represents accurately the
-local region. Hence, similar proposal regions are obtained using both
+local region. Hence, similar proposal regions are obtained by the two
 optimisation alternatives.
 
 The histograms of the marginal distributions, based on the weighted
-samples, is presented in figure \ref{fig:ex2_3}. In the same figure,
+samples, are presented in figure \ref{fig:ex2_3}. In the same figure,
 we can also plot the ground-truth distribution with the red dotted
-line. We observe that the weighted samples, follow quite accurately
-the ground-truth distribution. This is also confirmed by the
-statistics provided in table \ref{tab:ex2}; the sample mean $\mu$ and
-standard deviation $\sigma$ are similar to the ground-truth for both
-parameters $\theta_1$ and $\theta_2$. We also observe that they are
-almost the same between the two optimisation schemes.
+line. We observe that the weighted samples follow quite accurately the
+ground-truth distribution. This is also confirmed by the statistics
+provided in table \ref{tab:ex2}; the sample mean $\mu$ and standard
+deviation $\sigma$ are similar to the ground-truth for both parameters
+$\theta_1$ and $\theta_2$. We also observe that both optimisation
+schemes produce accurate samples.
 
 Finally, the ground-truth and the approximate posteriors are presented
 in figure \ref{fig:ex2_4}. We also confirm that the approximations are
-close to the ground truth posteriors. As a notice, we can observe that
-the approximate posteriors ... a diamond shape in the mode of the
-posterior; this happens due to the approximation of a circular
-gaussian-shape posterior with a sum of square boxes.  The divergence
+close to the ground truth posteriors. As a side-notice, we can observe
+that the approximate posteriors present a diamond-shape in the mode of
+the posterior; this happens due to the approximation of a circular
+gaussian-shape posterior with a sum of square boxes. The divergence
 between the ground-truth distribution and the approximate ones is
-$0.077$, using the Jensen-Shannon distance.
+$0.077$, using the Jensen-Shannon distance, which confirms the
+matching between the two posteriors.
 
 In this experiment we observed that the implementation fulfilled the
 theoretical expectations for the ROMC inference method.

@@ -81,7 +81,7 @@ part.
 \begin{minipage}{0.46\textwidth}
 \begin{algorithm}[H]
     \centering
-    \caption{Training Part - Gradient approach. Requires $g_i(\thetab), p(\thetab)$}\label{alg:training_GB}
+    \caption{Training Part - Gradient-based. Requires $g_i(\thetab), p(\thetab)$}\label{alg:training_GB}
     \begin{algorithmic}[1]
       \For{$i \gets 1 \textrm{ to } n$}
         \State Obtain $\thetab_i^*$ using a Gradient Optimiser
@@ -100,11 +100,11 @@ part.
 \begin{minipage}{0.46\textwidth}
 \begin{algorithm}[H]
     \centering
-    \caption{Training Part - GP approach. Requires $g_i(\theta), p(\theta)$}\label{alg:training_GP}
+    \caption{Training Part - Bayesian optimisation. Requires $g_i(\thetab), p(\thetab)$}\label{alg:training_GP}
     \begin{algorithmic}[1]
       \For{$i \gets 1 \textrm{ to } n$}
-        \State Obtain $\theta_i^*, \hat{d}_i(\theta)$ using a GP approach
-        \If{$g_i(\theta_i^*) > \epsilon$}
+        \State Obtain $\thetab_i^*, \hat{d}_i(\thetab)$ using a GP approach
+        \If{$g_i(\thetab_i^*) > \epsilon$}
         \State{go to} 1
         \Else
         \State Approximate $H_i \approx \jac^T_i \jac_i$
@@ -171,42 +171,42 @@ part.
 % \end{minipage}
 
 
-\begin{minipage}{0.46\textwidth}
+% \begin{minipage}{0.46\textwidth}
 \begin{algorithm}[H]
     \centering
-    \caption{Sampling - Gradient Based approach. Requires $g_i(\theta), p(\theta), q_i$}\label{alg:sampling_GB}
+    \caption{Sampling. Requires a function of distance $(g_i(\theta)$ or $\hat{d}_i$ or $\hat{g}_i), p(\theta), q_i$}\label{alg:sampling_GB}
     \begin{algorithmic}[1]
       \For {$i \gets 1 \textrm{ to } n_1$}
       \For {$j \gets 1 \textrm{ to } n_2$}
-          \State $\theta_{ij} \sim q_i$
-          \If {$g_i(\theta_{ij}) > \epsilon$}
+          \State $\thetab_{ij} \sim q_i$
+          \If {$g_i(\thetab_{ij}) > \epsilon$}
             \State Reject $\theta_{ij}$
           \Else {}
-            \State $w_{ij} = \frac{p(\theta_{ij})}{q(\theta_{ij})}$
-            \State Accept $\theta_{ij}$, with weight $w_{ij}$
+            \State $w_{ij} = \frac{p(\thetab_{ij})}{q(\thetab_{ij})}$
+            \State Accept $\thetab_{ij}$, with weight $w_{ij}$
           \EndIf
       \EndFor
       \EndFor
     \end{algorithmic}
 \end{algorithm}
-\end{minipage}
-\hfill
-\begin{minipage}{0.46\textwidth}
-\begin{algorithm}[H]
-    \centering
-    \caption{Sampling - GP approach. Requires $\hat{d}_i(\theta), p(\theta), q_i$}\label{alg:sampling_GP}
-    \begin{algorithmic}[1]
-      \For {$i \gets 1 \textrm{ to } n_1$}
-      \For {$j \gets 1 \textrm{ to } n_2$}
-          \State $\theta_{ij} \sim q_i$
-          \If {$\hat{d}_i(\theta_{ij}) > \epsilon$}
-            \State Reject $\theta_{ij}$
-          \Else {}
-            \State $w_{ij} = \frac{p(\theta_{ij})}{q(\theta_{ij})}$
-            \State Accept $\theta_{ij}$, with weight $w_{ij}$
-          \EndIf
-      \EndFor
-      \EndFor
-    \end{algorithmic}
-\end{algorithm}
-\end{minipage}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.46\textwidth}
+% \begin{algorithm}[H]
+%     \centering
+%     \caption{Sampling - GP approach. Requires $\hat{d}_i(\theta), p(\theta), q_i$}\label{alg:sampling_GP}
+%     \begin{algorithmic}[1]
+%       \For {$i \gets 1 \textrm{ to } n_1$}
+%       \For {$j \gets 1 \textrm{ to } n_2$}
+%           \State $\theta_{ij} \sim q_i$
+%           \If {$\hat{d}_i(\theta_{ij}) > \epsilon$}
+%             \State Reject $\theta_{ij}$
+%           \Else {}
+%             \State $w_{ij} = \frac{p(\theta_{ij})}{q(\theta_{ij})}$
+%             \State Accept $\theta_{ij}$, with weight $w_{ij}$
+%           \EndIf
+%       \EndFor
+%       \EndFor
+%     \end{algorithmic}
+% \end{algorithm}
+% \end{minipage}

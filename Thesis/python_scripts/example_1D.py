@@ -12,15 +12,7 @@ import elfi
 import matplotlib
 matplotlib.rcParams['text.usetex'] = True
 
-
-# from matplotlib import rc
-# rc('font', **{'family':'sans-serif','sans-serif':['Helvetica']})
-# ## for Palatino and other serif fonts use:
-# #rc('font',**{'family':'serif','serif':['Palatino']})
-# rc('text', usetex=True)
-
-
-prepath = '/home/givasile/ORwDS/edinburgh-thesis/'
+prepath = '/home/givasile/ORwDS/edinburgh-thesis/Thesis/tmp_images'
 np.random.seed(21)
 
 
@@ -181,7 +173,7 @@ plt.plot(theta, y, 'r-.', label=r'Posterior: $p(\theta|y_0)$')
 
 plt.legend()
 plt.savefig(os.path.join(
-    prepath, "Thesis/images/chapter3/example_gt.png"), bbox_inches='tight')
+    prepath, "chapter3/example_gt.png"), bbox_inches='tight')
 plt.show(block=False)
 
 
@@ -207,21 +199,22 @@ dim = data.shape[-1]
 romc = elfi.ROMC(dist, bounds)
 
 ############# TRAINING ###################
-n1 = 500
+n1 = 1000
 seed = 21
 romc.solve_problems(n1=n1, seed=seed, use_bo=False, optimizer_args=None)
 romc.distance_hist(bins=100,
-                   savefig=os.path.join(prepath, "Thesis/images/chapter3/example_theta_dist.png"))
-eps = .75
-romc.estimate_regions(eps=eps, use_surrogate=False, region_args=None)
-romc.visualize_region(1,
-                      savefig=os.path.join(prepath, "Thesis/images/chapter3/example_region.png"))
+                   savefig=os.path.join(prepath, "chapter3/example_theta_dist.png"))
+eps = 1.
+romc.estimate_regions(eps_filter=eps, use_surrogate=False,
+                      region_args=None, fit_models=True)
+romc.visualize_region(0,
+                      savefig=os.path.join(prepath, "chapter3/example_region.png"))
 
 ############# INFERENCE ##################
-n2 = 10
-tmp = romc.sample(n2=n2, seed=seed)
-romc.visualize_region(i=1, savefig=os.path.join(
-    prepath, "Thesis/images/chapter3/example_region_samples.png"))
+n2 = 50
+tmp = romc.sample(n2=n2)
+romc.visualize_region(i=0, savefig=os.path.join(
+    prepath, "chapter3/example_region_samples.png"))
 
 romc.result.summary()
 
@@ -237,7 +230,7 @@ plt.figure()
 plt.title("Histogram of the samples drawn")
 plt.hist(x=romc.result.samples_array,
          weights=romc.result.weights,
-         bins=80, density=True, range=(-3, 3))
+         bins=70, density=True, range=(-3, 3))
 theta = np.linspace(-3, 3, 60)
 y = np.squeeze(np.array([gt_posterior_pdf(th) for th in theta]))
 plt.plot(theta, y, 'r-.', label="True Posterior")
@@ -245,7 +238,7 @@ plt.xlabel(r'$\theta$')
 plt.ylabel(r'density')
 plt.ylim([0, .6])
 plt.savefig(os.path.join(
-    prepath, "Thesis/images/chapter3/example_marginal.png"), bbox_inches='tight')
+    prepath, "chapter3/example_marginal.png"), bbox_inches='tight')
 plt.show(block=False)
 
 
@@ -260,11 +253,11 @@ plt.ylim(0, .6)
 # plot histogram of samples
 plt.hist(x=romc.result.samples_array,
          weights=romc.result.weights,
-         bins=80, density=True, range=(-3, 3),
+         bins=50, density=True, range=(-3, 3),
          facecolor='y', alpha=.5, label="samples histogram")
 
 # plot prior
-theta = np.linspace(-3, 3, 60)
+theta = np.linspace(-3, 3, 150)
 y = prior.pdf(theta)
 plt.plot(theta, y, 'b-.', label='Prior')
 
@@ -284,7 +277,7 @@ plt.plot(theta, y, 'r-.', label="True Posterior")
 
 plt.legend()
 plt.savefig(os.path.join(
-    prepath, "Thesis/images/chapter3/example_posterior.png"), bbox_inches='tight')
+    prepath, "chapter3/example_posterior.png"), bbox_inches='tight')
 plt.show(block=False)
 
 

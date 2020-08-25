@@ -1,22 +1,89 @@
+In this section, we will present the execution time of the basic ROMC
+functionalities. Apart from performing the inference accurately, one
+of the notable advantages of ROMC is its efficiency. In terms of
+performance, ROMC holds two key advantages. Firstly, all its subparts
+are ridiculously parallelisable; optimising the objective functions,
+constructing the bounding boxes, fitting the local surrogate models,
+sampling and evaluating the posterior can be executed in a
+fully-parallel fashion. Therefore, the speed-up can be extended as
+much as the computational resources allow. Specifically, at the CPU
+level, the parallelisation can be incorporate all available cores. A
+similar design can be utilised in the case of having a cluster of PCs
+available. Parallelising the process at the GPU level is not that
+trivial, since the parallel tasks are more complicated than simple
+floating-point operations. The second significant advantage concerns
+the execution of the training and the inference phase in distinct
+timeslots. Therefore, one can consume a lot of training time and
+resources but ask for accelerated inference. The use of a lightweight
+surrogate model around the optimal point exploits this essential
+characteristic; it trades off some additional computational burden at
+the training phase, for exercising faster inference later. Since our
+current implementation does not support parallel execution
+so-far\footnote{The design of our code permits adding this feature in
+  a future update.}, in figures \ref{fig:exec_solve},
+\ref{fig:exec_regions}, \ref{fig:exec_posterior},
+\ref{fig:exec_sample} we can only observe the second advantage. The
+example measured in these figures is the simple 1D example, used in
+the previous chapter. We observe that fitting local surrogate models
+slows-down the training phase (estimating the regions) at a factor of
+$x1.5$, but provides a speed-up of $x15$ at the inference phase
+(i.e. approximating unnormalised posterior). This outcome would be
+even more potent in larger models, where running the simulator is even
+more expensive.
+
+
+
 \begin{figure}[h]
     \begin{center}
-      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_solve_gradients.png}
-      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_regions_gradients.png}\\
-      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_posterior_gradients.png}
-      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_sample_gradients.png}      
-    \end{center}
-    \caption{Gradients exec time}
-  \label{fig:exec_gradients}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_solve_grad.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_solve_grad_fit.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_solve_bo.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_solve_bo_fit.png}          \end{center}
+    \caption{Execution time for defining and solving the optimisation
+      problems. We observe a duration increase of $x75$ when switching
+      to Bayesian optimisation scheme.}
+  \label{fig:exec_solve}
 \end{figure}
 
 
 \begin{figure}[h]
     \begin{center}
-      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_solve_bo.png}
-      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_regions_bo.png}\\
-      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_posterior_bo.png}
-      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_sample_bo.png}      
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_regions_grad.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_regions_grad_fit.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_regions_bo.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_regions_bo_fit.png}
     \end{center}
-    \caption{Bo exec time}
-  \label{fig:exec_bo}
+    \caption{Execution time for constructing the n-dimensional
+      bounding box region and, optionally, fitting the local surrogate
+      models. We observe that fitting the surrogate models incurs a
+      small delay of about $x1.5$.}
+  \label{fig:exec_regions}
+\end{figure}
+
+
+\begin{figure}[h]
+    \begin{center}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_posterior_grad.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_posterior_grad_fit.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_posterior_bo.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_posterior_bo_fit.png}
+    \end{center}
+    \caption{Execution time for evaluating the unnormalised posterior
+      approximation. We observe that there is a major speed-up in the
+      models with fitted local surogate models, of about $x15$.}
+  \label{fig:exec_posterior}
+\end{figure}
+
+
+\begin{figure}[h]
+    \begin{center}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_sample_grad.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_sample_grad_fit.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_sample_bo.png}
+      \includegraphics[width=0.24\textwidth]{./Thesis/images/chapter4/exec_sample_bo_fit.png}
+    \end{center}
+    \caption{Execution time for sampling from the approximate
+      posterior. We observe a small speed-up when the local surogate
+      models are fitted, of about $x1.5$.}
+  \label{fig:exec_sample}
 \end{figure}

@@ -49,10 +49,11 @@ initial points for the optimisation procedure), making the whole
 process reproducible.
 
 Setting the argument \pinline{use_bo=True}, chooses the Bayesian
-Optimisation scheme for obtaining $\theta_i^*$. In this case the
-function $g_i(\thetab) = d(M_d(\thetab,\vb=\vb_i))$ which by default
-is evaluated using the simulator, is replaced by a Gaussian Proccess
-surrogate model $\hat{d}$, which is used in all next steps.
+Optimisation scheme for obtaining $\theta_i^*$. In this case, apart
+from obtaining the optimal points $\theta_i^*$, we also fit a Gaussian
+Process (GP) as surrogate model $\hat{d}_i$. In the following steps,
+$\hat{d}_i(\thetab)$ will replace $g_i(\thetab)$ when calling the
+indicator function.
 
 \subsubsection*{Function (ii): Construct bounding boxes and fit local surrogate models}
 
@@ -65,29 +66,7 @@ surrogate model $\hat{d}$, which is used in all next steps.
       \mintinline{python}{                      eps_region=None, eps_cutoff=None)}
 \vspace{5mm}
 
-\noindent
-This function return the appropriate distance value $d_{i=\kappa}^*$
-where $\kappa = \lfloor \frac{quantile}{n} \rfloor$ from the
-collection $\{ d_i^* \} \forall i = \{1, \ldots, n\}$ where $n$ is the
-number of accepted solutions. It can be used to automate the selection
-of the threshold $\epsilon$, e.g.\
-\pinline{eps=romc.compute_eps(quantile=0.9)}.
-
-\subsubsection*{Function (iii): Perform all training steps in a single call}
-
-
-\mintinline{python}{romc.fit_posterior(n1, eps_filter, use_bo=False, optimizer_args=None,}
-  
-          \mintinline{python}{                   seed=None, use_surrogate=None, region_args=None,}
-  
-          \mintinline{python}{                   fit_models=False, fit_models_args=None,}
-  
-          \mintinline{python}{                   eps_region=None, eps_cutoff=None)}
-
-\vspace{5mm}
-\noindent
-
-This function constructs the bounding boxes around the optimal points
+This routine constructs the bounding boxes around the optimal points
 $\thetab_i^* : i = 1, 2, \ldots, n_1$ following the
 Algorithm~\ref{alg:region_construction}. The Hessian matrix is
 approximated based on the Jacobian $\hess_i = \jac_i^T \jac_i$. The
@@ -102,10 +81,16 @@ section \ref{subsec:developers}, we provide some details regarding the
 way the bounding box is defined as a class and sampling is performed
 on it.
 
+\subsubsection*{Function (iii): Perform all training steps in a single call}
 
-\subsubsection*{Function (iv): Plot the histogramm of the optimal points}
+\mintinline{python}{romc.fit_posterior(n1, eps_filter, use_bo=False, optimizer_args=None,}
+  
+          \mintinline{python}{                seed=None, use_surrogate=None, region_args=None,}
+  
+          \mintinline{python}{                fit_models=False, fit_models_args=None,}
+  
+          \mintinline{python}{                eps_region=None, eps_cutoff=None)}
 
-\pinline{romc.distance_hist(**kwargs)}
 \vspace{5mm}
 \noindent
 
@@ -120,11 +105,13 @@ the histogram of distances. In the second scenario the
 \pinline{quantile} argument must be set to a floating number in the
 range $[0,1]$ and \pinline{eps='auto'}.
 
-\subsubsection*{Function (v): Plot the acceptance region of the objective functions}
 
-\pinline{romc.visualize_region(i)}
+\subsubsection*{Function (iv): Plot the histogramm of the optimal points}
+
+\pinline{romc.distance_hist(**kwargs)}
 \vspace{5mm}
 \noindent
+
 
 This function can serve as an intermediate step of manual inspection,
 for helping the user choose which threshold $\epsilon$ to use. It
@@ -136,15 +123,30 @@ keyword arguments and forwards them to the underlying
 customize some properties of the histogram, such as the number of bins
 or the range of values.
 
-\subsubsection*{Function (vi): Compute $\epsilon$ automatically based on the distribution of $d^*$}
+\subsubsection*{Function (v): Plot the acceptance region of the objective functions}
 
-\pinline{romc.compute_eps(quantile)}
+\pinline{romc.visualize_region(i)}
 \vspace{5mm}
 \noindent
 
 It can be used as an inspection utility for cases where the parametric
 space is up to two dimensional. The argument $\pinline{i}$ is the
 index of the corresponding optimization problem i.e.\ $i<n_1$.
+
+\subsubsection*{Function (vi): Compute $\epsilon$ automatically based on the distribution of $d^*$}
+
+\pinline{romc.compute_eps(quantile)}
+\vspace{5mm}
+\noindent
+
+\noindent
+This function return the appropriate distance value $d_{i=\kappa}^*$
+where $\kappa = \lfloor \frac{quantile}{n} \rfloor$ from the
+collection $\{ d_i^* \} \forall i = \{1, \ldots, n\}$ where $n$ is the
+number of accepted solutions. It can be used to automate the selection
+of the threshold $\epsilon$, e.g.\
+\pinline{eps=romc.compute_eps(quantile=0.9)}.
+
 
 \subsubsection*{Example}
 
@@ -156,7 +158,7 @@ code snippet performs the training part at ELFI.
   n1 = 500
   seed = 21
   eps = .75
-  use_bo = False # True, if using Bayesian optimisation
+  use_bo = False # set to True for switching to Bayesian optimisation
 
   # Training set-by-step
   romc.solve_problems(n1=n1, seed=seed, use_bo=use_bo)

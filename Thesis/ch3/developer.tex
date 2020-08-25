@@ -141,12 +141,23 @@ accesing all \pinline{OptimisationProblem} one after the other and
 call the corresponding function
 i.e.\pinline{solve_gradients(**kwargs)}, \pinline{solve_bo(**kwargs)},
 \pinline{build_region(**kwargs)},
-\pinline{fit_local_surrogate(**kwargs)}.
+\pinline{fit_local_surrogate(**kwargs)}. The functions of
+\pinline{OptimisationProblem} execute their main functionality and
+update the appropriate attribute. Table \ref{tab:extensibility}
+summarizes this procedure.
 
-\begin{center} \label{tab:ex2}
+\begin{center} \label{tab:extensibility}
+\captionof{table}{Table explaining the object returned by each
+  \pinline{OptimisationProblem} routine. The functions of the first
+  column (\pinline{ROMC} class) call the correpsonding functions of
+  the second column (\pinline{OptimisationProblem} class). The
+  functions of the second column should execute their main
+  functionality and update the appropriate attribute with a certain
+  object, as described in the third column. }
+  
 \begin{tabular}{ c|c|c }
 \hline
-\pinline{ROMC} & \pinline{OptimisationProblem} & \pinline{OptimisationProblem} \\
+\pinline{ROMC} & \pinline{OptimisationProblem} & \pinline{Return value} \\
 \hline \hline
 \pinline{_solve_gradients()} & \pinline{solve_gradients()} & \pinline{result <- RomcOptimisationResult} \\
 \hline
@@ -155,6 +166,61 @@ i.e.\pinline{solve_gradients(**kwargs)}, \pinline{solve_bo(**kwargs)},
 \hline
 \pinline{_build_boxes()} & \pinline{build_region()} & \pinline{regions <- List[NDimBoundingBox]}\\
 \hline
-\pinline{_fit_models()} & \pinline{fit_local_surrogate()} & \pinline{local_surrogate <- Callable}\\  
+  \pinline{_fit_models()} & \pinline{fit_local_surrogate()} & \pinline{local_surrogate <- Callable}\\
+  \hline
 \end{tabular}
 \end{center}
+
+\subsubsection*{Example: use a Neural Network as a local surrogate model}
+
+Let's say we have observed that the local area around $\theta_i^*$ is
+too complex to be represented by a simple quadratic model, as in the
+current implementation. Hence, a researcher thinks of using a more
+agile model and selects a neural network as a good alternative. In the
+following snippet, we demonstrate how he could implement this
+functionality, without much effort; (a) he has to develop the neural
+network using the package of his choice (b) he must create a custom
+optimisation class, inheriting the basic \pinline{OptimisationClass}
+and (c) he has to overwrite the \pinline{fit_local_surrogate} routine,
+with one that sets the neural network's prediction function as the
+\pinline{local_surrograte} attribute. The argument \pinline{**kwargs}
+may be used for passing all the important arguments e.g.\ training
+epochs, gradient step etc. If he would like to set the size of the
+training set dynamically, we may replace \pinline{x =
+  self.regions[0].sample(30)} with \pinline{x =
+  self.regions[0].sample(kwargs["nof_examples"])}.
+
+\begin{pythoncode}
+  class NeuralNetwork:
+      def __init__(self, **kwargs):
+          # set the input arguments
+
+      def train(x, y):
+          # training code
+
+      def predict(x):
+          # prediction code
+
+  # Inherit the base optimisation class
+  class customOptim(elfi.OptimisationProblem):
+      def __init__(self):
+          pass
+
+      # overwrite the function you want to replace
+      def fit_local_surrogate(**kwargs):
+          # init and train the NN
+          x = self.regions[0].sample(30) # 30 training points
+          y = [np.array([self.objective(ii) for ii in x])]
+          nn = NeuralNet()
+          nn.train(x,y)
+
+          # set the appropriate attribute
+          self.local_surrogate = nn.predict
+
+          # update the state
+          self.state["local_surrogate"] = True
+  
+\end{pythoncode}
+
+
+The above method, for 

@@ -214,7 +214,7 @@ model = summary
 n1 = 500
 n2 = 30
 bounds = [(-2.5, 2.5), (-2.5, 2.5)]
-eps = .4
+eps = .75
 vis_ind_1 = 1
 
 romc = ROMC(model, bounds=bounds, discrepancy_name="d")
@@ -222,7 +222,7 @@ romc.solve_problems(n1=n1, seed=seed)
 romc.distance_hist(savefig=os.path.join(
     prepath, "ex2D_distance_hist.png"))
 
-romc.estimate_regions(eps_filter=eps, fit_models=False)
+romc.estimate_regions(eps_filter=eps, fit_models=True)
 
 tmp = romc.sample(n2=n2)
 romc.visualize_region(vis_ind_1, savefig=os.path.join(
@@ -261,7 +261,7 @@ romc1.solve_problems(n1=n1, seed=seed, use_bo=use_bo)
 romc1.distance_hist(savefig=os.path.join(
     prepath, "ex2D_distance_hist_bo.png"))
 
-romc1.estimate_regions(eps_filter=eps, use_surrogate=False)
+romc1.estimate_regions(eps_filter=eps, use_surrogate=False, fit_models=True)
 
 tmp = romc1.sample(n2=n2)
 romc1.visualize_region(vis_ind_1, savefig=os.path.join(
@@ -314,9 +314,11 @@ def plot_romc_posterior(title, posterior, nof_points, savefig):
     plt.show(block=False)
 
 
+romc.posterior.partition = None
+romc.posterior.eps_cutoff = .75
 plot_romc_posterior('ROMC Posterior (gradient-based)',
                     romc.eval_posterior,
-                    nof_points=20,
+                    nof_points=40,
                     savefig=os.path.join(prepath, "ex2D_romc_posterior.png"))
 
 
@@ -333,4 +335,4 @@ def wrapper(x):
     return np.array(res)
 
 
-romc1.compute_divergence(wrapper, step=.2)
+romc.compute_divergence(wrapper, step=.2)

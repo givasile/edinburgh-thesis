@@ -9,6 +9,8 @@
 \usepackage[noend]{algpseudocode}
 \usepackage{multirow}
 
+\usepackage{caption}
+
 \usepackage{hyperref}
 \hypersetup{colorlinks=True, urlcolor=cyan}
 
@@ -209,7 +211,11 @@ Here comes your own work declaration
 \clearpage
 \section{Introduction}
 \label{sec:introduction}
-This dissertation is mainly focused on the implementation of the Robust Optimisation Monte Carlo (ROMC) method as it was proposed by \autocite{Ikonomov2019} at the python package ELFI (Engine For Likelihood-Free Inference) \autocite{1708.00707}. The ROMC method describes a novel likelihood-free inference approach for simulator-based models.
+This dissertation is mainly focused on the implementation of the
+Robust Optimisation Monte Carlo (ROMC) method as it was proposed by
+\autocite{Ikonomov2019}, at the Python package ELFI - "Engine For
+Likelihood-Free Inference" \autocite{1708.00707}. ROMC is a novel
+likelihood-free inference approach for simulator-based models.
 
 \subsection{Motivation}
 \label{subsec:motivation}
@@ -259,19 +265,19 @@ two logical blocks; In
 Sections~\ref{subsec:general_design},~\ref{subsec:training},~\ref{subsec:inference},
 \ref{subsec:evaluation} we present the functionalities provided by our
 implementation, from the \textbf{user's point-of-view}. These sections
-demonstrate how a practitioner could use our ROMC implementation for
-performing the inference in a real-case scenario. For providing a
+demonstrate hpow a practitioner could use our ROMC implementation for
+performing the inference in an simulator-based model. For providing a
 practical overview of the implementation, we set-up a simple running
 example and illustrate the functionalities on top of it. In contrast,
 in the final Section~\ref{subsec:developers} we delve into the
 internals of the code, presenting all the tiny details of the
-implementation. This Section mainly refers to a \textbf{developer or a
-  researcher} who would like to use ROMC as a meta-algorithm and
+implementation. This Section mainly refers to a \textbf{researcher or
+  a developer} who would like to use ROMC as a meta-algorithm and
 experiment with novel approaches for solving specific tasks. We have
 designed our implementation preserving extensibility and
 customisation; hence, a researcher may intervene in parts of the
-method without too much effort. This Section can serve as a driver for
-achieving so.
+method without too much effort. This Section contains as well a driver
+example for extending the method with custom utilities.
 
 
 \subsection{General Design}
@@ -298,18 +304,17 @@ achieving so.
 
 \clearpage
 \section{Experiments}
-This section presents the ROMC implementation on some real-world
+This section presents the ROMC implementation on some real-case
 examples. It is used to present the accuracy of the method both at a
 conceptual and the implementation level. The two examples that will be
-presented are multidimensional to confirm that method works fine in
-higher-dimensions. The first one is chosen to be a simple $2D$ with
-tractable likelihood, for the ground-truth information to be available
-for validation purposes. The second one is the second-degree moving
-average model, where the likelihood becomes intractable as the number
-of observations grows large. This model, which is used as a general
-example by the ELFI package, is chosen to illustrate that our
-implementation performs well at a general model, not implemented by
-us.
+presented are multidimensional, in order to confirm that method works
+fine in higher-dimensions. The first one is chosen to be a simple $2D$
+with tractable likelihood, for the ground-truth information to be
+available for validation purposes. The second one is the second-degree
+moving average model, which is a basic example used by the ELFI
+package for checking the inference methods. This model is also chosen
+to illustrate that our implementation performs well at a general
+model, not implemented by us.
 
 \subsection{Example 1: Simple 2D example}
 \label{subsec:ex1}
@@ -340,12 +345,11 @@ us.
 \clearpage
 \section{An Appendix}
 \label{app:one}
-
+lllllllll
 \clearpage
 
 \section{Another Appendix}
 \label{app:two}
-llllllllll
 
 
 
