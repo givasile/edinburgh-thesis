@@ -6,7 +6,7 @@ space.
 
 The equations describing this inference problem are presented below.
 
-\begin{gather}
+\begin{gather} \label{eq:ex1_equations}
   p(\thetab) = p(\theta_1)p(\theta_2)
   = \mathcal{U}(\theta_1; -2.5, 2.5) \mathcal{U}(\theta_2; -2.5, 2.5)\\
   p(\yb|\thetab) = \mathcal{N}(\yb;\thetab, \mathcal{I})\\
@@ -15,15 +15,15 @@ The equations describing this inference problem are presented below.
 \end{gather}
 
 \noindent
-Computing the unnormalised posterior in this example is quite
-straightforward using the a compuational approximation. Additionaly
-the partition function $Z$ can be estimated using the Riemann's
-approximation. Hence, computing the ground-truth posterior is
-computationally feasible. Setting the observation to
-$\data=(-0.5,0.5)$, the ground-truth posterior is illustrated in
-figure \ref{fig:ex2_4}. In table \ref{tab:ex2}, we present the
-ground-truth statistics i.e.\ $\mu, \sigma$ of the marginal posterior
-distributions.
+As shown in equations \eqref{eq:ex1_equations}, in this simple
+example, it is feasible to evaluate the likelihood and the
+unnormalised posterior. Additionally, the partition function $Z$ can
+be estimated using the Riemann's approximation. Hence, computing the
+ground-truth posterior is computationally feasible. Setting the
+observation to $\data=(-0.5,0.5)$, the ground-truth posterior is
+illustrated in figure \ref{fig:ex2_4}. In table \ref{tab:ex2}, we
+present the ground-truth statistics i.e.\ $\mu, \sigma$ of the
+marginal posterior distributions.
 
 \subsubsection*{Performing the inference}
 
@@ -37,11 +37,11 @@ majority of the optimisation procedures has the behaviour; there are
 only 4 optimal distance above the limit. In figure \ref{fig:ex2_2},
 the acceptance area of a specific optimisation problem is
 demonstrated. We observe that both optimisation schemes lead to a
-similar bounding box construction. This specific example is quite
+similar bounding box construction. This specific example is
 representative of the rest of the optimisation problems; due to the
-simplicity of the optimisation process, in most cases the optimal
-points are similar and the surrogate model represents accurately the
-local region. Hence, similar proposal regions are obtained by the two
+simplicity of the objective function, in most cases the optimal points
+are similar and the surrogate model represents accurately the local
+region. Hence, similar proposal regions are obtained by the two
 optimisation alternatives.
 
 The histograms of the marginal distributions, based on the weighted
@@ -68,15 +68,15 @@ In this experiment we observed that the implementation fulfilled the
 theoretical expectations for the ROMC inference method.
 
 \begin{center} \label{tab:ex2}
-\begin{tabular}{ c|c|c|c|c }
+\begin{tabular}{ c|c|c|c|c|c }
 \hline
-& $\mu_{\theta_1}$ & $\sigma_{\theta_1}$ & $\mu_{\theta_2}$ & $\sigma_{\theta_2}$ \\
+& $\mu_{\theta_1}$ & $\sigma_{\theta_1}$ & $\mu_{\theta_2}$ & $\sigma_{\theta_2}$ & Divergence\\
 \hline \hline
-Ground-truth & -0.45 & 0.935 & 0.45 & 0.935 \\
+Ground-truth & -0.45 & 0.935 & 0.45 & 0.935 & \\
 \hline
-ROMC (gradient-based) & -0.482 & 0.976 & 0.522 & 0.945 \\
+ROMC (gradient-based) & -0.474 & 0.994 & 0.502 & 0.966 & 0.068\\
 \hline
-ROMC (Bayesian optimisation) & -0.481 & 0.976 & 0.518 & 0.947 \\
+ROMC (Bayesian optimisation) & -0.485 & 0.987 & 0.511 & 0.939 & 0.069\\
 \hline
 \end{tabular}
 \end{center}
@@ -140,9 +140,16 @@ ROMC (Bayesian optimisation) & -0.481 & 0.976 & 0.518 & 0.947 \\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_romc_posterior_bo.png}
     \end{center}
     \caption{(a) First row: Ground-truth posterior approximated
-      computationally. (b) ROMC approximate posteriors using
-      gradient-based approach (left) and Bayesian optimisation
-      approach (right).}
+      computationally. (b) Second row (left): ROMC approximate
+      posteriors using gradient-based approach. The divergence from
+      the ground-truth using the Jensen-Shannon distance is
+      $0.068$. (c) Second row (right): ROMC approximate posterior
+      using Bayesian optimisation. The divergence from the
+      ground-truth using the Jensen-Shannon distance is $0.069$}
   \label{fig:ex2_4}
 \end{figure}
 
+In this simple artificial 2D example, where the ground-truth
+information is available, we confirmed that our implementation
+produces accurate approximations. In the following section we will
+test it in a more complex example.

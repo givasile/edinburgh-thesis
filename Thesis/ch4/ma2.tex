@@ -2,7 +2,8 @@ The second example is the second-order moving average (MA2) which is
 used by the ELFI package as a fundamental model for testing all
 inference implementations. This example is chosen to confirm that our
 implementation of the ROMC approach produces sensible results in a
-general model, not set-up by us.
+general model, since the previous ones where artificially created by
+us.
 
 \subsubsection*{Problem definition}
 
@@ -45,7 +46,22 @@ p(\thetab) = p(\theta_1)p(\theta_2|\theta_1)
 
 \noindent
 The vector $\yb_0 = (y_1, \ldots, y_{100})$ used as the observation,
-has been generated with $\thetab=(0.6, 0.2)$.
+has been generated with $\thetab=(0.6, 0.2)$. The dimensionality of
+the output $\yb$ is quite large, therefore we use summary
+statistics. Considering that the ouptput vector represents a
+time-series signal, we prefer the autocovariance as the summary
+statistic; we incorporate the autocovariances with $lag=1$ and
+$lag=2$, as shown in equation \eqref{eq:ma2_summary}. Hence, the
+distance is defined as the squared euclidean distance between the
+summary statistics.
+
+\begin{gather} \label{eq:ma2_summary}
+  s_1(\yb) = \frac{1}{T-1} \sum_{t=2}^T y_ty_{t-1}\\
+  s_2(\yb) = \frac{1}{T-2} \sum_{t=3}^T y_ty_{t-2} \\
+  s(\yb) = (s_1(\yb), s_2(\yb))\\
+  d = ||s(\yb) - s(\yb_0)||_2^2
+\end{gather}
+
 
 \subsubsection*{Perform the inference}
 
