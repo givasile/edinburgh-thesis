@@ -1,34 +1,24 @@
-In the previous sections we described the functionalities of the our
-implementation from the user's point-of-view; the demonstration
-focused on performing the inference on a real-case scenario, using our
-implementation. Apart from this fundamental use-case, we would also
-like our implementation to serve as an initial point for a researcher
-or developer experimenting with new approaches. We would like our
-implementation to be extensible enough so that he may extend parts of
-the ROMC approach, without having to re-implement everything from
-scratch. This feature is essential if we treat ROMC as a
-meta-algorithm.
-
-
-In section 
-
+In the previous sections we described ROMC from the user's
+point-of-view; the demonstration focused on performing the inference
+with the ready-to-use tools. Apart from this use-case, a practitioner
+can also use the implementation as a meta-algorithm, adding custom
+algorithms as part of the method. Our implementation allows such
+intervention. In the rest of the chapter, We will initially present
+the main internal classes and then we will exhibit how to add custom
+methods.
 
 \subsubsection{Entities presentation}
 
 In figure \ref{fig:example_training} we provide an overview of the
-classes used for implementing the method. The class $\textit{ROMC}$
-can be thought as the "front-end" of the method providing the API
-calls needed from the user; the rest of the classes implement the
-backend functionality of the inference. It is important for the reader
-to have in mind the sequence of the events in the training phase, as
-demonstrated in figure \ref{fig:romc_overview}. In this section we
-will try to describe the result of each step at the attributes of each
-class.
+classes used. The class $\pinline{ROMC}$ can be thought as the
+interface between the user and the method. The rest of the classes are
+responsible for the backend functionality. It is important for the
+reader to understand the sequence of the events for performing the
+inference, as demonstrated in figure \ref{fig:romc_overview}.
 
 The initialisation of the ROMC object sets the attributes
-\pinline{model, model_prior, bounds, inference_state} to the
-appropriate values; the rest of the attributes are set to
-\pinline{None}.\footnote{in general, throughout all classes, we use
+\pinline{model, model_prior, bounds, inference_state}; the rest of the
+attributes are set to \pinline{None}.\footnote{in all cases, we use
   the value None for indicating that an attribute is not yet
   initialised."} The \pinline{_sample_nuisance()} routine samples
 $n_1$ integers for the discrete integer uniform distribution. The
@@ -199,9 +189,9 @@ training set dynamically, we may replace \pinline{x =
           # prediction code
 
   # Inherit the base optimisation class
-  class customOptim(elfi.OptimisationProblem):
-      def __init__(self):
-          pass
+  class customOptim(elfi.methods.parameter_inference.OptimisationProblem):
+      def __init__(self, **kwargs):
+          super(customOptim, self).__init__(**kwargs)
 
       # overwrite the function you want to replace
       def fit_local_surrogate(**kwargs):
@@ -216,7 +206,9 @@ training set dynamically, we may replace \pinline{x =
 
           # update the state
           self.state["local_surrogate"] = True
-  
+
+  # pass the custom inference method as argument
+  romc = elfi.ROMC(dist, bounds, custom_optim_class=customOptim)
 \end{pythoncode}
 
 

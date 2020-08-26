@@ -3,7 +3,7 @@
 A simulator-based model is a parameterised stochastic data generating
 mechanism \autocite{Gutmann2016}. The key characteristic of these
 models is that although we can sample (simulate) data points, we
-cannot evaluate the likelihood for a specific set of observations
+cannot evaluate the likelihood of a specific set of observations
 $\data$. Formally, a simulator-based model is described as a
 parameterised family of probability density functions
 $\{ p_{\yb|\thetab}(\yb) \}_{\thetab}$, whose closed-form is either
@@ -20,7 +20,7 @@ Simulator-based models are particularly captivating due to the
 modelling freedom they provide; any physical process that can be
 conceptualised as a computer program of finite (deterministic or
 stochastic) steps can be modelled as a simulator-based model without
-any compromise. The modelling fredom includes any amount of hidden
+any compromise. The modelling freedom includes any amount of hidden
 (unobserved) internal variables or logic-based decisions. As always,
 this degree of freedom comes at a cost; performing the inference is
 particularly demanding from both computational and mathematical
@@ -46,21 +46,21 @@ rate $\delta$, creating a $3D$-parametric space
 $\thetab = (\alpha, \tau, \delta)$. The outcome of the process is a
 variable-size tuple $\yb_{\thetab}$, containing the population
 contaminated by each different haplotype, as described in
-figure~\ref{fig:tuberculosis_model}. Lets say that the disease has
-been spread in a real population and when $m$ hosts where contaminated
+figure~\ref{fig:tuberculosis_model}. Let's say that the disease has
+been spread in a real population and when $m$ hosts were contaminated
 simultaneously, the vector with the infectious populations has been
 measured to be $\data$. We would like to discover the parameters
-$\thetab = (\alpha, \tau, \delta)$ that describe the spreading process
-and lead to the specific outcome $\data$. Computing
+$\thetab = (\alpha, \tau, \delta)$ that generated the spreading
+process and led to the specific outcome $\data$. Computing
 $p(\yb=\data|\thetab)$ requires tracking all tree-paths that could
 generate the specific tuple; such exhaustive enumeration becomes
 intractable when $m$ grows larger, as in real-case scenarios. In
 figure~\ref{fig:tuberculosis_model} we can observe that a transmission
 followed by a recovery/death creates a loop, reinstating the process
-to the previous step, which also ... the exhaustive
-enumeration. Hence, modelling the process as a simulator-based
+to the previous step, which also complicates the exhaustive
+enumeration. Hence, representing the process with a simulator-based
 model\footnote{which is simple and efficient} and performing
-likelihood-free inference is the suggested solution.
+likelihood-free inference is the recommended solution.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -76,22 +76,21 @@ likelihood-free inference is the suggested solution.
 
 As in most Machine Learning (ML) concepts, the fundamental goal is the
 derivation of one(many) parameter configuration(s) $\thetab^*$ that
-\textit{describe} well the data i.e.\ generate samples
+\textit{describe} the data best i.e.\ generate samples
 $M_r(\thetab^*)$ that are as close as possible to the observed data
-$\data$. In our case, following the approach of Bayesian Machine
-Learning, we treat the parameters of interest $\thetab$ as random
-variables and we try to \textit{infer} a posterior distribution
-$p(\thetab|\data)$ on them. 
+$\data$. In our case, following the approach of Bayesian ML, we treat
+the parameters of interest $\thetab$ as random variables and we try to
+\textit{infer} a posterior distribution $p(\thetab|\data)$ on them.
 
 \subsubsection*{\textit{Robust Optimisation Monte Carlo (ROMC) method}}
 
 The ROMC method~\autocite{Ikonomov2019} is very a recent
-likelihood-free approach; its fundamental idea is the transformation
+likelihood-free approach. Its fundamental idea is the transformation
 of the stochastic data generation process $M_r(\thetab)$ to a
 deterministic mapping $g_i(\thetab)$, by sampling the variables that
 produce the randomness $\vb_i \sim p(\V)$. Formally, in every
 stochastic process the randomness is influenced by a vector of random
-variables $\V$, whose state is unknown before the execution of the
+variables $\V$, whose state is unknown prior to the execution of the
 simulation; sampling the state makes the procedure deterministic,
 namely $g_i(\thetab) = M_d(\thetab, \V=\vb_i)$. This approach
 initially introduced at \autocite{Meeds2015} with the title
@@ -102,7 +101,7 @@ series of steps, without explicitly enforcing which algorithms must be
 utilised for each step\footnote{The implementation chooses a specific
   algorithm for each task, but this choice has just a demonstrative
   value; any appropriate algorithm can be used instead.}; in this
-sense, it can be thought as a meta-algorithm.
+sense, it can be perceived as a meta-algorithm.
 
 \subsubsection*{\textit{Implementation}}
 
