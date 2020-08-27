@@ -3,7 +3,7 @@ point-of-view; the demonstration focused on performing the inference
 with the ready-to-use tools. Apart from this use-case, a practitioner
 can also use ROMC as a meta-algorithm, adding custom algorithms as
 part of the method. Our implementation allows such intervention. In
-the rest of the chapter, We will initially present the main internal
+the rest of the chapter, we will initially present the main internal
 classes and then then we will exhibit how to add custom methods.
 
 \subsubsection{Entities presentation}
@@ -20,7 +20,7 @@ The class \pinline{ROMC} is the main class of the method; it is
 initialised when the user calls the method for the first time and its
 state is updated throughout the inference.The initialisation of the
 \pinline{ROMC} object sets the attributes \pinline{model},
-\pinline{model_prior}, \pinline{bounds}, \pinline{inference_state} to
+\pinline{model_prior}, \pinline{bounds} and \pinline{inference_state} to
 the appropriate values; the rest of the attributes are set to
 \pinline{None}.\footnote{in all cases, we use the value None for
   indicating that an attribute is not yet initialised."}.
@@ -30,7 +30,7 @@ the discrete integer distribution. The \pinline{_define_objectives()}
 routine initialises $n_1$ \pinline{OptimisationProblem} objects,
 appends them to a \pinline{List} and stores this \pinline{List} as the
 \pinline{romc.optim_problems} attribute. The
-\pinline{_define_objectives()} function, initialises the only the
+\pinline{_define_objectives()} function, initialises only the
 attributes \pinline{objective} and \pinline{bounds} of the
 \pinline{OptimisationProblem}; the rest are set to \pinline{None}. The
 attribute \pinline{objective}, which is a \pinline{Callable}, is
@@ -40,24 +40,24 @@ specific integer, turning the random generator to a deterministic.
 Afterwards, depending on the boolean argument
 \pinline{use_bo=True/False}, the function \pinline{_solve_gradients}
 or \pinline{_solve_bo} is called. Both of them follow the same
-sequence of steps; for each optimisation problem (a) they solve it and
-(b) they initialise a \pinline{RomcOptimisationResult} object with the
-solution and (c) they store it as the
-\pinline{OptimisationProblem.result} attribute. Although they both
-apply the same sequence of steps, each method uses a different
-optimisation scheme; \pinline{_solve_gradients} uses the
-\pinline{minimize} class of the \pinline{scipy.optimize} library
-\autocite{2020SciPy-NMeth}, whereas \pinline{_solve_bo} uses the
-\pinline{BoDeterministic} class.  \pinline{BoDeterministic} is a class
-we implemented for performing Bayesian Optimisation and fitting a
-Gaussian Process surrogate model to the objective function. It relies
-on the Gpy framework \autocite{gpy2014} for fitting the Gaussian
-Process. The only difference between \pinline{_solve_gradients} and
-\pinline{_solve_bo}, as effect in the state of the
-\pinline{OptimisationProblem} class, is the initialisation of the
-attribute \pinline{OptimisationProblem.surrogate}, which is done only
-by \pinline{_solve_bo}. The attribute is set to a \pinline{Callable}
-that wraps the \pinline{GPyRegression.predict_mean} function. If
+sequence of steps; for each optimisation problem they (a) solve it,
+(b) create a \pinline{RomcOptimisationResult} object with the solution
+and (c) store it as the \pinline{OptimisationProblem.result}
+attribute. Although they both apply the same sequence of steps, each
+method uses a different optimisation scheme;
+\pinline{_solve_gradients} uses the \pinline{minimize} class of the
+\pinline{scipy.optimize} library \autocite{2020SciPy-NMeth}, whereas
+\pinline{_solve_bo} uses the \pinline{BoDeterministic} class.
+\pinline{BoDeterministic} is a class we implemented for performing
+Bayesian Optimisation and fitting a Gaussian Process surrogate model
+to the objective function. It relies on the Gpy framework
+\autocite{gpy2014} for fitting the Gaussian Process. The only
+difference between \pinline{_solve_gradients} and \pinline{_solve_bo},
+as effect in the state of the \pinline{OptimisationProblem} class, is
+the initialisation of the attribute
+\pinline{OptimisationProblem.surrogate}, which is done only by
+\pinline{_solve_bo}. The attribute is set to a \pinline{Callable} that
+wraps the \pinline{GPyRegression.predict_mean} function. If
 \pinline{_solve_gradients} is called, the attribute remains
 \pinline{None}.
 
