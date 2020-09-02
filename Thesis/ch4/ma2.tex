@@ -12,11 +12,11 @@ univariate time series analysis. The observation at time $t$ is given by:
 
 \begin{gather} \label{eq:ma2}
 y_t = w_t + \theta_1 w_{t-1} + \theta_2 w_{t-2}\\
-\theta_1, \theta_2 \in \R, \quad  w_{k, k \in \mathbb{Z}} \sim \mathcal{N}(0,1)
+\theta_1, \theta_2 \in \R, \quad  w_k \sim \mathcal{N}(0,1), k \in \mathbb{Z}
 \end{gather}
 
 \noindent
-The random variables $w_{k, k \in \mathbb{Z}} \sim \mathcal{N}(0,1)$
+The random variables $w_{k} \sim \mathcal{N}(0,1), k \in \mathbb{Z}$
 represent an independent and identically distributed white noise and
 $\theta_1, \theta_2$ the dependence from the previous
 observations. The number of consecutive observations $T$ is a
@@ -39,8 +39,8 @@ p(\thetab) = p(\theta_1)p(\theta_2|\theta_1)
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_prior_samples.png}
     \end{center}
-    \caption{Prior distribution proposed by Marin et al.\
-      \cite{Marin2012}. The samples follow a triangular shape.}
+    \caption{Prior distribution proposed by \autocite{Marin2012}. The
+      samples follow a triangular shape.}
   \label{fig:ma2_1}
 \end{figure}
 
@@ -53,7 +53,7 @@ time-series signal, we prefer the autocovariance as the summary
 statistic; we incorporate the autocovariances with $lag=1$ and
 $lag=2$, as shown in equation \eqref{eq:ma2_summary}. Hence, the
 distance is defined as the squared euclidean distance between the
-summary statistics.
+summary statistics; this is the same choice as in \autocite{Marin2012}.
 
 \begin{gather} \label{eq:ma2_summary}
   s_1(\yb) = \frac{1}{T-1} \sum_{t=2}^T y_ty_{t-1}\\
@@ -73,38 +73,41 @@ use the samples obtained with Rejection ABC. In figure \ref{fig:ma2_2}
 we observe that in most cases the optimal distance $d_i^*$ is close to
 zero in both optimisation approaches.
 
-In figure \ref{fig:ma2_5}, we have chosen three different optimisation
-examples for illustrating three different cases. In the first case,
-both optimisation schemes lead to the creation of almost the same
-bounding box. In the second case, the bounding box has a similar
-shape, though different size and it is shifted along the $\theta_1$
-axis. Finally, in the third case, the bounding boxes are completely
-different. We can thus conclude that although fitting a surrogate
-model has important computational advantages, there is no guarantee
-that it will reproduce accurately the local region around the optimal
-point. This approximation error may lead to the construction of a
-considerably different proposal region, which in turn, explains the
-differences in the histogram of the marginal distributions presented
-in figure \ref{fig:ma2_3} and in the approximate posteriors in figure
+In figure \ref{fig:ma2_5}, we have chosen three different
+deterministic optimisation cases (i.e. three different seeds) for
+illustrating three different cases. In the first case, both
+optimisation schemes lead to the creation of almost the same bounding
+box. In the second case, the bounding box has a similar shape, though
+different size and it is shifted along the $\theta_1$ axis. Finally,
+in the third case, the bounding boxes are completely different. We can
+thus conclude that although fitting a surrogate model has important
+computational advantages, there is no guarantee that it will reproduce
+accurately the local region around the optimal point. This
+approximation error may lead to the construction of a considerably
+different proposal region, which in turn, explains the differences in
+the histogram of the marginal distributions presented in figure
+\ref{fig:ma2_3} and in the approximate posteriors in figure
 \ref{fig:ma2_4}.
 
-In figure \ref{fig:ma2_3}, we observe the histograms of the marginal
-posteriors; undoubtedly, we observe that there is a significant
-similarity between the three approaches. The Rejection ABC inference
-has been set to infer 10000 accepted samples, with threshold
-$\epsilon=0.1$. The large number of samples and the small distance
-from the observations let treat them as ground-truth information. In
-the table \ref{tab:ma2} we present the empirical mean $\mu$ and
-standard deviation $\sigma$ for each inference approach. We observe
-that there is a significant agreement between the approaches, which
-verifies that the ROMC implementation provides sensible
-results. Finally, in figure \ref{fig:ma2_4} we provide the ROMC
-approximate posteriors using gradients and Bayesian optimisation; as
-confirmed by the statistics in \ref{tab:ma2}, both posteriors have a
-single mode, located at the same point, with a larger variance
-observed in the Bayesian Optimisation case. The posteriors mode is
-quite close to the parameter configuration that generated the data
-i.e.\ $\thetab = (0.6, 0.2)$.
+In figure \ref{fig:ma2_3}, we demonstrate the histograms of the
+marginal posteriors, using the three different methods; (a) Rejection
+ABC (first line), (b) ROMC with gradient-based optimisation (second
+line) and (c) ROMC with Bayesian optimisation (third
+line). Undoubtedly, we observe that there is a significant similarity
+between the three approaches. The Rejection ABC inference has been set
+to infer 10000 accepted samples, with threshold $\epsilon=0.1$. The
+large number of samples and the small distance from the observations
+let us treat them as ground-truth information. In the table \ref{tab:ma2}
+we present the empirical mean $\mu$ and standard deviation $\sigma$
+for each inference approach. We observe that there is a significant
+agreement between the approaches, which verifies that the ROMC
+implementation provides sensible results. Finally, in figure
+\ref{fig:ma2_4} we provide the ROMC approximate posteriors using
+gradients and Bayesian optimisation; as confirmed by the statistics in
+\ref{tab:ma2}, both posteriors have a single mode, located at the same
+point, with a larger variance observed in the Bayesian Optimisation
+case. The posteriors mode is quite close to the parameter
+configuration that generated the data i.e.\ $\thetab = (0.6, 0.2)$.
 
 \begin{center} \label{tab:ma2}
 \begin{tabular}{ c|c|c|c|c }
@@ -125,7 +128,10 @@ ROMC (Bayesian optimisation) & 0.510 & 0.156 & 0.108 & 0.183 \\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ma2_distance_hist.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ma2_distance_hist_bo.png}
     \end{center}
-  \caption{Histogram of distances $d_{i, i \in {1, \ldots, n_1}}^*$. The left graph corresponds to the gradient-based approach and the right one to the Bayesian optimisation approach.}
+    \caption{Histogram of distances
+      $d_i^*, i \in \{ 1, \ldots, n_1 \}$. The left graph corresponds
+      to the gradient-based approach and the right one to the Bayesian
+      optimisation approach.}
   \label{fig:ma2_2}
 \end{figure}
 
@@ -152,7 +158,14 @@ ROMC (Bayesian optimisation) & 0.510 & 0.156 & 0.108 & 0.183 \\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_hist_t1_romc_bo.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_hist_t2_romc_bo.png}\\
     \end{center}
-  \caption{Histogram of the marginal distribution for three different inference approaches; (a) in the first row, the approximate posterior samples are obtained using Rejection ABC sampling (b) in the second row, using ROMC sampling with gradient-based approach and (c) in the third row, using ROMC sampling with Bayesian optimisation approach. The vertical (red) line represents the samples mean $\mu$ and the horizontal (black) the standard deviation $\sigma$.}
+    \caption{Histogram of the marginal distribution for three
+      different inference approaches; (a) in the first row, the
+      approximate posterior samples are obtained using Rejection ABC
+      sampling (b) in the second row, using ROMC sampling with
+      gradient-based approach and (c) in the third row, using ROMC
+      sampling with Bayesian optimisation approach. The vertical (red)
+      line represents the samples mean $\mu$ and the horizontal
+      (black) the standard deviation $\sigma$.}
   \label{fig:ma2_3}
 \end{figure}
 
@@ -162,7 +175,8 @@ ROMC (Bayesian optimisation) & 0.510 & 0.156 & 0.108 & 0.183 \\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_romc_posterior.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_romc_posterior_bo.png}
     \end{center}
-  \caption{ROMC approximate posteriors using gradient-based approach (left) and Bayesian optimisation approach (right).}
+    \caption{ROMC approximate posteriors using gradient-based approach
+      (left) and Bayesian optimisation approach (right).}
   \label{fig:ma2_4}
 \end{figure}
 
