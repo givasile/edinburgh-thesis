@@ -106,11 +106,11 @@ which gets updated whenever an algorithmic step is executed. The rest
 of the classes provide objects which are stored as attributes of
 \pinline{ROMC}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=\textwidth]{./Thesis/graphs/RomcEntityDiagram.png}
     \end{center}
-  \caption{Histogram of distances and visualisation of a specific region.}
+  \caption[Overview of the entities (classes) of the ROMC implementation.]{Overview of the entities (classes) used at the deployment of the ROMC inference method, at the \pinline{ELFI} package.}
   \label{fig:example_training}
 \end{figure}
 
@@ -142,8 +142,8 @@ example, a function that replaces \pinline{solve_gradients()} must
 have the effect of storing a \pinline{RomcOptimisationResult} object
 to the \pinline{OptimisationObject} attribute.
 
-\begin{center} \label{tab:extensibility} \captionof{table}{Table
-    explaining the appropriate effect of each replacable routine,
+\begin{center} \label{tab:extensibility} \captionof{table}[Demonstration of the appropriate effect of each replaceable routine]{Table
+    explaining the appropriate effect of each replaceable routine,
     i.e. which object they should attach to the appropriate
     attribute. The functions of the first column (\pinline{ROMC}
     class) call the correpsonding functions of the second column
@@ -181,7 +181,7 @@ of their choice (b) they must create a custom optimisation class which
 inherites the basic \pinline{OptimisationClass} and (c) they have to
 overwrite the \pinline{fit_local_surrogate} routine, with one that
 sets the neural network's prediction function as the
-\pinline{local_surrograte} attribute. The argument \pinline{**kwargs}
+\pinline{local_surrogate} attribute. The argument \pinline{**kwargs}
 may be used for passing all the important arguments e.g.\ training
 epochs, gradient step etc. If, for example, they would like to set the
 size of the training set dynamically, we may replace \pinline{x =

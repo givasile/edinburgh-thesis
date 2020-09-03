@@ -34,7 +34,7 @@ This routine is responsible for (a) drawing the nuisance variables,
 (b) define the optimisation problems and (c) solve them using either a
 gradient-based optimiser or Bayesian optimisation. The aforementioned
 tasks are done in a sequential fashion, as show in
-figure~\ref{fig:elfi-model}. The defininition of the optimisation
+figure~\ref{fig:romc_overview}. The definition of the optimisation
 problems is performed by drawing $n_1$ integer numbers from a discrete
 uniform distribution $u_i \sim \mathcal{U}\{1, 2^{32}-1\}$. Each
 integer $u_i$ is the seed used in ELFI's random simulator. Hence from
@@ -44,7 +44,7 @@ just setting the seed that initialises the state of the pseudo-random
 generator, before asking a sample from the simulator.
 
 Finally, passing an integer number as the argument \pinline{seed}
-absorbs all the randomness of the optimistation part (e.g.\ drawing
+absorbs all the randomness of the optimisation part (e.g.\ drawing
 initial points for the optimisation procedure), making the whole
 process reproducible.
 
@@ -173,7 +173,7 @@ code snippet performs the training part at ELFI.
 As stated before, switching to the Bayesian optimisation scheme needs
 nothing more the setting the argument \pinline{use_bo=True}; all the
 following command remain unchanged. In figure
-\ref{fig:example_training} we illustrate the distribution of the
+\ref{fig:example_training_hist} we illustrate the distribution of the
 distances obtained and the acceptance area of the first optimisation
 problem. We observe that most optimal points produce almost zero
 distance.
@@ -183,6 +183,6 @@ distance.
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter3/example_theta_dist.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter3/example_region.png}
     \end{center}
-  \caption{Histogram of distances and visualisation of a specific region.}
-  \label{fig:example_training}
+  \caption[Histogram of distances at the 1D example.]{Histogram of distances and visualisation of a specific region.}
+  \label{fig:example_training_hist}
 \end{figure}

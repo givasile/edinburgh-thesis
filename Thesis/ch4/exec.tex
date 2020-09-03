@@ -33,27 +33,27 @@ more expensive.
 
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_solve_grad.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_solve_grad_fit.png}\\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_solve_bo.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_solve_bo_fit.png}          \end{center}
-    \caption{Execution time for defining and solving the optimisation
+    \caption[Execution time for solving the optimisation problems.]{Execution time for defining and solving the optimisation
       problems. We observe an increase by a factor of $75$ when switching
       to Bayesian optimisation scheme.}
   \label{fig:exec_solve}
 \end{figure}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_regions_grad.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_regions_grad_fit.png}\\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_regions_bo.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_regions_bo_fit.png}
     \end{center}
-    \caption{Execution time for constructing the n-dimensional
+    \caption[Execution time for constructing the n-dimensional bounding box regions.]{Execution time for constructing the n-dimensional
       bounding box region and, optionally, fitting the local surrogate
       models. We observe that fitting the surrogate models incurs a
       small increase by a factor of $1.5$.}
@@ -61,29 +61,29 @@ more expensive.
 \end{figure}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_posterior_grad.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_posterior_grad_fit.png}\\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_posterior_bo.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_posterior_bo_fit.png}
     \end{center}
-    \caption{Execution time for evaluating the unnormalised posterior
+    \caption[Execution time for evaluation the unnormalised posterior.]{Execution time for evaluating the unnormalised posterior
       approximation. We observe that there is a major speed-up in the
-      models with fitted local surogate models, by about a factor $15$.}
+      models with fitted local surrogate models, by about a factor $15$.}
   \label{fig:exec_posterior}
 \end{figure}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_sample_grad.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_sample_grad_fit.png}\\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_sample_bo.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_sample_bo_fit.png}
     \end{center}
-    \caption{Execution time for sampling from the approximate
-      posterior. We observe a small speed-up when the local surogate
+    \caption[Execution time for sampling from the approximate posterior.]{Execution time for sampling from the approximate
+      posterior. We observe a small speed-up when the local surrogate
       models are fitted, by about a factor $1.5$.}
   \label{fig:exec_sample}
 \end{figure}

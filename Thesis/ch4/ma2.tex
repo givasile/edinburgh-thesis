@@ -35,11 +35,11 @@ p(\thetab) = p(\theta_1)p(\theta_2|\theta_1)
 = \mathcal{U}(\theta_1;-2,2)\mathcal{U}(\theta_2;\theta_1-1, \theta_1+1)
 \end{equation}
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_prior_samples.png}
     \end{center}
-    \caption{Prior distribution proposed by \autocite{Marin2012}. The
+    \caption[MA2 example, prior distribution.]{Prior distribution proposed by \autocite{Marin2012}. The
       samples follow a triangular shape.}
   \label{fig:ma2_1}
 \end{figure}
@@ -128,14 +128,14 @@ ROMC (Bayesian optimisation) & 0.510 & 0.156 & 0.108 & 0.183 \\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ma2_distance_hist.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ma2_distance_hist_bo.png}
     \end{center}
-    \caption{Histogram of distances
+    \caption[MA2 example, histogram of distances]{Histogram of distances
       $d_i^*, i \in \{ 1, \ldots, n_1 \}$. The left graph corresponds
       to the gradient-based approach and the right one to the Bayesian
       optimisation approach.}
   \label{fig:ma2_2}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ma2_region_1.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ma2_region_1_bo.png}\\
@@ -144,12 +144,12 @@ ROMC (Bayesian optimisation) & 0.510 & 0.156 & 0.108 & 0.183 \\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ma2_region_3.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ma2_region_3_bo.png}
     \end{center}
-  \caption{Visualisation of the acceptance region in 3 different optimisation problems. Each row illustrates a different optimisation problem, the left column corresponds to the gradient-based approach and the right column to the Bayesian optimisation approach. The examples have been chosen to illustrate three different cases; in the first case, both optimisation schemes lead to similar optimal point and bounding box, in the second case the bounding box is similar in shape but a little bit shifted to the right relatively to the gradient-based approach and in the third case, both the optimal point and the bounding box is completely different.}
+  \caption[MA2 example, the acceptance region in three distinct optimisation problems.]{Visualisation of the acceptance region in 3 different optimisation problems. Each row illustrates a different optimisation problem, the left column corresponds to the gradient-based approach and the right column to the Bayesian optimisation approach. The examples have been chosen to illustrate three different cases; in the first case, both optimisation schemes lead to similar optimal point and bounding box, in the second case the bounding box is similar in shape but a little bit shifted to the right relatively to the gradient-based approach and in the third case, both the optimal point and the bounding box is completely different.}
   \label{fig:ma2_5}
 \end{figure}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_hist_t1_rejection.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_hist_t2_rejection.png}\\
@@ -158,7 +158,7 @@ ROMC (Bayesian optimisation) & 0.510 & 0.156 & 0.108 & 0.183 \\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_hist_t1_romc_bo.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_hist_t2_romc_bo.png}\\
     \end{center}
-    \caption{Histogram of the marginal distribution for three
+    \caption[MA2 example, evaluation of the marginal distributions.]{Histogram of the marginal distributions using
       different inference approaches; (a) in the first row, the
       approximate posterior samples are obtained using Rejection ABC
       sampling (b) in the second row, using ROMC sampling with
@@ -170,12 +170,12 @@ ROMC (Bayesian optimisation) & 0.510 & 0.156 & 0.108 & 0.183 \\
 \end{figure}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_romc_posterior.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/mae2_romc_posterior_bo.png}
     \end{center}
-    \caption{ROMC approximate posteriors using gradient-based approach
+    \caption[MA2 example, approximate posterior.]{ROMC approximate posteriors using gradient-based approach
       (left) and Bayesian optimisation approach (right).}
   \label{fig:ma2_4}
 \end{figure}

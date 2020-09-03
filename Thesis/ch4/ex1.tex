@@ -82,12 +82,12 @@ ROMC (Bayesian optimisation) & -0.485 & 0.987 & 0.511 & 0.939 & 0.069\\
 \end{center}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_distance_hist.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_distance_hist_bo.png}
     \end{center}
-    \caption{Histogram of distances $d_i^*, i \in \{1, \ldots,
+    \caption[2D example, histogram of distances]{Histogram of distances $d_i^*, i \in \{1, \ldots,
       n_1\}$. The left graph corresponds to the gradient-based
       approach and the right one to the Bayesian optimisation
       approach.}
@@ -95,12 +95,12 @@ ROMC (Bayesian optimisation) & -0.485 & 0.987 & 0.511 & 0.939 & 0.069\\
 \end{figure}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_region_1.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_region_1_bo.png}
     \end{center}
-    \caption{The acceptance region and the bounding box of the
+    \caption[2D example, the bounding box of the $1^{st}$ optimisation problem.]{The acceptance region and the bounding box of the
       $1^{st}$ optimisation problem; In the left plot, it is
       constructed with a gradient-based approach and in the right
       figure with Bayesian optimisation. We observe that both
@@ -109,14 +109,14 @@ ROMC (Bayesian optimisation) & -0.485 & 0.987 & 0.511 & 0.939 & 0.069\\
 \end{figure}
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_hist_t1_romc.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_hist_t2_romc.png}\\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_hist_t1_romc_bo.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_hist_t2_romc_bo.png}\\
     \end{center}
-    \caption{Histogram of the weighted samples. The first row of plots
+    \caption[2D example, histogram of the weighted samples.]{Histogram of the weighted samples. The first row of plots
       refers to the gradient-based optimisation scheme, while the
       second row to the Bayesian optimisation. We represent the
       ground-truth marginal distribution $p(\theta_i|\data$ with the
@@ -125,13 +125,13 @@ ROMC (Bayesian optimisation) & -0.485 & 0.987 & 0.511 & 0.939 & 0.069\\
   \label{fig:ex2_3}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \begin{center}
       \includegraphics[width=0.5\textwidth]{./Thesis/images/chapter4/ex2D_gt_posterior.png}\\
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_romc_posterior.png}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/ex2D_romc_posterior_bo.png}
     \end{center}
-    \caption{(a) First row: Ground-truth posterior approximated
+    \caption[2D example, evaluation of the approximate posterior.]{(a) First row: Ground-truth posterior approximated
       computationally. (b) Second row (left): ROMC approximate
       posteriors using gradient-based approach. The divergence from
       the ground-truth using the Jensen-Shannon distance is

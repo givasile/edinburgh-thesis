@@ -1,5 +1,5 @@
-In figure \ref{fig:elfi-model} we present an overview of our
-implementation; one may interpret figure~\ref{fig:elfi-model} as a
+In figure \ref{fig:romc_overview} we present an overview of our
+implementation; one may interpret figure~\ref{fig:romc_overview} as a
 depiction of the main class of our implementation, called
 (\pinline{ROMC}), while the entities inside the green and blue
 ellipses are the main functions of the class. Following the common
@@ -11,7 +11,7 @@ implementation favours extensibility; the building blocks that compose
 the method have been designed in an isolated fashion so that a
 practitioner may replace them without the method to collapse.
 
-Figure \ref{fig:elfi-model} groups the ROMC implementation into the
+Figure \ref{fig:romc_overview} groups the ROMC implementation into the
 training, the inference and the evaluation part, following the
 arrangement used in the algorithmic presentation (section
 \ref{subsec:romc-algorithmic}). The training part includes all the
@@ -68,7 +68,7 @@ figure \ref{fig:example_gt}.
     \begin{center}
       \includegraphics[width=0.5\textwidth]{./Thesis/images/chapter3/example_gt.png}
     \end{center}
-  \caption{Ground-truth posterior distribution for our simple 1D example}
+  \caption[Ground-truth posterior distribution of the simple 1D example.]{Ground-truth posterior distribution of the simple 1D example.}
   \label{fig:example_gt}
 \end{figure}
 
@@ -116,7 +116,7 @@ be passed.
     \begin{center}
       \includegraphics[width=0.8\textwidth]{./Thesis/graphs/ROMC.png}
     \end{center}
-    \caption{Overview of the ROMC implementation. The training part
+    \caption[Overview of the ROMC implementation.]{Overview of the ROMC implementation. The training part
       follows a sequential pattern; the functions in the green
       ellipses must be called in a sequential fashion for completing
       the training part and define the posterior distribution. The
