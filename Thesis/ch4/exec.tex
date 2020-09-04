@@ -32,7 +32,6 @@ even more potent in larger models, where running the simulator is even
 more expensive.
 
 
-
 \begin{figure}[ht]
     \begin{center}
       \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/exec_solve_grad.png}
@@ -86,4 +85,18 @@ more expensive.
       posterior. We observe a small speed-up when the local surrogate
       models are fitted, by about a factor $1.5$.}
   \label{fig:exec_sample}
+\end{figure}
+
+
+\subsubsection{The effect of parallelisation}
+
+\begin{figure}[ht]
+    \begin{center}
+      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/solve_problems_parallel.png}
+      \includegraphics[width=0.48\textwidth]{./Thesis/images/chapter4/estimate_regions_parallel.png}
+    \end{center}
+    \caption[Execution time for sampling from the approximate posterior.]{Execution time for sampling from the approximate
+      posterior. We observe a small speed-up when the local surrogate
+      models are fitted, by about a factor $1.5$.}
+  \label{fig:exec_parallel}
 \end{figure}
