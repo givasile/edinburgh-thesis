@@ -1,6 +1,7 @@
 \documentclass[11pt,twoside]{article}
 \usepackage{geometry}
 \usepackage{enumerate}
+\usepackage{enumitem}
 \usepackage{latexsym,booktabs}
 \usepackage{amsmath,amssymb,bbold, xfrac}
 \usepackage{graphicx}
@@ -315,18 +316,17 @@ likelihood-free inference approach for simulator-based models.
 \clearpage
 \section{Implementation}
 In this chapter, we will exhibit the implementation of the ROMC
-inference method at the ELFI package. The presentation is divided in
-two logical blocks; In
-Sections~\ref{subsec:general_design},~\ref{subsec:training},~\ref{subsec:inference},
+inference method in the ELFI package. The presentation is divided in
+two logical blocks; In Sections~\ref{subsec:general_design} to
 \ref{subsec:evaluation} we present the functionalities provided from
-the \textbf{user's point-of-view}. These sections demonstrate how a
+the \emph{user's point-of-view}. These sections demonstrate how a
 practitioner could use our ROMC implementation for performing the
 inference in a simulator-based model. For providing a practical
 overview of the implementation, we set-up a simple running example and
 illustrate the functionalities on top of it. In contrast, in the final
 Section~\ref{subsec:developers} we delve into the internals of the
-code, presenting all the tiny details of the implementation. This
-Section mainly refers to a \textbf{researcher or a developer} who
+code, presenting the details of the implementation. This
+Section mainly refers to a \emph{researcher or a developer} who
 would like to use ROMC as a meta-algorithm and experiment with novel
 approaches. We have designed our implementation preserving
 extensibility and customisation; hence, a researcher may intervene in
@@ -405,9 +405,10 @@ TODO:
 \begin{itemize}
 \item make nice tables
 \item add subcaption in figures
- \item add parallelisation description.l
+\item add parallelisation description.
+  \item uncapitalise all section
 \end{itemize}
-
+l
 \printbibliography
 \clearpage
 

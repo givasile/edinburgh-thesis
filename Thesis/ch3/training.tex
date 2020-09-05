@@ -1,6 +1,6 @@
-The training part contains the 6 following functionalities:
+The training part contains the following 6 functionalities:
 
-\begin{itemize}
+\begin{enumerate}[label=(\roman*)]
 \item \mintinline{python}{romc.solve_problems(n1, use_bo=False, optimizer_args=None, seed=None)}
 \item \mintinline{python}{romc.estimate_regions(eps_filter,}
   
@@ -21,7 +21,7 @@ The training part contains the 6 following functionalities:
 \item \mintinline{python}{romc.distance_hist(savefig=False, **kwargs)}
 \item \mintinline{python}{romc.visualize_region(i, savefig=False)}
 \item \mintinline{python}{romc.compute_eps(quantile)}
-\end{itemize}
+\end{enumerate}
 
 
 \subsubsection*{Function (i): Define and solve the optimisation problems}
@@ -31,7 +31,7 @@ The training part contains the 6 following functionalities:
 
 \noindent
 This routine is responsible for (a) drawing the nuisance variables,
-(b) define the optimisation problems and (c) solve them using either a
+(b) defining the optimisation problems and (c) solving them using either a
 gradient-based optimiser or Bayesian optimisation. The aforementioned
 tasks are done in a sequential fashion, as show in
 figure~\ref{fig:romc_overview}. The definition of the optimisation
@@ -46,11 +46,11 @@ generator, before asking a sample from the simulator.
 Finally, passing an integer number as the argument \pinline{seed}
 absorbs all the randomness of the optimisation part (e.g.\ drawing
 initial points for the optimisation procedure), making the whole
-process reproducible.
+process reproducible and deterministic.
 
 Setting the argument \pinline{use_bo=True}, chooses the Bayesian
-Optimisation scheme for obtaining $\theta_i^*$. In this case, apart
-from obtaining the optimal points $\theta_i^*$, we also fit a Gaussian
+Optimisation scheme for obtaining $\thetab_i^*$. In this case, apart
+from obtaining the optimal points $\thetab_i^*$, we also fit a Gaussian
 Process (GP) as surrogate model $\hat{d}_i$. In the following steps,
 $\hat{d}_i(\thetab)$ will replace $g_i(\thetab)$ when calling the
 indicator function.
@@ -67,19 +67,20 @@ indicator function.
 \vspace{5mm}
 
 This routine constructs the bounding boxes around the optimal points
-$\thetab_i^* : i = 1, 2, \ldots, n_1$ following the
+$\thetab_i^* : i = 1, 2, \ldots, n_1$ following
 Algorithm~\ref{alg:region_construction}. The Hessian matrix is
 approximated based on the Jacobian $\hess_i = \jac_i^T \jac_i$. The
 eigenvectores are computed using the function
 \pinline{numpy.linalg.eig()} that calls, under the hood, the
 \pinline{_geev LAPACK}. A check is performed so that the matrix
 $\hess_i$ is not singular; if this is the case, the eigenvectors are
-set to be the vectors of the orthonormal basis. Afterwards, the limits
-are obtained by repeteadly querying the distance function
-($g_i(\thetab)$ or $\hat{d}(\thetab)$) along the search directions. In
-section \ref{subsec:developers}, we provide some details regarding the
-way the bounding box is defined as a class and sampling is performed
-on it.
+set to be the vectors of the standard Euclidean basis i.e.\
+$\{ \mathbf{e_1} = (1, 0, \ldots), \mathbf{e_2} = (0,1,0,\ldots),
+\text{etc} \}$. Afterwards, the limits are obtained by repeteadly querying
+the distance function ($g_i(\thetab)$ or $\hat{d}(\thetab)$) along the
+search directions. In section \ref{subsec:developers}, we provide some
+details regarding the way the bounding box is defined as a class and
+sampling is performed on it.
 
 \subsubsection*{Function (iii): Perform all training steps in a single call}
 
@@ -151,16 +152,16 @@ of the threshold $\epsilon$, e.g.\
 \subsubsection*{Example}
 
 Here we will illustrate the aforementioned functionalities using the
-simple 1D example we set up in the previous chapter. The following
-code snippet performs the training part at ELFI.
+simple 1D example we set up in the previous section. The following
+code snippet performs the training part in ELFI.
 
 \begin{pythoncode}
-  n1 = 500
-  seed = 21
-  eps = .75
+  n1 = 500 # number of optimisation problems
+  seed = 21 # seed for solving the optimisation problems
+  eps = .75 # threshold for bounding box
   use_bo = False # set to True for switching to Bayesian optimisation
 
-  # Training set-by-step
+  # Training step-by-step
   romc.solve_problems(n1=n1, seed=seed, use_bo=use_bo)
   romc.theta_hist(bins=100)
   romc.estimate_regions(eps=eps)

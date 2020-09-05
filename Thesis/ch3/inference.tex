@@ -1,6 +1,6 @@
 The inference part contains the 4 following functionalities:
 
-\begin{itemize}
+\begin{itemize}[label=(\roman*)]
 \item \mintinline{python}{romc.sample(n2, seed=None)}
 \item \mintinline{python}{romc.compute_expectation(h)}  
 \item \mintinline{python}{romc.eval_unnorm_posterior(theta)}
@@ -10,18 +10,23 @@ The inference part contains the 4 following functionalities:
 \subsubsection*{Function (i): Perform weithted sampling}
 
 \mintinline{python}{romc.sample(n2)}
-
 \vspace{5mm}
+
 \noindent
-This is the basic inference utility of the ROMC implementation. The
-samples are drawn from a uniform distribution $q_i$ defined over the
-corresponding bounding box and the weight $w_i$ is computed as in
-equation~\eqref{eq:sampling}. The function stores an
-\pinline{elfi.Result} object as \pinline{romc.result} attribute. The
-\pinline{elfi.Result} provides by some usefull functionalities for
-inspecting the obtained samples such as
-\pinline{romc.result.summary()} that prints the number. A comlete
-overview of these functionalities is provided in ELFI's
+This is the basic inference utility of the ROMC implementation; we
+draw $n_2$ samples for each bounding box region. This gives a total of
+$k \times n_2$, where $k < n_1$ is the number of the optimal points
+remained after filtering\footnote{From the $n_1$ optimisation
+  problems, only the ones with $g_i(\thetab_*) < \epsilon$ are kept
+  for building a bounding box}. The samples are drawn from a uniform
+distribution $q_i$ defined over the corresponding bounding box and the
+weight $w_i$ is computed as in equation~\eqref{eq:sampling}. The
+function stores an \pinline{elfi.Result} object as
+\pinline{romc.result} attribute. The \pinline{elfi.Result} provides
+some usefull functionalities for inspecting the obtained samples e.g.\
+\pinline{romc.result.summary()} prints the number of the obtained
+samples and their mean. A comlete overview of these functionalities is
+provided in ELFI's
 \href{https://elfi.readthedocs.io/en/latest/api.html#elfi.methods.results.Sample}{official
   documentation}.
 
@@ -29,43 +34,45 @@ overview of these functionalities is provided in ELFI's
 
 \mintinline{python}{romc.compute_expectation(h)}
 \vspace{5mm}
-\noindent
 
+\noindent
 This function computes the expectation
-$E_{p(\thetab|\data)}[h(\thetab)]$ using the
+$E_{p(\thetab|\data)}[h(\thetab)]$ using
 expression~\eqref{eq:expectation}. The argument \pinline{h} can be
-any python \pinline{Callable} that accepts a one-dimensional
-\pinline{np.ndarray} as input and returns a one-dimensional
-\pinline{np.ndarray} as output.
+any python \pinline{Callable}.
 
 \subsubsection*{Function (iii): Evaluate the unnormalised posterior}
 \mintinline{python}{romc.eval_unorm_posterior(theta, eps_cutoff=False)}
 \vspace{5mm}
-\noindent
 
+\noindent
 This function computes the unnormalised posterior approximation using
-the expression~\eqref{eq:approx_posterior}.
+expression~\eqref{eq:approx_posterior}.
 
-\subsubsection*{Function (iv):Evaluate the normalised posterior}
-\vspace{5mm}
-\noindent
-
+\subsubsection*{Function (iv): Evaluate the normalised posterior}
 \mintinline{python}{romc.eval_posterior(theta, eps_cutoff=False)}
+\vspace{5mm}
 
+\noindent
 This function evaluates the normalised posterior. For doing so it
 needs to approximate the partition function
-$Z = \int_{\thetab : p(\thetab)>0}
-p_{d,\epsilon}(\thetab|\data)d\thetab$; this is done using the Riemann
-integral aproximation. Unfortunatelly, the Riemann approximation does
-not scale well in high-dimensional spaces, hence the approximation is
-tractable only at low-dimensional parametric spaces. Given that this
-functionality is particulary useful for ploting the posterior, we
-could say that it is meaningful to be used for up to $3D$ parametric
-spaces, even though it is not restricted to that. Finally, for this
-functionality to work, the left and right limit determinining a
-bounding box that includes the area where the prior distribution has
-mass must have been passed as the \pinline{left_lim, right_lim} in the
-initialisation of the \pinline{elfi.ROMC} object.
+$Z = \int p_{d,\epsilon}(\thetab|\data)d\thetab$; this is done using
+the Riemann integral aproximation. Unfortunatelly, the Riemann
+approximation does not scale well in high-dimensional spaces, hence
+the approximation is tractable only at low-dimensional parametric
+spaces. Given that this functionality is particulary useful for
+ploting the posterior, we could say that it is meaningful to be used
+for up to $3D$ parametric spaces, even though it is not restricted to
+that. Finally, for this functionality to work, the \pinline{bounds}
+arguments must have been set at the initialisation of the
+\pinline{elfi.ROMC} object.\footnote{The argument \pinline{bounds}
+  should define a bounding box \emph{containing} all the mass of the
+  prior; it may also contain redundant areas. For example, if the
+  prior is the uniform defined over a unit circle i.e.\
+  $c=(0,0), r=1$, the best bounds arguments is
+  \pinline{bounds=[(-1,1),(-1,1)]}. However, any argument
+  \pinline{bounds=[(-t,t),(-t,t)]} where $t\geq1$ is technically
+  correct.}
 
 \subsubsection*{Example - Sampling and compute expectation}
 
@@ -117,13 +124,12 @@ is close to the ground truth $\mu = 0$ and $\sigma^2 = 1$.
 \subsubsection*{Example - Evaluate Posterior}
 
 The \pinline{romc.eval_unnorm_posterior(theta)} evaluates the
-posterior at point $\theta$ using the expression
+posterior at point $\theta$ using expression
 \eqref{eq:aprox_posterior}. The \pinline{romc.eval_posterior(theta)}
 approximates the partition function
 $Z = \int_{\thetab} p_{d,\epsilon}(\thetab|\data) d\thetab$ using the
-Riemann approximation in the points where the prior has mass; hence it
-doesn't scale well to high-dimensional spaces. In our simple example,
-this utility can provide a nice plot of the approximate posterior as
+Riemann approximation as explained above. In our simple example, this
+utility can provide a nice plot of the approximate posterior as
 illustrated in figure~\ref{fig:approx_posterior}. We observe that the
 approximation is quite close to the ground-truth posterior.
 
