@@ -33,6 +33,10 @@ ground-truth, if the latter is available.\footnote{Normally, the
   or with an alternative method (i.e.\ ABC Rejection Sampling) and we
   would like to measure the discrepancy between the two
   approximations.}
+  
+\subsubsection*{Parallelising the processes}
+
+As stated above, the most critical advantage of the ROMC method is that it can be fully parallelised. In our implementation, we have exploited this fact by implementing a parallel version in the following tasks; (a) solving the optimisation problems, (b) constructing bounding box regions, (c) sampling and (d) evaluating the posterior. Parallelism has been achieved using the package \pinline{multiprocessing}. The specific package enables concurrency, using subprocesses instead of threads, hence side-stepping the Global Interpreter (GIL). In our implementation we use the \pinline{Pool} object, which offers a convenient means of parallelising the execution of a function across multiple input values (data parallelism). For activating the parallel version of the algorithms, the user has to just pass the argument \pinline{parallelize=True} at the initialisation of the \pinline{ROMC} method.
 
 
 \subsubsection*{Simple one-dimensional example}
@@ -53,14 +57,14 @@ In the model \eqref{eq:1D_example}, the prior is the uniform
 distribution in the range $[-2.5, 2.5]$ and the likelihood a Gaussian
 distribution. There is only one observation $y_0 = 0$. The inference
 in this particular example can be performed quite easily, without
-icorporating a likelihood-free inference approach. Ee can exploit this
+incorporating a likelihood-free inference approach. We can exploit this
 fact for validating the accuracy of our implementation. The
 ground-truth posterior, approximated computationally, is shown in
 figure \ref{fig:example_gt}.
 
 \begin{figure}[h]
     \begin{center}
-\includegraphics[width=0.5\textwidth]{./Thesis/images/chapter3/example_gt.png}
+\includegraphics[width=0.7\textwidth]{./Thesis/images/chapter3/example_gt.png}
     \end{center}
   \caption[Ground-truth posterior distribution of the simple 1D
 example.]{Ground-truth posterior distribution of the simple 1D
@@ -101,9 +105,10 @@ be passed.
   sim = elfi.Simulator(simulator, t1, observed=y)
   d = elfi.Distance('euclidean', sim)
 
-  # Define ROMC inference method
-  bounds = [(-2.5, 2.5)]
-  romc = elfi.ROMC(d, bounds=bounds)
+  # Initialise the ROMC inference method
+  bounds = [(-2.5, 2.5)] # limits of the prior
+  parallelize = True # activate parallel execution
+  romc = elfi.ROMC(d, bounds=bounds, parallelize=parallelize)
 \end{pythoncode}
 
 

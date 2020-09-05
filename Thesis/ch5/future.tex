@@ -57,11 +57,7 @@ because we can efficiently sample from a uniform distribution defined
 on it. A future research direction could investigate this capability.
 
 
-On the implementation side, the improvements are more concrete. A
-major upgrade would be supporting the parallel execution of the
-training and inference phase. As mentioned in chapter 4, the ROMC
-approach can be executed in a completely parallel manner, as each
-optimisation problem does not interact with the rest. Another critical
+On the implementation side, the improvements are more concrete. A critical
 improvement would be performing the training and the inference phase
 in a batched fashion. For example, the practitioner may indicate that
 he would like to approximate the posterior in batches of N

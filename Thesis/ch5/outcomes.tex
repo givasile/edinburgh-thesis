@@ -31,7 +31,7 @@ examples for ensuring accurate inference results. We designed some
 artificial examples for evaluating our implementation using
 ground-truth information. We also tested that it works smoothly under
 general models, not artificially created by us. Thirdly, we tried to
-solve the tasks efficiently. We avoided using redundant calls, we
+solve the tasks efficiently. We applied parallel processing which offers a major speedup in the the execution time of all tasks. Furthermore, we avoided using redundant calls, we
 exploited vectorisation when possible, and we avoided expensive
 for-loops.  We measured the execution time of the method for providing
 an overview of the time needed for performing each task. Finally, we

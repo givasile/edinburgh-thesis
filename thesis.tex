@@ -178,7 +178,7 @@ belief).  Approximate Bayesian Computation (ABC) methods, also known
 as likelihood-free inference techniques, are a class of models used for
 performing inference when the likelihood is intractable. The unique
 requirement of these models is a black-box sampling machine. Due to
-the modelling-freedom they provide, these approaches are particularly
+the modelling-freedom they provide these approaches are particularly
 captivating.
 
 
@@ -194,7 +194,7 @@ functionalities provided to the user and (b) we demonstrate how to
 perform inference on some real examples.  Our implementation provides 
 a robust and efficient solution to a
 practitioner who wants to perform inference on a simulator-based
-model. Furthermore, it has been designed to serve extensibility; the
+model. Furthermore, it exploits parallel processing for accelerating the inference wherever it is possible. Finally, it has been designed to serve extensibility; the
 user can easily replace specific subparts of the method without
 significant overhead on the development side. Therefore, it can be
 used by a researcher for further experimentation.
@@ -328,7 +328,7 @@ parts of the method without too much effort. A driver example which
 demonstrates how to extend the method with custom utilities is
 also contained in this section.
 
-\subsection{Implementation overview for the user}
+\subsection{Implementation description from the user's point-of-view}
 \label{subsec:user}
 \input{Thesis/ch3/user}
 
@@ -381,15 +381,6 @@ future research.
 \input{Thesis/ch5/future}
 \clearpage
 
-TODO:
-
-\begin{itemize}
-\item make nice tables
-\item add subcaption in figures
-\item add parallelisation description.
-  \item uncapitalise all section
-\end{itemize}
-l
 \printbibliography
 \clearpage
 

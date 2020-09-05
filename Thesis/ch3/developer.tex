@@ -38,7 +38,7 @@ created by setting the seed of the \pinline{model.generate()} to a
 specific integer, turning the random generator to a deterministic.
 
 Afterwards, depending on the boolean argument
-\pinline{use_bo=True/False}, the function \pinline{_solve_gradients}
+\pinline{use_bo=True/False}, the function \linebreak \pinline{_solve_gradients}
 or \pinline{_solve_bo} is called. Both of them follow the same
 sequence of steps; for each optimisation problem they (a) solve it,
 (b) create a \pinline{RomcOptimisationResult} object with the solution
@@ -54,7 +54,7 @@ to the objective function. It relies on the Gpy framework
 \autocite{gpy2014} for fitting the Gaussian Process. The only
 difference between \pinline{_solve_gradients} and \pinline{_solve_bo},
 as effect in the state of the \pinline{OptimisationProblem} class, is
-the initialisation of the attribute
+the initialisation of the attribute 
 \pinline{OptimisationProblem.surrogate}, which is done only by
 \pinline{_solve_bo}. The attribute is set to a \pinline{Callable} that
 wraps the \pinline{GPyRegression.predict_mean} function. If
@@ -96,7 +96,7 @@ Finally, the \pinline{_define_posterior} method is used for creating
 the \pinline{RomcPosterior} object and storing it as the
 \pinline{ROMC.posterior} attribute. The method collects (a) all the
 bounding boxes created so far (accessing the
-\pinline{OptimisationProblem.regions} attributes and (b) all the objective functions. As the objective function it collects either \pinline{OptimisationProblem.local_surrogate} or \pinline{OptimisationProblem.surrogate} or \pinline{OptimisationProblem.objective}, depending on which one is available based on the previous steps.
+\pinline{OptimisationProblem.regions} attributes and (b) all the objective functions. As the objective function it collects either \pinline{OptimisationProblem.local_surrogate} or \linebreak \pinline{OptimisationProblem.surrogate} or \pinline{OptimisationProblem.objective}, depending on which one is available based on the previous steps.
 
 The description above summarises the sequence of steps needed for the
 training part of the method. The conclusion is that a \pinline{ROMC}
@@ -127,8 +127,8 @@ algorithms than the ones we propose, without the rest of the method to
 change.
 
 The four replacable parts described above, are solved using the four
-methods of the \pinline{OptimisatioProblem} class;
-\pinline{solve_gradients(**kwargs)}, \pinline{solve_bo(**kwargs)},
+methods of the \linebreak \pinline{OptimisatioProblem} class;
+\pinline{solve_gradients(**kwargs)}, \pinline{solve_bo(**kwargs)}, \linebreak
 \pinline{build_region(**kwargs)},
 \pinline{fit_local_surrogate(**kwargs)}. Therefore, the practitioner
 should not alter at all the basic \pinline{ROMC} class. Instead, they
@@ -189,6 +189,8 @@ size of the training set dynamically, we may replace \pinline{x =
   self.regions[0].sample(kwargs["nof_examples"])}. Finally, they must
 pass the custom optimisation class, when calling the \pinline{ROMC}
 method.
+
+\newpage 
 
 \begin{pythoncode}
   class NeuralNetwork:
