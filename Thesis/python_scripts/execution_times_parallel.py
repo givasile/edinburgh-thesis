@@ -206,9 +206,11 @@ bounds = [(-2.5, 2.5), (-2.5, 2.5)]
 # LINEAR
 seed = 21
 eps = 1
-n1 = np.linspace(1, 501, 20)
+n1 = np.linspace(1, 501, 10)
 solve_grad = []
 estimate_regions = []
+sample = []
+eval_post = []
 for i, n in enumerate(n1):
     romc = elfi.ROMC(summary, bounds, parallelize=False)
 
@@ -223,9 +225,21 @@ for i, n in enumerate(n1):
     toc = timeit.default_timer()
     estimate_regions.append(toc-tic)
 
+    tic = timeit.default_timer()
+    romc.sample(n2=50)
+    toc = timeit.default_timer()
+    sample.append(toc-tic)
+
+    tic = timeit.default_timer()
+    romc.eval_unnorm_posterior(np.zeros((50, 2)))
+    toc = timeit.default_timer()
+    eval_post.append(toc-tic)
+
 # PARALLEL
 estimate_regions_parallel = []
 solve_grad_parallel = []
+sample_parallel = []
+eval_post_parallel = []
 for i, n in enumerate(n1):
     time.sleep(2)
     romc1 = elfi.ROMC(summary, bounds, parallelize=True)
@@ -241,12 +255,22 @@ for i, n in enumerate(n1):
     toc = timeit.default_timer()
     estimate_regions_parallel.append(toc-tic)
 
+    tic = timeit.default_timer()
+    romc1.sample(n2=50)
+    toc = timeit.default_timer()
+    sample_parallel.append(toc-tic)
+
+    tic = timeit.default_timer()
+    romc1.eval_unnorm_posterior(np.zeros((50, 2)))
+    toc = timeit.default_timer()
+    eval_post_parallel.append(toc-tic)
+
 
 prepath = '/home/givasile/ORwDS/edinburgh-thesis/Thesis/tmp_images/chapter4'
 
 
 plt.figure()
-plt.title("Solve optimisation problems: linear vs parallel")
+plt.title("Solve optimisation problems: sequential vs parallel")
 plt.plot(n1, solve_grad, "bo--", label="linear")
 plt.plot(n1, solve_grad_parallel, "ro--", label="parallel")
 plt.xlabel(r"$n_1$")
@@ -258,12 +282,36 @@ plt.show(block=False)
 
 
 plt.figure()
-plt.title("Construct bounding boxes: linear vs parallel")
+plt.title("Construct bounding boxes: sequential vs parallel")
 plt.plot(n1, estimate_regions, "bo--", label="linear")
 plt.plot(n1, estimate_regions_parallel, "ro--", label="parallel")
 plt.xlabel(r"$n_1$")
 plt.ylabel("time (sec)")
 plt.legend()
 plt.savefig(os.path.join(prepath, "estimate_regions_parallel"),
+            bbox_inches="tight")
+plt.show(block=False)
+
+
+plt.figure()
+plt.title("Sampling: sequential vs parallel")
+plt.plot(n1, sample, "bo--", label="linear")
+plt.plot(n1, sample_parallel, "ro--", label="parallel")
+plt.xlabel(r"$n_1$")
+plt.ylabel("time (sec)")
+plt.legend()
+plt.savefig(os.path.join(prepath, "sample_parallel"),
+            bbox_inches="tight")
+plt.show(block=False)
+
+
+plt.figure()
+plt.title("Evaluate the approximate posterior: sequential vs parallel")
+plt.plot(n1, eval_post, "bo--", label="linear")
+plt.plot(n1, eval_post_parallel, "ro--", label="parallel")
+plt.xlabel(r"$n_1$")
+plt.ylabel("time (sec)")
+plt.legend()
+plt.savefig(os.path.join(prepath, "eval_post_parallel"),
             bbox_inches="tight")
 plt.show(block=False)
