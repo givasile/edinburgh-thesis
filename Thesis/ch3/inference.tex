@@ -7,7 +7,7 @@ The inference part contains the 4 following functionalities:
 \item \mintinline{python}{romc.eval_posterior(theta)}
 \end{enumerate}
 
-\subsubsection*{Function (i): Perform weithted sampling}
+\subsubsection*{Function (i): Perform weighted sampling}
 
 \mintinline{python}{romc.sample(n2)}
 \vspace{5mm}
@@ -25,7 +25,7 @@ function stores an \pinline{elfi.Result} object as
 \pinline{romc.result} attribute. The \pinline{elfi.Result} provides
 some usefull functionalities for inspecting the obtained samples e.g.\
 \pinline{romc.result.summary()} prints the number of the obtained
-samples and their mean. A comlete overview of these functionalities is
+samples and their mean. A complete overview of these functionalities is
 provided in ELFI's
 \href{https://elfi.readthedocs.io/en/latest/api.html#elfi.methods.results.Sample}{official
   documentation}.
@@ -57,11 +57,11 @@ expression~\eqref{eq:approx_posterior}.
 This function evaluates the normalised posterior. For doing so it
 needs to approximate the partition function
 $Z = \int p_{d,\epsilon}(\thetab|\data)d\thetab$; this is done using
-the Riemann integral aproximation. Unfortunatelly, the Riemann
+the Riemann integral approximation. Unfortunately, the Riemann
 approximation does not scale well in high-dimensional spaces, hence
 the approximation is tractable only at low-dimensional parametric
-spaces. Given that this functionality is particulary useful for
-ploting the posterior, we could say that it is meaningful to be used
+spaces. Given that this functionality is particularly useful for
+plotting the posterior, we could say that it is meaningful to be used
 for up to $3D$ parametric spaces, even though it is not restricted to
 that. Finally, for this functionality to work, the \pinline{bounds}
 arguments must have been set at the initialisation of the

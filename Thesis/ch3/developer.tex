@@ -68,7 +68,7 @@ estimates the bounding boxes around the accepted objective
 functions. For each accepted objective function, a
 \pinline{RegionConstructor} object is initialised in order to
 construct the region. In the current implementation, for each
-objective function we constract a single bounding box, but this may
+objective function we construct a single bounding box, but this may
 change in a future approach; for being able to support multiple
 bounding boxes per objective function, we decided to return a
 \pinline{List} of \pinline{NDimBoundingBox} objects\footnote{Each
@@ -78,7 +78,7 @@ attribute.
 
 By now, we have estimated the bounding boxes around the optimal
 points. The last step, before defining the posterior, is the fitting
-local surrogate models. This step is optional and is performend only
+local surrogate models. This step is optional and is performed only
 if the argument \pinline{fit_models} is set to \pinline{True}. The
 routine \pinline{_fit_models}, fits a quadratic model on the area
 around the optimal point for each objective function. For achieving
@@ -100,7 +100,7 @@ bounding boxes created so far (accessing the
 
 The description above summarises the sequence of steps needed for the
 training part of the method. The conclusion is that a \pinline{ROMC}
-object is intialised when the user calls the method. Throughout the
+object is initialised when the user calls the method. Throughout the
 inference process, the \pinline{ROMC} object is always as a specific state,
 which gets updated whenever an algorithmic step is executed. The rest
 of the classes provide objects which are stored as attributes of

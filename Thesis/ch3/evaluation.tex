@@ -25,7 +25,7 @@ this chapter, in a real-case scenario it is not expected the
 ground-truth posterior to be available. However, in cases where the
 posterior can be approximated decently well with a numerical approach
 (as in the current example) or with some other inference approach,
-this function can provide a numerical measure of the aggreement
+this function can provide a numerical measure of the agreement
 between the two approximations. The argument \pinline{step} defines
 the step used in the Riemann's approximation and the argument
 \pinline{distance} can take either the \pinline{Jensen-Shannon} or the
@@ -44,7 +44,7 @@ following expression~\autocite{Sudman1967},
   ESS = \frac{(\sum_i w_i)^2}{\sum_i w_i^2}
 \end{equation}
 
-The ESS is a usefull measure of the \textbf{actual} sample size, when
+The ESS is a useful measure of the \textbf{actual} sample size, when
 the samples are weighted. For example if in a population of $100$
 samples one has a very large weight (e.g.\ $\approx 100$) whereas the
 rest have small (i.e.\ $\approx 1$), the real sample size is close to
