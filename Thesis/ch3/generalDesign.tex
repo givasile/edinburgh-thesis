@@ -1,7 +1,7 @@
 In figure \ref{fig:romc_overview} we present an overview of our
 implementation; one may interpret figure~\ref{fig:romc_overview} as a
 depiction of the main class of our implementation, called
-(\pinline{ROMC}), while the entities inside the green and blue
+\pinline{ROMC}, while the entities inside the green and blue
 ellipses are the main functions of the class. Following Python's
 naming principles, the methods starting with an underscore (green
 ellipses) represent internal (private) functions and are not meant to
@@ -12,9 +12,7 @@ the method have been designed in a modular fashion so that a
 practitioner may replace them without the method to collapse.
 
 Figure \ref{fig:romc_overview} groups the ROMC implementation into the
-training, the inference and the evaluation part, following the
-arrangement used in the algorithmic presentation (section
-\ref{subsec:romc-algorithmic}). The training part includes all the
+training, the inference and the evaluation part. The training part includes all the
 steps until the computation of the proposal regions; sampling the
 nuisance variables, defining the optimisation problems, solving them,
 constructing the regions and fitting local surrogate models. The

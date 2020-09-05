@@ -315,43 +315,24 @@ likelihood-free inference approach for simulator-based models.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \clearpage
 \section{Implementation}
-In this chapter, we will exhibit the implementation of the ROMC
+In this section, we will exhibit the implementation of the ROMC
 inference method in the ELFI package. The presentation is divided in
-two logical blocks; In Sections~\ref{subsec:general_design} to
-\ref{subsec:evaluation} we present the functionalities provided from
-the \emph{user's point-of-view}. These sections demonstrate how a
-practitioner could use our ROMC implementation for performing the
-inference in a simulator-based model. For providing a practical
-overview of the implementation, we set-up a simple running example and
-illustrate the functionalities on top of it. In contrast, in the final
-Section~\ref{subsec:developers} we delve into the internals of the
+two logical blocks; In section~\ref{subsec:user} we present our method from the \emph{user's point-of-view}, i.e.\ what functionalities a practitioner can use for performing the inference in a simulator-based model. For showing the functions in-practice, we set-up a simple running example and
+illustrate the functionalities on top of it. In section~\ref{subsec:developers} we delve into the internals of the
 code, presenting the details of the implementation. This
-Section mainly refers to a \emph{researcher or a developer} who
+section mainly refers to a \emph{researcher or a developer} who
 would like to use ROMC as a meta-algorithm and experiment with novel
 approaches. We have designed our implementation preserving
 extensibility and customisation; hence, a researcher may intervene in
 parts of the method without too much effort. A driver example which
-demonstrates the way of extending the method with custom utilities is
-also contained in this Section.
+demonstrates how to extend the method with custom utilities is
+also contained in this section.
 
-\subsection{General Design}
-\label{subsec:general_design}
-% \input{ch3/generalDesign}
-\input{Thesis/ch3/generalDesign}
+\subsection{Implementation overview for the user}
+\label{subsec:user}
+\input{Thesis/ch3/user}
 
-\subsection{Training}
-\label{subsec:training}
-\input{Thesis/ch3/training}
-
-\subsection{Performing the Inference}
-\label{subsec:inference}
-\input{Thesis/ch3/inference}
-
-\subsection{Evaluation}
-\label{subsec:evaluation}
-\input{Thesis/ch3/evaluation}
-
-\subsection{Implementation details for developers}
+\subsection{Implementation details for the developer}
 \label{subsec:developers}
 \input{Thesis/ch3/developer}
 \clearpage
