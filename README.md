@@ -10,7 +10,7 @@ Dissertation for the MSc in ORwDS (2019-2020);
 
 ---
 
-##### The directrory ***notebook_examples*** contains some useful examples that can serve as a tutorial in using the ROMC method
+##### The directrory ***notebook_examples*** contains some useful examples that can serve as a tutorial for the ROMC method
 
 **How to run the examples in the notebooks:**
 
