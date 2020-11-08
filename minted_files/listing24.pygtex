@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+                   \PYG{n}{seed}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{use\PYGZus{}surrogate}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{region\PYGZus{}args}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,}
+\end{Verbatim}

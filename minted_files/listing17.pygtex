@@ -1,0 +1,26 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PYG{k+kn}{import} \PYG{n+nn}{elfi} \PYG{k+kn}{import} \PYG{n+nn}{scipy.stats} \PYG{k}{as} \PYG{n+nn}{ss}
+  \PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k}{as} \PYG{n+nn}{np}
+
+  \PYG{k}{def} \PYG{n+nf}{simulator}\PYG{p}{(}\PYG{n}{t1}\PYG{p}{,} \PYG{n}{batch\PYGZus{}size}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{n}{random\PYGZus{}state}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{):}
+      \PYG{k}{if} \PYG{n}{t1} \PYG{o}{\PYGZlt{}} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{0.5}\PYG{p}{:}
+          \PYG{n}{y} \PYG{o}{=} \PYG{n}{ss}\PYG{o}{.}\PYG{n}{norm}\PYG{p}{(}\PYG{n}{loc}\PYG{o}{=\PYGZhy{}}\PYG{n}{t1}\PYG{o}{\PYGZhy{}}\PYG{n}{c}\PYG{p}{,} \PYG{n}{scale}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{.}\PYG{n}{rvs}\PYG{p}{(}\PYG{n}{random\PYGZus{}state}\PYG{o}{=}\PYG{n}{random\PYGZus{}state}\PYG{p}{)}
+      \PYG{k}{elif} \PYG{n}{t1} \PYG{o}{\PYGZlt{}=} \PYG{l+m+mf}{0.5}\PYG{p}{:}
+          \PYG{n}{y} \PYG{o}{=} \PYG{n}{ss}\PYG{o}{.}\PYG{n}{norm}\PYG{p}{(}\PYG{n}{loc}\PYG{o}{=}\PYG{n}{t1}\PYG{o}{**}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{n}{scale}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{.}\PYG{n}{rvs}\PYG{p}{(}\PYG{n}{random\PYGZus{}state}\PYG{o}{=}\PYG{n}{random\PYGZus{}state}\PYG{p}{)}
+      \PYG{k}{else}\PYG{p}{:}
+          \PYG{n}{y} \PYG{o}{=} \PYG{n}{ss}\PYG{o}{.}\PYG{n}{norm}\PYG{p}{(}\PYG{n}{loc}\PYG{o}{=}\PYG{n}{t1}\PYG{o}{\PYGZhy{}}\PYG{n}{c}\PYG{p}{,} \PYG{n}{scale}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{.}\PYG{n}{rvs}\PYG{p}{(}\PYG{n}{random\PYGZus{}state}\PYG{o}{=}\PYG{n}{random\PYGZus{}state}\PYG{p}{)}
+      \PYG{k}{return} \PYG{n}{y}
+
+  \PYG{c+c1}{\PYGZsh{} observation}
+  \PYG{n}{y} \PYG{o}{=} \PYG{l+m+mi}{0}
+
+  \PYG{c+c1}{\PYGZsh{} Elfi graph}
+  \PYG{n}{t1} \PYG{o}{=} \PYG{n}{elfi}\PYG{o}{.}\PYG{n}{Prior}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}uniform\PYGZsq{}}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{2.5}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{)}
+  \PYG{n}{sim} \PYG{o}{=} \PYG{n}{elfi}\PYG{o}{.}\PYG{n}{Simulator}\PYG{p}{(}\PYG{n}{simulator}\PYG{p}{,} \PYG{n}{t1}\PYG{p}{,} \PYG{n}{observed}\PYG{o}{=}\PYG{n}{y}\PYG{p}{)}
+  \PYG{n}{d} \PYG{o}{=} \PYG{n}{elfi}\PYG{o}{.}\PYG{n}{Distance}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}euclidean\PYGZsq{}}\PYG{p}{,} \PYG{n}{sim}\PYG{p}{)}
+
+  \PYG{c+c1}{\PYGZsh{} Initialise the ROMC inference method}
+  \PYG{n}{bounds} \PYG{o}{=} \PYG{p}{[(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{2.5}\PYG{p}{,} \PYG{l+m+mf}{2.5}\PYG{p}{)]} \PYG{c+c1}{\PYGZsh{} limits of the prior}
+  \PYG{n}{parallelize} \PYG{o}{=} \PYG{k+kc}{True} \PYG{c+c1}{\PYGZsh{} activate parallel execution}
+  \PYG{n}{romc} \PYG{o}{=} \PYG{n}{elfi}\PYG{o}{.}\PYG{n}{ROMC}\PYG{p}{(}\PYG{n}{d}\PYG{p}{,} \PYG{n}{bounds}\PYG{o}{=}\PYG{n}{bounds}\PYG{p}{,} \PYG{n}{parallelize}\PYG{o}{=}\PYG{n}{parallelize}\PYG{p}{)}
+\end{Verbatim}

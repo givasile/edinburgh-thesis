@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PYG{n}{n1} \PYG{o}{=} \PYG{l+m+mi}{500} \PYG{c+c1}{\PYGZsh{} number of optimisation problems}
+  \PYG{n}{seed} \PYG{o}{=} \PYG{l+m+mi}{21} \PYG{c+c1}{\PYGZsh{} seed for solving the optimisation problems}
+  \PYG{n}{eps} \PYG{o}{=} \PYG{o}{.}\PYG{l+m+mi}{75} \PYG{c+c1}{\PYGZsh{} threshold for bounding box}
+  \PYG{n}{use\PYGZus{}bo} \PYG{o}{=} \PYG{k+kc}{False} \PYG{c+c1}{\PYGZsh{} set to True for switching to Bayesian optimisation}
+
+  \PYG{c+c1}{\PYGZsh{} Training step\PYGZhy{}by\PYGZhy{}step}
+  \PYG{n}{romc}\PYG{o}{.}\PYG{n}{solve\PYGZus{}problems}\PYG{p}{(}\PYG{n}{n1}\PYG{o}{=}\PYG{n}{n1}\PYG{p}{,} \PYG{n}{seed}\PYG{o}{=}\PYG{n}{seed}\PYG{p}{,} \PYG{n}{use\PYGZus{}bo}\PYG{o}{=}\PYG{n}{use\PYGZus{}bo}\PYG{p}{)}
+  \PYG{n}{romc}\PYG{o}{.}\PYG{n}{theta\PYGZus{}hist}\PYG{p}{(}\PYG{n}{bins}\PYG{o}{=}\PYG{l+m+mi}{100}\PYG{p}{)}
+  \PYG{n}{romc}\PYG{o}{.}\PYG{n}{estimate\PYGZus{}regions}\PYG{p}{(}\PYG{n}{eps}\PYG{o}{=}\PYG{n}{eps}\PYG{p}{)}
+  \PYG{n}{romc}\PYG{o}{.}\PYG{n}{visualize\PYGZus{}region}\PYG{p}{(}\PYG{n}{i}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{)}
+
+  \PYG{c+c1}{\PYGZsh{} Equivalent one\PYGZhy{}line command}
+  \PYG{c+c1}{\PYGZsh{} romc.fit\PYGZus{}posterior(n1=n1, eps=eps, use\PYGZus{}bo=use\PYGZus{}bo, seed=seed)}
+\end{Verbatim}

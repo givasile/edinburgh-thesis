@@ -1,0 +1,33 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PYG{k}{class} \PYG{n+nc}{NeuralNetwork}\PYG{p}{:}
+      \PYG{k}{def} \PYG{n+nf+fm}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{o}{**}\PYG{n}{kwargs}\PYG{p}{):}
+          \PYG{c+c1}{\PYGZsh{} set the input arguments}
+
+      \PYG{k}{def} \PYG{n+nf}{train}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{y}\PYG{p}{):}
+          \PYG{c+c1}{\PYGZsh{} training code}
+
+      \PYG{k}{def} \PYG{n+nf}{predict}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+          \PYG{c+c1}{\PYGZsh{} prediction code}
+
+  \PYG{c+c1}{\PYGZsh{} Inherit the base optimisation class}
+  \PYG{k}{class} \PYG{n+nc}{customOptim}\PYG{p}{(}\PYG{n}{elfi}\PYG{o}{.}\PYG{n}{methods}\PYG{o}{.}\PYG{n}{parameter\PYGZus{}inference}\PYG{o}{.}\PYG{n}{OptimisationProblem}\PYG{p}{):}
+      \PYG{k}{def} \PYG{n+nf+fm}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{o}{**}\PYG{n}{kwargs}\PYG{p}{):}
+          \PYG{n+nb}{super}\PYG{p}{(}\PYG{n}{customOptim}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{o}{.}\PYG{n+nf+fm}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(}\PYG{o}{**}\PYG{n}{kwargs}\PYG{p}{)}
+
+      \PYG{c+c1}{\PYGZsh{} overwrite the function you want to replace}
+      \PYG{k}{def} \PYG{n+nf}{fit\PYGZus{}local\PYGZus{}surrogate}\PYG{p}{(}\PYG{o}{**}\PYG{n}{kwargs}\PYG{p}{):}
+          \PYG{c+c1}{\PYGZsh{} init and train the NN}
+          \PYG{n}{x} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{regions}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{sample}\PYG{p}{(}\PYG{l+m+mi}{30}\PYG{p}{)} \PYG{c+c1}{\PYGZsh{} 30 training points}
+          \PYG{n}{y} \PYG{o}{=} \PYG{p}{[}\PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{([}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{objective}\PYG{p}{(}\PYG{n}{ii}\PYG{p}{)} \PYG{k}{for} \PYG{n}{ii} \PYG{o+ow}{in} \PYG{n}{x}\PYG{p}{])]}
+          \PYG{n}{nn} \PYG{o}{=} \PYG{n}{NeuralNet}\PYG{p}{()}
+          \PYG{n}{nn}\PYG{o}{.}\PYG{n}{train}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{n}{y}\PYG{p}{)}
+
+          \PYG{c+c1}{\PYGZsh{} set the appropriate attribute}
+          \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{local\PYGZus{}surrogate} \PYG{o}{=} \PYG{n}{nn}\PYG{o}{.}\PYG{n}{predict}
+
+          \PYG{c+c1}{\PYGZsh{} update the state}
+          \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{state}\PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}local\PYGZus{}surrogate\PYGZdq{}}\PYG{p}{]} \PYG{o}{=} \PYG{k+kc}{True}
+
+  \PYG{c+c1}{\PYGZsh{} pass the custom inference method as argument}
+  \PYG{n}{romc} \PYG{o}{=} \PYG{n}{elfi}\PYG{o}{.}\PYG{n}{ROMC}\PYG{p}{(}\PYG{n}{dist}\PYG{p}{,} \PYG{n}{bounds}\PYG{p}{,} \PYG{n}{custom\PYGZus{}optim\PYGZus{}class}\PYG{o}{=}\PYG{n}{customOptim}\PYG{p}{)}
+\end{Verbatim}

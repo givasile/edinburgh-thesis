@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{romc}\PYG{o}{.}\PYG{n}{solve\PYGZus{}problems}\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,} \PYG{n}{use\PYGZus{}bo}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,} \PYG{n}{optimizer\PYGZus{}args}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{seed}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{)}
+\end{Verbatim}

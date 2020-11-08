@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{res} \PYG{o}{=} \PYG{n}{romc}\PYG{o}{.}\PYG{n}{compute\PYGZus{}divergence}\PYG{p}{(}\PYG{n}{wrapper}\PYG{p}{,} \PYG{n}{distance}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}Jensen\PYGZhy{}Shannon\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Jensen\PYGZhy{}Shannon divergence: }\PYG{l+s+si}{\PYGZpc{}.3f}\PYG{l+s+s2}{\PYGZdq{}} \PYG{o}{\PYGZpc{}} \PYG{n}{res}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} Jensen\PYGZhy{}Shannon divergence: 0.025}
+
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Nof Samples: }\PYG{l+s+si}{\PYGZpc{}d}\PYG{l+s+s2}{, ESS: }\PYG{l+s+si}{\PYGZpc{}.3f}\PYG{l+s+s2}{\PYGZdq{}} \PYG{o}{\PYGZpc{}} \PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{romc}\PYG{o}{.}\PYG{n}{result}\PYG{o}{.}\PYG{n}{weights}\PYG{p}{),} \PYG{n}{romc}\PYG{o}{.}\PYG{n}{compute\PYGZus{}ess}\PYG{p}{()))}
+\PYG{c+c1}{\PYGZsh{} Nof Samples: 19950, ESS: 16694.816}
+\end{Verbatim}

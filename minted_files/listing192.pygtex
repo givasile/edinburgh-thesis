@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{x} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{regions}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{sample}\PYG{p}{(}\PYG{n}{kwargs}\PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}nof\PYGZus{}examples\PYGZdq{}}\PYG{p}{])}
+\end{Verbatim}

@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{romc}\PYG{o}{.}\PYG{n}{eval\PYGZus{}unorm\PYGZus{}posterior}\PYG{p}{(}\PYG{n}{theta}\PYG{p}{,} \PYG{n}{eps\PYGZus{}cutoff}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{)}
+\end{Verbatim}
