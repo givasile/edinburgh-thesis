@@ -1,7 +1,7 @@
 \begin{Verbatim}[commandchars=\\\{\}]
   \PYG{n}{n1} \PYG{o}{=} \PYG{l+m+mi}{500} \PYG{c+c1}{\PYGZsh{} number of optimisation problems}
   \PYG{n}{seed} \PYG{o}{=} \PYG{l+m+mi}{21} \PYG{c+c1}{\PYGZsh{} seed for solving the optimisation problems}
-  \PYG{n}{eps} \PYG{o}{=} \PYG{o}{.}\PYG{l+m+mi}{75} \PYG{c+c1}{\PYGZsh{} threshold for bounding box}
+  \PYG{n}{eps} \PYG{o}{=} \PYG{l+m+mf}{.75} \PYG{c+c1}{\PYGZsh{} threshold for bounding box}
   \PYG{n}{use\PYGZus{}bo} \PYG{o}{=} \PYG{k+kc}{False} \PYG{c+c1}{\PYGZsh{} set to True for switching to Bayesian optimisation}
 
   \PYG{c+c1}{\PYGZsh{} Training step\PYGZhy{}by\PYGZhy{}step}
